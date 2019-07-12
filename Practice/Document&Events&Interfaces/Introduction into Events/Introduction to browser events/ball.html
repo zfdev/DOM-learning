@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #field {
+            width: 200px;
+            height: 150px;
+            border: 10px solid black;
+            background-color: #00FF00;
+            overflow: hidden;
+        }
+
+        #ball {
+            transition: all ease-out .5s;
+        }
+    </style>
+</head>
+
+<body style="height:2000px">
+
+    Click on a field to move the ball there.
+    <br> The ball should never leave the field.
+
+
+    <div id="field">
+        <img src="https://en.js.cx/clipart/ball.svg" id="ball"> . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . .
+    </div>
+
+    <script>
+        const field = document.querySelector('#field');
+        const ball = document.querySelector('#ball');
+        const fieldRect = field.getBoundingClientRect();
+
+        const handler = function (e) {
+            // console.log(e.pageX, e.pageY); //mouse position in viewport
+
+            let moveToX = e.pageX - fieldRect.left - field.clientLeft - ball.offsetHeight / 2;
+            let moveToY = e.pageY - fieldRect.top - field.clientTop - ball.offsetHeight / 2;
+
+            moveToX = Math.max(0, moveToX);
+            moveToY = Math.max(0, moveToY);
+
+            moveToX = Math.min(field.clientWidth - ball.offsetHeight / 2 - field.clientLeft * 2, moveToX);
+            moveToY = Math.min(field.clientHeight - ball.offsetHeight / 2 - field.clientTop * 2, moveToY);
+
+            console.log(moveToX, moveToY);
+            //do animation
+            ball.style.transform = `translate(${moveToX}px, ${moveToY}px)`;
+        }
+
+        ball.addEventListener('load', function () {
+            document.addEventListener('click', handler);
+        });
+    </script>
+
+</body>
+
+</html>

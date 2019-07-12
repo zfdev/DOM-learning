@@ -1,0 +1,54 @@
+<!doctype html>
+
+<body>
+    <style>
+        .invalid {
+            border-color: red;
+        }
+
+        #error {
+            color: red
+        }
+    </style>
+
+    Your email please: <input type="email" id="input">
+
+    <div id="error"></div>
+
+    <script>
+        // input.onblur = function () {
+        //     if (!input.value.includes('@')) { // not email
+        //         input.classList.add('invalid');
+        //         error.innerHTML = 'Please enter a correct email.'
+        //     }
+        // };
+
+        // input.onfocus = function () {
+        //     if (this.classList.contains('invalid')) {
+        //         // remove the "error" indication, because the user wants to re-enter something
+        //         this.classList.remove('invalid');
+        //         error.innerHTML = "";
+        //     }
+        // };
+
+        let inputDOM = document.querySelector('#input');
+        let msg = document.querySelector('#error');
+        let blurCallback = function (event) {
+            let regExp = /^[a-zA-Z0-9\-\_]*@[a-zA-Z0-9]*\.[a-z]{1,4}$/g;
+            let input = event.target;
+            if (!regExp.test(input.value)) {
+                input.classList.add('invalid');
+                msg.innerHTML = 'Please enter a correct email!';
+            }
+        }
+        let focusCallback = function (event) {
+            let input = event.target;
+            if (input.classList.contains('invalid')) {
+                input.classList.remove('invalid');
+                msg.innerHTML = '';
+            }
+        }
+        inputDOM.addEventListener('blur', blurCallback);
+        inputDOM.addEventListener('focus', focusCallback);
+    </script>
+</body>

@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+
+<head></head>
+
+<body>
+    <form id="form" class="">
+        <input type="text" name="name" value="Name">
+        <input type="text" name="surname" value="Surname">
+    </form>
+
+    <style>
+        .focused {
+            outline: 1px solid red;
+        }
+    </style>
+
+    <script>
+        // put the handler on capturing phase (last argument true)
+        // form.addEventListener("focus", () => form.classList.add('focused'), true);
+        // form.addEventListener("blur", () => form.classList.remove('focused'), true);
+        let form = document.querySelector('#form');
+        form.addEventListener('focus', () => {
+            form.classList.add('focused')
+        }, true);
+        form.addEventListener('blur', () => {
+            form.classList.remove('focused')
+        }, true);
+    </script>
+</body>
+
+</html>

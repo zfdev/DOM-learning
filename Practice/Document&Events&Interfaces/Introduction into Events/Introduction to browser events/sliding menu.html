@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        .menu-container {}
+
+        .menu-container a:before {
+            content: '▶';
+        }
+
+        .menu-container a.show:before {
+            content: '▼';
+        }
+    </style>
+</head>
+
+<body>
+    <div class="menu-container">
+        <ul>
+            <li>
+                <a href="">Sweeties (click me)!</a>
+                <ul>
+                    <li>Cake</li>
+                    <li>Donut</li>
+                    <li>Honey</li>
+                </ul>
+            </li>
+            <li>
+                <a href="" class="show">Sweeties (click me)!</a>
+                <ul>
+                    <li>Cake</li>
+                    <li>Donut</li>
+                    <li>Honey</li>
+                </ul>
+            </li>
+            <li>
+                <a href="">Sweeties (click me)!</a>
+                <ul>
+                    <li>Cake</li>
+                    <li>Donut</li>
+                    <li>Honey</li>
+                </ul>
+            </li>
+        </ul>
+
+    </div>
+
+    <script>
+        const menuContainer = document.querySelector('.menu-container');
+
+        const allLink = menuContainer.querySelectorAll('a');
+
+        const isShow = function (link) {
+            if (link.classList.contains('show')) {
+                link.nextElementSibling.hidden = false;
+            } else {
+                link.nextElementSibling.hidden = true;
+            }
+            // link.classList.toggle('show');
+        }
+        allLink.forEach((link) => {
+            isShow(link);
+        })
+
+        const clickHandler = function (e) {
+            const target = e.target;
+            if (Array.prototype.includes.call(allLink, target)) {
+                target.classList.toggle('show');
+                target.nextElementSibling.hidden = target.nextElementSibling.hidden ? false : true;
+            }
+            e.preventDefault();
+        };
+        menuContainer.addEventListener('click', clickHandler);
+
+        console.dir(allLink);
+    </script>
+</body>
+
+</html>

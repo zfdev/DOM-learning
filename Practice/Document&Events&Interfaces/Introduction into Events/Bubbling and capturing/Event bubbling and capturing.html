@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //事件过程
+        //事件发生时，目标元素最深层次的DOM为event.target,
+        //从根节点开始，依次向下向目标元素遍历，依次执行element.addEventListener(eventType, callback, true)绑定的事件处理器(捕获阶段)
+        //到达目标元素后，再依次向上向根节点遍历，依次执行on<event>和addEventListener(event.type, callback, false)绑定的事件处理器(冒泡阶段)
+
+        //事件传递过程中关键的对象属性
+        //event.target 触发事件的目标元素，最深层的节点，注意不是绑定处理器的元素哦
+        //event.currentTarget === this 绑定事件处理器的元素 element.addEventListener的element
+        //event.eventType 事件类型
+        //event.eventPhase 当前阶段 bubbling=3 capturing = 1
+    </script>
+</body>
+
+</html>

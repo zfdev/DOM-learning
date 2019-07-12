@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        span:hover {
+            font-weight: bold;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <ul class="tree" id="tree">
+        <li>Animals
+            <ul>
+                <li>Mammals
+                    <ul>
+                        <li>Cows</li>
+                        <li>Donkeys</li>
+                        <li>Dogs</li>
+                        <li>Tigers</li>
+                    </ul>
+                </li>
+                <li>Other
+                    <ul>
+                        <li>Snakes</li>
+                        <li>Birds</li>
+                        <li>Lizards</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Fishes
+            <ul>
+                <li>Aquarium
+                    <ul>
+                        <li>Guppy</li>
+                        <li>Angelfish</li>
+                    </ul>
+                </li>
+                <li>Sea
+                    <ul>
+                        <li>Sea trout</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    <script>
+        const allLi = document.querySelectorAll('.tree li');
+        allLi.forEach((li) => {
+            // console.dir(li.firstChild);
+            console.log(li.firstChild.nodeValue.trim(), li.children.length);
+            if (li.children.length !==
+                0) { //li.parentNode.querySelector('ul') 还有另一种判断是否含有子节点的方法，就是先访问parentNode，再使用querySelector选择器查找目标子节点
+                const spanWrapper = document.createElement('span');
+                li.prepend(spanWrapper);
+                spanWrapper.append(spanWrapper.nextSibling); //先创建插入之后，再移动其他节点，这样可控性好些
+            }
+        });
+        document.addEventListener('click', function (e) {
+            const target = e.target;
+            // console.log(target.tagName)
+            if (target.tagName.toLowerCase() === 'span') {
+                // console.log(target.children);
+                ul = target.nextElementSibling;
+                ul.hidden = !ul.hidden;
+            }
+        })
+
+        //总结一下，总共有两个部分是这个题的难点，
+        //一个修改dom结构以便实现更好的交互效果，这里操作dom节点的顺序很重要，先在父节点通过prepend前插入容器节点，再通过nextSibling访问相邻的文本节点。
+
+        //再就是判断父亲节点是否含有子节点的方法，我是使用children获取element节点的数量，如果子元素的数量为0则没有子节点，这是因为children计算的是element的数量，还有一种更好的方法，就是先通过parentNode获取父节点，再使用querySelector查询要查找的目标子节点的DOMString selector
+
+        //还有一个地方也是个小技巧，关于显示隐藏切换的方式的问题 直接使用element.hidden = !element.hidden;进行切换是最快的方法，无需判断
+    </script>
+</body>
+
+</html>

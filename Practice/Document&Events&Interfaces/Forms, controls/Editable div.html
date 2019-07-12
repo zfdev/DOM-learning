@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <style>
+        .view {
+            height: 150px;
+            width: 400px;
+            font-family: arial;
+            font-size: 14px;
+            display: block;
+        }
+
+        .view {
+            /* padding + border = 3px */
+            padding: 2px;
+            border: 1px solid black;
+        }
+
+
+        .edit:focus {
+            outline: none;
+            /* remove focus border in Safari */
+        }
+    </style>
+    <meta charset="utf-8">
+</head>
+
+<body>
+
+    <ul>
+        <li>Click the div to edit.</li>
+        <li>Enter or blur saves the result.</li>
+    </ul>
+
+    HTML is allowed.
+
+    <div id="view" class="view">Text</div>
+
+    <script>
+        // ...your code...
+        // Note: <textarea> should have class="edit"
+        // my.css has styles to make it the same size as div
+
+        // const editableDiv = document.querySelector('.view');
+        // const textarea = document.createElement('textarea');
+        // textarea.className = 'edit';
+        // const editAreaRect = editableDiv.getBoundingClientRect();
+        // textarea.style.width = editAreaRect.width + 'px';
+        // textarea.style.height = editAreaRect.height + 'px';
+        // textarea.style.top = editAreaRect.top + 'px';
+        // textarea.style.position = 'absolute';
+        // textarea.style.left = editAreaRect.left + 'px';
+        // textarea.style.display = 'none';
+        // document.body.append(textarea);
+
+        // const focusHandler = function (e) {
+        //     textarea.style.display = 'block';
+        //     textarea.value = editableDiv.innerHTML;
+        //     textarea.focus();
+        // }
+
+        // editableDiv.addEventListener('click', focusHandler);
+
+        // const hideEdit = function () {
+        //     textarea.style.display = 'none';
+        //     editableDiv.innerHTML = textarea.value;
+        // }
+
+        // textarea.addEventListener('blur', hideEdit);
+
+        // const keydownHandler = function (e) {
+        //     // console.log(e);
+        //     if (e.keyCode === 13) {
+        //         hideEdit();
+        //     }
+        // }
+        // textarea.addEventListener('keydown', keydownHandler);
+        class EditableDiv {
+            constructor(config) {
+                this.config = config;
+                this.el = null;
+                this.init();
+            }
+            init() {
+                this.render();
+                this.bindEvent();
+            }
+            render() {
+                if (!this.el) {
+                    this.createDOM();
+                    this.config.container.style.position = 'relative';
+                }
+            }
+            createDOM() {
+                let textarea = document.createElement('textarea');
+                textarea.classList.add('edit');
+                textarea.style.position = 'absolute';
+                textarea.style.top = '-1px';
+                textarea.style.left = '-1px';
+                textarea.style.border = '1px solid blue';
+                textarea.style.padding = window.getComputedStyle(this.config.container).padding;
+                textarea.style.fontSize = window.getComputedStyle(this.config.container).fontSize;
+                textarea.style.fontFamily = window.getComputedStyle(this.config.container).fontFamily;
+                textarea.hidden = true;
+                textarea.style.width = window.getComputedStyle(this.config.container).width;
+                textarea.style.height = window.getComputedStyle(this.config.container).height;
+
+                this.el = textarea;
+                this.config.container.append(this.el);
+                return this.el;
+            }
+            show(e) {
+                this.el.hidden = false;
+                this.el.zIndex = 1;
+                this.el.value = this.config.container.firstChild.nodeValue;
+                this.el.focus();
+                e.stopPropagation();
+            }
+            hide(e) {
+                if (!this.el.hidden) {
+                    this.el.hidden = true;
+                    this.el.zIndex = -1;
+                    this.config.container.firstChild.nodeValue = this.el.value;
+                }
+
+            }
+            pressEnter(e) {
+                if (e.keyCode === 13) {
+                    this.hide();
+                }
+            }
+            bindEvent() {
+                this.config.container.addEventListener('click', this.show.bind(this));
+                this.el.addEventListener('blur', this.hide.bind(this));
+                document.addEventListener('click', this.hide.bind(this));
+                document.addEventListener('keyup', this.pressEnter.bind(this));
+            }
+        }
+        const targetDiv = document.querySelector('.view');
+        const editableDiv = new EditableDiv({
+            container: targetDiv
+        });
+    </script>
+
+</body>
+
+</html>

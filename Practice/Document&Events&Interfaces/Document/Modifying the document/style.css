@@ -1,0 +1,163 @@
+/* Reset */
+html,
+body,
+div {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: rgb(253, 253, 253);
+}
+
+#calendar {
+    padding: 15px;
+}
+
+#calendar:after {
+    clear: both;
+    content: '';
+    display: block;
+}
+
+h3 {
+    text-indent: 15px;
+    font-weight: normal;
+    font-size: 16px;
+}
+
+/*Calendar*/
+.calendar-group {
+    float: left;
+}
+
+.calendar-group:first-child {
+    margin-right: 1;
+}
+
+.calendar-container {
+    display: inline-block;
+}
+
+.calendar-container caption {
+    text-align: center;
+    height: 28px;
+    line-height: 28px;
+}
+
+.calendar-container.hidden {
+    display: none;
+}
+
+table {
+    border-collapse: collapse;
+    display: inline-block;
+}
+
+td,
+th {
+    border: 1px solid black;
+    padding: 3px;
+    text-align: center;
+}
+
+th.weekend {
+    color: #FFF;
+    background-color: #F80652;
+}
+
+td.other-month {
+    color: #888;
+    background-color: #F9F9F9;
+}
+
+td.today {
+    color: #F80652;
+}
+
+th {
+    font-weight: bold;
+    background-color: #E6E6E6;
+}
+
+.calendar-container.interaction td.current-month {
+    cursor: pointer;
+    transition: background-color, color ease-in-out .4s;
+}
+
+.calendar-container.interaction td.current-month:hover {
+    color: #FFF;
+    background-color: #F80652;
+}
+
+.calendar-container td.other-month.hidden-nearby-month {
+    color: #F9F9F9;
+}
+
+
+/* UI */
+/* Button */
+.button {
+    /* display: inline-block; */
+    height: 24px;
+    border: 1px solid #F80652;
+    background-color: #F80652;
+    color: #FFF;
+    transition: color, background-color ease-in-out .4s;
+}
+
+.button:hover {
+    cursor: pointer;
+    color: #F80652;
+    background-color: #F9F9F9;
+}
+
+/* Tools */
+.clear-fix {}
+
+.clear-fix:after {
+    content: '';
+    display: block;
+    clear: both;
+}
+
+/* time */
+.timer-container {
+    padding: 0 15px;
+}
+
+.timer-container span {
+    display: block;
+    float: left;
+    height: 25px;
+    line-height: 25px;
+}
+
+.timer-container .time-hour {
+    color: red;
+}
+
+.timer-container .time-minute {
+    color: green;
+}
+
+.timer-container .time-second {
+    color: blue;
+}
+
+.timer-control {
+    padding: 0 15px;
+}
+
+.timer-container .dot {
+    padding: 0 3px;
+    line-height: 22px;
+}
+
+
+/* sort table */
+.sort-table table tr th.sort-by {
+    background-color: #F80652;
+    color: #F9F9F9;
+}

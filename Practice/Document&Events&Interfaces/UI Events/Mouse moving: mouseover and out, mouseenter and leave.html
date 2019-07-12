@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Mouse moving: mouseover mouseout mouseenter mouseleave</title>
+</head>
+
+<body>
+    <p>
+        I close my eyes and I drift into the oneness.
+        And I see you beside me. In this moment I freeze the time.
+        I know that you are there, somewhere, feeling the same.
+        I know you feel me.
+        <strong>I open my eyes and I scared.</strong>
+        of myself and my fear.
+        I try to push you out of my mind.
+        My heart is frozen like a winterstorm. Just let me be.
+        I just want to push you away, why wouldn't you leave.
+    </p>
+    <script>
+        const logInfo = function (e) {
+            console.log(e.type);
+        }
+        const pElement = document.querySelector('p');
+        pElement.addEventListener('mouseover', logInfo);
+        pElement.addEventListener('mouseout', logInfo);
+        pElement.addEventListener('mouseenter', logInfo);
+        pElement.addEventListener('mouseleave', logInfo);
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #contents {
+            padding: 5px;
+            border: 1px green solid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <fieldset id="contents">
+        <legend>#contents</legend>
+        <p>
+            How about to read <a href="http://wikipedia.org">Wikipedia</a> or visit <a
+                href="http://w3.org"><i>W3.org</i></a> and learn about modern standards?
+        </p>
+    </fieldset>
+    <script>
+        //对于事件的理解，我原本以为preventDefault方法作用的目标元素，在父元素上执行，会不会有效果呢
+
+        //preventDefault并不会影响事件冒泡
+        //它只会阻止事件触发的浏览器的默认行为
+        //我们可以通过defaultPrevented属性来判断 默认行为是否被阻止了
+        //而不阻止事件冒泡以方便使用代理
+        //对于嵌套元素来说，可以通过判断defaultPrevented属性在父元素上判断默认事件是否被处理过，来避免因冒泡触发父元素上绑定的事件处理器函数被触发
+        //
+
+        const container = document.getElementById('contents');
+        document.addEventListener('click', function (e) {
+            console.log(e.defaultPrevented);
+        });
+        const handler = function (e) {
+            const target = e.target;
+            //这里的验证不够严谨，不仅是父元素有a的对象，还要确保触发事件的target包含在容器内
+            if (target.closest('a') && container.contains(target)) {
+                if (confirm(`Do you want to visit ${target.closest('a').href}`)) {
+                    window.open(target.closest('a').href, '_blank');
+                }
+            }
+
+            e.preventDefault();
+        }
+        container.addEventListener('click', handler);
+    </script>
+</body>
+
+</html>

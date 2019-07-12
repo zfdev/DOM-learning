@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #mouse {
+            display: inline-block;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        #mouse:focus {
+            outline: 1px dashed black;
+        }
+    </style>
+</head>
+
+<body>
+
+    <p>Click on the mouse and move it with arrow keys.</p>
+
+    <pre id="mouse">
+ _   _
+(q\_/p)
+ /. .\
+=\_t_/=   __
+ /   \   (
+((   ))   )
+/\) (/\  /
+\  Y  /-'
+ nn^nn
+</pre>
+
+
+    <script>
+        // ...your code...
+        let mouse = document.querySelector('#mouse');
+        // mouse.tabIndex = 0;
+        mouse.style.postion = 'fixed';
+        mouse.style.transition = 'transform ease-in-out .5s';
+        const stepWidth = mouse.offsetWidth;
+        let posX = 0;
+        let move = function (event) {
+            console.dir(event.keyCode);
+            if (event.keyCode === 37) {
+
+                mouse.style.transform = `translateX(${posX -= stepWidth}px)`;
+            }
+            if (event.keyCode === 39) {
+                mouse.style.transform = `translateX(${posX += stepWidth}px)`;
+            }
+        }
+        document.addEventListener('keyup', move);
+        mouse.addEventListener('transitionend', function () {
+            console.log('Animation done!');
+        });
+    </script>
+
+</body>
+
+</html>

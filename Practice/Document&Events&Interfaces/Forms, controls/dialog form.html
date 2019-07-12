@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <button id="showDialog">Show Dialog</button>
+    <div id="prompt-form-container">
+        <form id="prompt-form">
+            <div id="prompt-message">Enter something...
+                <br>Please..</div>
+            <input name="text" type="text">
+            <input type="submit" value="Ok">
+            <input type="button" name="cancel" value="Cancel">
+        </form>
+    </div>
+
+    <script>
+        class Prompt {
+            constructor(config) {
+                this.config = config;
+                this.mask = null;
+                this.form = this.config.container.querySelector('form');
+                this.state = {};
+                this.init();
+            }
+            init() {
+                this.config.container.hidden = true;
+                this.render();
+                this.bindEvent();
+            }
+            render() {
+                if (!this.mask) {
+                    this.createDOM();
+                }
+            }
+            createDOM() {
+                let mask = document.createElement('div');
+                mask.style.position = 'fixed';
+                mask.style.width = '100%';
+                mask.style.height = '100%';
+                mask.style.top = '0px';
+                mask.style.left = '0px';
+                mask.style.backgroundColor = 'rgba(0,0,0,.6)';
+                mask.style.zIndex = -1;
+                mask.classList.add('mask');
+                mask.hidden = true;
+                this.mask = mask;
+                document.body.append(mask);
+            }
+            show() {
+                this.mask.style.zIndex = 1;
+                this.mask.hidden = false;
+                this.config.container.hidden = false;
+                this.state.isOpen = true;
+                this.config.container.style.marginLeft = -(this.config.container.offsetWidth / 2) + 'px';
+                this.config.container.style.marginTop = -(this.config.container.offsetHeight / 2) + 'px';
+                document.body.style.overflowY = 'hidden';
+            }
+            hide() {
+                this.mask.style.zIndex = -1;
+                this.mask.hidden = true;
+                this.config.container.hidden = true;
+                this.state.isOpen = false;
+                document.body.style.overflowY = '';
+            }
+            showPrompt(tipText, callback) {
+                let self = this;
+                let form = this.form;
+                this.show();
+                form['text'].focus();
+                this.callback = callback;
+            }
+            runSubmitCall(e) {
+                let self = this;
+                //Trigger callback with custom event on DOM object! Yeah!
+                this.form.dispatchEvent(new CustomEvent('prompt.submit', {
+                    bubbles: true,
+                    detail: {
+                        callback: self.callback
+                    }
+                }));
+                e.preventDefault();
+            }
+            runCancelCall() {
+                this.callback && this.callback(null);
+                this.hide();
+            }
+            switchInput(e) {
+                let self = this;
+                if (this.state.isOpen) {
+                    let activeIndex = Array.from(this.form.elements).indexOf(document.activeElement);
+
+                    if (e.key === 'Tab') {
+                        e.preventDefault();
+                        if (activeIndex < this.form.elements.length - 1) {
+                            activeIndex++;
+                        } else {
+                            activeIndex = 0;
+                        }
+                        setTimeout(function () {
+                            self.form.elements[activeIndex].focus();
+                        }, 1)
+                        // console.dir(this.form.elements[activeIndex]);
+                        // console.dir(activeIndex);
+
+                    }
+                    if (e.key === 'Tab' && e.shiftKey) {
+
+                    }
+
+                }
+
+            }
+            // peventTab(e) {
+            //     if (this.state.isOpen) {
+            //         if (e.key === 'Tab') {
+            //             e.preventDefault();
+            //         }
+            //         if (e.key === 'Tab' && e.shiftKey) {
+            //             e.preventDefault();
+            //         }
+
+            //     }
+            // }
+            submit(e) {
+                let inputValue = this.form['text'].value;
+                e.detail.callback && e.detail.callback(inputValue);
+                this.hide();
+            }
+            // preventSubmit(e) {
+            //     e.preventDefault();
+            // }
+            bindEvent() {
+                this.mask.addEventListener('click', this.hide.bind(this));
+                this.form.addEventListener('keydown', this.switchInput.bind(this));
+                this.form.addEventListener('prompt.submit', this.submit.bind(this));
+                this.form.addEventListener('submit', this.runSubmitCall.bind(this));
+                this.form['cancel'].removeEventListener('click', this.runCancelCall);
+                this.form['cancel'].addEventListener('click', this.runCancelCall.bind(this));
+                // this.form.addEventListener('submit', this.preventSubmit.bind(this));
+            }
+        }
+
+        let prompt = document.querySelector('#prompt-form-container');
+        let formPrompt = new Prompt({
+            container: prompt
+        });
+        let showBtn = document.querySelector('#showDialog');
+        showBtn.addEventListener('click', function () {
+            formPrompt.showPrompt("Enter something<br>...smart :)", function (value) {
+                alert(value);
+            });
+        });
+    </script>
+
+</body>
+
+</html>

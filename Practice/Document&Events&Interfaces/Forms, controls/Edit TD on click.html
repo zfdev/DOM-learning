@@ -1,0 +1,388 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            height: 1000px;
+        }
+
+        /* common styles for the table, no need to modify these */
+
+        th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        td {
+            width: 150px;
+            white-space: nowrap;
+            text-align: center;
+            vertical-align: middle;
+            padding: 10px;
+        }
+
+        .nw {
+            background-color: #999;
+        }
+
+        .n {
+            background-color: #03f;
+            color: #fff;
+        }
+
+        .ne {
+            background-color: #ff6;
+        }
+
+        .w {
+            background-color: #ff0;
+        }
+
+        .c {
+            background-color: #60c;
+            color: #fff;
+        }
+
+        .e {
+            background-color: #09f;
+            color: #fff;
+        }
+
+        .sw {
+            background-color: #963;
+            color: #fff;
+        }
+
+        .s {
+            background-color: #f60;
+            color: #fff;
+        }
+
+        .se {
+            background-color: #0c3;
+            color: #fff;
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .editor {
+            display: none;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .editor.show {
+            display: block;
+            z-index: 2;
+        }
+
+        .mask {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            transition: opacity ease-in-out .5s;
+        }
+
+        textarea {
+            padding: 0;
+        }
+
+        .mask.show {
+            z-index: 1;
+            opacity: .6;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <p>Click on a table cell to edit it. Press OK or CANCEL when you finish.</p>
+    <div class="container">
+        <table id="bagua-table">
+            <tr>
+                <th colspan="3"><em>Bagua</em> Chart: Direction, Element, Color, Meaning</th>
+            </tr>
+            <tr>
+                <td class="nw"><strong>Northwest</strong>
+                    <br>Metal
+                    <br>Silver
+                    <br>Elders
+                </td>
+                <td class="n"><strong>North</strong>
+                    <br>Water
+                    <br>Blue
+                    <br>Change
+                </td>
+                <td class="ne"><strong>Northeast</strong>
+                    <br>Earth
+                    <br>Yellow
+                    <br>Direction
+                </td>
+            </tr>
+            <tr>
+                <td class="w"><strong>West</strong>
+                    <br>Metal
+                    <br>Gold
+                    <br>Youth
+                </td>
+                <td class="c"><strong>Center</strong>
+                    <br>All
+                    <br>Purple
+                    <br>Harmony
+                </td>
+                <td class="e"><strong>East</strong>
+                    <br>Wood
+                    <br>Blue
+                    <br>Future
+                </td>
+            </tr>
+            <tr>
+                <td class="sw"><strong>Southwest</strong>
+                    <br>Earth
+                    <br>Brown
+                    <br>Tranquility
+                </td>
+                <td class="s"><strong>South</strong>
+                    <br>Fire
+                    <br>Orange
+                    <br>Fame
+                </td>
+                <td class="se"><strong>Southeast</strong>
+                    <br>Wood
+                    <br>Green
+                    <br>Romance
+                </td>
+            </tr>
+
+        </table>
+    </div>
+
+
+
+    <script>
+        // const container = document.getElementsByClassName('container')[0];
+        // const allTd = container.querySelectorAll('td');
+        // let editTd = null;
+
+        // const editWindow = document.createElement('textarea');
+        // editWindow.style.position = 'absolute';
+        // editWindow.hidden = true;
+
+        // const setEditWindowPosition = function (posObject) {
+        //     editWindow.style.top = `${posObject.top}px`;
+        //     editWindow.style.left = `${posObject.left}px`;
+        //     editWindow.style.width = `${posObject.width}px`;
+        //     editWindow.style.height = `${posObject.height}px`;
+        //     editWindowToolbar.style.top = `${posObject.top + posObject.height}px`;
+        //     editWindowToolbar.style.left = `${posObject.left}px`;
+        // }
+
+        // const mask = document.createElement('div');
+        // mask.className = 'mask';
+
+        // const editWindowToolbar = document.createElement('div');
+        // editWindowToolbar.hidden = true;
+        // editWindowToolbar.style.position = 'absolute';
+        // const editWindowOK = document.createElement('button');
+        // editWindowOK.innerText = 'OK';
+        // editWindowOK.dataset.action = 'save';
+        // const editWindowCancel = document.createElement('button');
+        // editWindowCancel.innerText = 'Cancel';
+        // editWindowCancel.dataset.action = 'cancel';
+        // editWindowToolbar.append(editWindowOK);
+        // editWindowToolbar.append(editWindowCancel);
+
+
+        // container.append(mask);
+        // container.append(editWindow);
+        // container.append(editWindowToolbar);
+
+        // const showEditWindow = function (tdDom) {
+        //     editWindow.hidden = false;
+        //     editWindowToolbar.hidden = false;
+        //     editWindowToolbar.style.zIndex = 2;
+        //     mask.classList.add('show');
+        //     setEditWindowPosition({
+        //         top: tdDom.offsetTop,
+        //         left: tdDom.offsetLeft,
+        //         width: tdDom.clientWidth,
+        //         height: tdDom.clientHeight,
+        //     });
+        //     editWindow.style.zIndex = 2;
+        //     editWindow.value = tdDom.innerHTML;
+        //     editWindow.focus();
+
+        // }
+
+        // const hideEditWindow = function () {
+        //     mask.classList.remove('show');
+        //     editWindow.hidden = true;
+        //     editWindowToolbar.hidden = true;
+
+        //     editWindow.zIndex = -1;
+        //     editWindowToolbar.zIndex = -1;
+
+        // }
+
+        // const saveEditorValueToTd = function () {
+        //     editTd.innerHTML = editWindow.value;
+        //     editTd = null;
+        // }
+
+        // const clickDelegateHandler = function (e) {
+        //     const target = e.target;
+        //     if (target.closest('td') && container.contains(target)) {
+        //         const tdDom = target.closest('td');
+        //         editTd = tdDom;
+        //         showEditWindow(tdDom);
+        //     }
+        //     if (target.classList.contains('mask')) {
+        //         hideEditWindow();
+
+        //     }
+
+        //     if (target.tagName.toLowerCase() === 'button') {
+        //         if (target.dataset.action === 'cancel') {
+        //             hideEditWindow();
+        //         }
+        //         if (target.dataset.action === 'save') {
+        //             hideEditWindow();
+        //             saveEditorValueToTd();
+        //         }
+        //     }
+        // }
+
+        // const keypressHandler = function (e) {
+        //     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        //         // hideEditWindow();
+        //         console.log('Ctrl + Enter');
+        //     }
+        // }
+
+        // const bindEvent = function () {
+        //     document.addEventListener('click', clickDelegateHandler);
+        //     // document.addEventListener('keypress', keypressHandler);
+        // }
+
+        // const init = function () {
+        //     bindEvent();
+        // }
+
+        // init();
+
+        class EditTable {
+            constructor(config) {
+                this.config = config;
+                this.container = this.config.table.closest('.container');
+                this.editor = null;
+                this.mask = null;
+                this.currentTd = null;
+                this.init();
+            }
+            init() {
+                this.render();
+                this.bindEvent();
+            }
+            render() {
+                if (!this.editor) {
+                    this.createDOM();
+                }
+            }
+            createDOM() {
+                const mask = document.createElement('div');
+                mask.classList.add('mask');
+                this.mask = mask;
+                const editContainer = document.createElement('div');
+                editContainer.classList.add('editor');
+                const textarea = document.createElement('textarea');
+                const yesBtn = document.createElement('button');
+                const cancelBtn = document.createElement('button');
+                yesBtn.textContent = 'OK';
+                yesBtn.dataset.action = 'save';
+                cancelBtn.textContent = 'Cancel';
+                cancelBtn.dataset.action = 'cancel';
+                editContainer.append(textarea);
+                editContainer.append(yesBtn);
+                editContainer.append(cancelBtn);
+                this.container.append(editContainer);
+                this.editor = editContainer;
+                this.container.append(mask);
+
+            }
+            show(td) {
+                this.mask.classList.add('show');
+                this.editor.classList.add('show');
+                // console.dir(td.offsetParent);
+                // console.dir(td.offsetLeft);
+                // console.dir(td.offsetTop);
+                // console.dir(td.getBoundingClientRect().top);
+                // console.dir(td.getBoundingClientRect().left);
+                this.editor.style.top = td.offsetTop + 'px';
+                this.editor.style.left = td.offsetLeft + 'px';
+                this.editor.style.width = td.clientWidth + 'px';
+                this.editor.style.height = td.clientHeight + 'px';
+                this.editor.firstElementChild.style.width = td.clientWidth + 'px';
+                this.editor.firstElementChild.style.height = td.clientHeight + 'px';
+                this.getValue();
+                this.editor.firstElementChild.focus();
+            }
+            hide() {
+                this.mask.classList.remove('show');
+                this.editor.classList.remove('show');
+            }
+            getValue() {
+                return this.editor.firstElementChild.value = this.currentTd.innerHTML;
+            }
+            saveValue(td, value) {
+                return this.currentTd.innerHTML = this.editor.firstElementChild.value;
+            }
+            delegation(event) {
+                let target = event.target;
+                let td = target.closest('td');
+                // console.dir(event.target);
+                // console.dir(event.currentTarget);
+                // if (target.tagName.toLowerCase() === 'td') {
+                //Make sure the td child element is triggered.
+                if (event.currentTarget.contains(target) && td) {
+                    this.currentTd = td;
+                    this.show(td);
+                }
+                if (target.classList.contains('mask')) {
+                    this.hide();
+                }
+                if (target.tagName.toLowerCase() === 'button') {
+                    if (target.dataset.action === 'cancel') {
+                        this.hide();
+                    }
+                    if (target.dataset.action === 'save') {
+                        this.saveValue();
+                        this.hide();
+                    }
+                }
+            }
+            bindEvent() {
+                this.container.addEventListener('click', this.delegation.bind(this));
+            }
+        }
+        const tableDOM = document.querySelector('#bagua-table');
+        const editTable = new EditTable({
+            table: tableDOM
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        .note {
+            position: absolute;
+            z-index: 1000;
+            padding: 5px;
+            border: 1px solid black;
+            background: rgba(255, 255, 255, .75);
+            text-align: center;
+            font: italic 14px serif;
+        }
+
+        blockquote {
+            background: #f9f9f9;
+            border-left: 10px solid #ccc;
+            margin: 0 0 0 100px;
+            padding: .5em 10px;
+            quotes: "\201C""\201D""\2018""\2019";
+            display: inline-block;
+            white-space: pre;
+        }
+
+        blockquote:before {
+            color: #ccc;
+            content: open-quote;
+            font-size: 4em;
+            line-height: .1em;
+            margin-right: .25em;
+            vertical-align: -.4em;
+        }
+    </style>
+</head>
+
+<body style="height: 2000px">
+
+    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad incidunt
+        voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim nisi rem provident
+        molestias sit tempore omnis recusandae
+        esse sequi officia sapiente.</p>
+
+    <blockquote>
+        Teacher: Why are you late?
+        Student: There was a man who lost a hundred dollar bill.
+        Teacher: That's nice. Were you helping him look for it?
+        Student: No. I was standing on it.
+    </blockquote>
+
+
+    <p><span>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Reprehenderit sint atque dolorum fuga ad incidunt
+            voluptatum error fugiat animi amet! Odio temporibus nulla id unde quaerat dignissimos enim nisi rem
+            provident
+            molestias sit tempore omnis recusandae
+            esse sequi officia sapiente.</span></p>
+
+
+    <script>
+        // /**
+        //  * Positions elem relative to anchor as said in position.
+        //  *
+        //  * @param {Node} anchor     Anchor element for positioning
+        //  * @param {string} position One of: top/right/bottom
+        //  * @param {Node} elem       Element to position
+        //  *
+        //  * Both elements: elem and anchor must be in the document
+        //  */
+        // function positionAt(anchor, position, elem) {
+        //     // ... your code ...
+        //     let anchorPos = anchor.getBoundingClientRect();
+        //     anchorPos = {
+        //         left: anchorPos.left + window.pageXOffset,
+        //         top: anchorPos.top + window.pageYOffset,
+        //         right: anchorPos.right + window.pageXOffset,
+        //         bottom: anchorPos.bottom + window.pageYOffset,
+
+        //     }
+        //     switch (position) {
+        //         case 'top-out':
+        //             elem.style.left = anchorPos.left + 'px';
+        //             elem.style.top = (anchorPos.top - elem.offsetHeight) + 'px';
+        //             break;
+
+        //         case 'bottom-out':
+        //             elem.style.left = anchorPos.left + 'px';
+        //             elem.style.top = anchorPos.bottom + 'px';
+        //             break;
+
+        //         case 'right-out':
+        //             elem.style.left = anchorPos.right + 'px';
+        //             elem.style.top = anchorPos.top + 'px';
+        //             break;
+
+        //         case 'top-in':
+        //             elem.style.left = anchorPos.left + 'px';
+        //             elem.style.top = anchorPos.top + 'px';
+        //             break;
+
+        //         case 'bottom-in':
+        //             elem.style.left = anchorPos.left + 'px';
+        //             elem.style.top = (anchorPos.bottom - elem.offsetHeight) + 'px';
+        //             break;
+        //     }
+        // }
+
+        // /**
+        //  * Shows a note with the given html at the given position
+        //  * relative to the anchor element.
+        //  */
+        // function showNote(anchor, position, html) {
+        //     // ... your code ...
+        //     const note = document.createElement('div');
+        //     note.className = 'note';
+        //     note.textContent = html;
+        //     document.body.append(note); //一个元素只有在文档中，才能读取到它的offsetWidth大小，否则获取到的值是0
+        //     positionAt(anchor, position, note);
+        // }
+
+        // // test it
+        // let blockquote = document.querySelector('blockquote');
+
+        // showNote(blockquote, "top-in", "note above");
+        // showNote(blockquote, "top-out", "note below");
+        // showNote(blockquote, "right-out", "note right");
+        // showNote(blockquote, "bottom-in", "note inside");
+
+
+        // //elementFromPoint
+        // document.addEventListener('click', function (e) {
+        //     const inSightElement = document.elementFromPoint(e.pageX, e.pageY);
+        //     console.dir(inSightElement);
+        // })
+
+        // //getClientRects
+        // let inlineElements = document.getElementsByTagName('span')[0].getClientRects();
+        // console.dir(inlineElements);
+
+        let proxy = function (context, method) {
+            return method.bind(context);
+        }
+
+        let throttlingTest = function () {
+            console.dir('test');
+        }
+
+        let throttling = function (callback, context, rate = 10) {
+            // console.dir(callback.previous);
+            let now = Date.now();
+            if (!callback.previous) {
+                callback && callback.apply(context);
+                callback.previous = now;
+            } else {
+                if (now - callback.previous >= rate) {
+                    callback && callback.apply(context);
+                    delete callback.previous;
+                }
+            }
+            // callback.timer = window.setTimeout(callback, rate);
+
+        }
+
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+        // throttling(throttlingTest);
+
+        class Note {
+            constructor(config) {
+                this.config = config;
+                this.el = null;
+                this.init();
+            }
+            init() {
+                this.render();
+                this.bindEvent();
+            }
+            createDOM() {
+                let HTMLDOM = document.createElement('div');
+                HTMLDOM.classList.add('note');
+                HTMLDOM.textContent = this.config.text;
+                this.el = HTMLDOM;
+                document.body.append(HTMLDOM);
+            }
+            render() {
+                if (!this.el) {
+                    this.createDOM();
+                }
+                this.coordinatePos();
+                console.log('render');
+            }
+            coordinatePos() {
+                let parentRect = this.config.parent.getBoundingClientRect();
+                let documentCoordinate = {
+                    top: parentRect.top + pageYOffset,
+                    left: parentRect.left + pageYOffset,
+                    right: parentRect.right + pageXOffset,
+                    bottom: parentRect.bottom + pageYOffset,
+                };
+                switch (this.config.pos) {
+                    case 'above':
+                        this.el.style.left = documentCoordinate.left + 'px';
+                        this.el.style.top = (documentCoordinate.top - this.el.offsetHeight) + 'px';
+                        break;
+                    case 'below':
+                        this.el.style.left = documentCoordinate.left + 'px';
+                        this.el.style.top = (documentCoordinate.top + this.config.parent.offsetHeight) + 'px';
+                        break;
+                    case 'right':
+                        this.el.style.left = documentCoordinate.right + 'px';
+                        this.el.style.top = documentCoordinate.top + 'px';
+                        break;
+                    case 'inside':
+                        this.el.style.left = documentCoordinate.left + 'px';
+                        this.el.style.top = documentCoordinate.top + 'px';
+                        break;
+                }
+            }
+            bindEvent() {
+                let self = this;
+                window.addEventListener('resize', function () {
+                    throttling(self.render, self, 1000);
+                });
+            }
+        }
+
+        let blockquote = document.getElementsByTagName('blockquote')[0];
+        let noteAbove = new Note({
+            parent: blockquote,
+            pos: 'above',
+            text: 'note above'
+        });
+        // let noteBelow = new Note({
+        //     parent: blockquote,
+        //     pos: 'below',
+        //     text: 'note below'
+        // });
+        // let noteRight = new Note({
+        //     parent: blockquote,
+        //     pos: 'right',
+        //     text: 'note right'
+        // });
+        // let noteInside = new Note({
+        //     parent: blockquote,
+        //     pos: 'inside',
+        //     text: 'note inside'
+        // });
+    </script>
+
+
+</body>
+
+</html>

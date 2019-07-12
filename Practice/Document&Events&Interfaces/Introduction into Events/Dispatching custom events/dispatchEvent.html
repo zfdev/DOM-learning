@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button>Dispatch Custom Button Event</button>
+    <p id="paragraph">Custom event from paragraph element.</p>
+    <script>
+        const button = document.getElementsByTagName('button')[0];
+        const p = document.getElementById('paragraph');
+        button.addEventListener('click', function (e) {
+            console.dir(e);
+        });
+        const customClickEvent = new Event('click');
+        button.dispatchEvent(customClickEvent);
+
+        document.addEventListener('jason', function (e) {
+            alert('Hello from ' + e.target.id);
+            console.log(e);
+        });
+        const customJasonEvent = new Event('jason', {
+            bubbles: true
+        });
+        p.dispatchEvent(customJasonEvent);
+
+        const customEventWithData = new CustomEvent('custom.jason', {
+            detail: {
+                message: 'Hello, my name is Jason Zhang.'
+            }
+        });
+
+        p.addEventListener('custom.jason', function (e) {
+            alert(e.detail.message);
+        });
+        p.dispatchEvent(customEventWithData); //Attention, dispatchEvent param is the variable of custom event.
+    </script>
+</body>
+
+</html>

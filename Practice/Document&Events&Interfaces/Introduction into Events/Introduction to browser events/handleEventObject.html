@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <button id="elem">Click me</button>
+
+    <script>
+        class Handler {
+            handleEvent(event) {
+                const eventName = `on${event.type[0].toUpperCase()}${event.type.slice(1)}`;
+                this[eventName](event);
+            }
+
+            onMousedown(e) {
+                e.target.innerText = 'mousedown';
+            }
+
+            onMouseup(e) {
+                e.target.innerText += ' and do mouseup';
+            }
+        }
+        const handler = new Handler();
+        elem.addEventListener('mousedown', handler);
+        elem.addEventListener('mouseup', handler);
+    </script>
+</body>
+
+</html>

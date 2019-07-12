@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #field {
+            width: 200px;
+            border: 10px groove black;
+            background-color: #00FF00;
+            position: relative;
+        }
+
+        #ball {
+            position: absolute;
+            transition: all ease-in-out 1s;
+            /* transform: translateX(100px); */
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div id="field">
+        <img src="https://en.js.cx/clipart/ball.svg" id="ball"> . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
+        . . . . . . . . . . . . . . . . . . . . . .
+    </div>
+    <script>
+        const ballDom = document.querySelector('#ball');
+        const filedDom = ballDom.offsetParent;
+
+        ballDom.addEventListener('load', function () {
+            console.log(ballDom.offsetWidth);
+            setTimeout(function () {
+                ballDom.style.transform =
+                    `translate(${(filedDom.clientWidth - ballDom.offsetWidth) / 2 }px, ${(filedDom.clientHeight - ballDom.offsetHeight) / 2 }px)`;
+                console.dir(filedDom);
+            }, 2000);
+        })
+    </script>
+
+</body>
+
+</html>

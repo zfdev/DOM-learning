@@ -1,0 +1,138 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            height: 2000px;
+            /* make body scrollable, the tooltip should work after the scroll */
+        }
+
+        .tooltip {
+            /* some styles for the tooltip, you can use your own instead */
+            position: fixed;
+            padding: 10px 20px;
+            border: 1px solid #b3c9ce;
+            border-radius: 4px;
+            text-align: center;
+            /* font: italic 14px/1.3 arial, sans-serif; */
+            color: #333;
+            background: #fff;
+            box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <p>LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa</p>
+    <p>LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa LaLaLa</p>
+
+    <button data-tooltip="the tooltip is longer than the element">Short button</button>
+    <button data-tooltip="HTML&lt;a href=&quot;http://bing.com&quot;&gt;test&lt;/a&gt;tooltip">One more button</button>
+    <p>Scroll
+        the page to make buttons appear on the top, check if the tooltips show up correctly.</p>
+
+    <input type="text" data-tooltip="Jason's tooltip" placeholder="Jason tooltip">
+
+    <script>
+        // ...your code...
+        let tooltipDom;
+        // const hideDelayTime = 3000; //ms
+        // let hideTimer;
+
+        function isTooltipElement(element) {
+            let result;
+            if (!!element.dataset.tooltip) {
+                // console.log('Is tooltip element.');
+                result = element.dataset.tooltip;
+            } else {
+                result = false;
+            }
+            return result;
+        }
+
+        function buildTooltipHTML(data) {
+            return `<div class="tooltip">${data}</div>`
+        }
+
+        function hasToolTipDom() {
+            return !!document.querySelector('.tooltip');
+        }
+
+        function isInViewport(tooltipDom, target) {
+
+        }
+
+        function showTooltip(e) {
+            const target = e.target;
+            // console.log('target', e.target);
+            // console.log('relatedTarget', e.relatedTarget);
+            if (isTooltipElement(target)) {
+
+                if (hasToolTipDom()) {
+                    // tooltipDom = document.querySelector('.tooltip');
+                    tooltipDom.innerHTML = isTooltipElement(target);
+                    tooltipDom.hidden = false;
+
+                } else {
+                    document.body.insertAdjacentHTML('beforeend', buildTooltipHTML(isTooltipElement(target)));
+                    tooltipDom = document.querySelector('.tooltip');
+                    // bindTooltipDomEvent();
+                }
+
+                tooltipDom.style.left = target.getBoundingClientRect().left + 'px';
+                let tooltipY = target.getBoundingClientRect().top - tooltipDom
+                    .offsetHeight;
+                if (tooltipY <= 0) {
+                    tooltipY = tooltipY + tooltipDom.offsetHeight + target.offsetHeight;
+                }
+                tooltipDom.style.top = tooltipY + 'px';
+            }
+        }
+
+        function hiddenTooltip(e) {
+            const target = e.target;
+            //Do hide at two condition
+            //First condition
+            //Mouse move out from the tooltip target element, and it's next target is not the tooltip dom element.
+            if (isTooltipElement(target) && e.relatedTarget.className !== 'tooltip') {
+                // console.log('target', e.target);
+                // console.log('relatedTarget', e.relatedTarget);
+                doHide();
+                // hideTimer = setTimeout(doHide, hideDelayTime);
+
+            }
+            //second condition
+            //Mouse move out from tooltip dom element and it not move to the tooltip target, dont forget the child element will trigger the mouseout event too, so we need to determine the event target is the child of tooltip dom or not.
+            if (e.target.className === 'tooltip' && !e.relatedTarget.dataset.tooltip && !e.relatedTarget.closest(
+                    '.tooltip')) {
+                doHide();
+            }
+        }
+
+        const doHide = function () {
+            document.querySelector('.tooltip').hidden = true;
+        }
+
+        //绑定mousein mouseout事件 控制显示tooltip和隐藏
+        document.addEventListener('mouseover', showTooltip);
+        document.addEventListener('mouseout', hiddenTooltip);
+        //判断dataset是否含有tooltip对象，如果有的进行初始化
+        //计算当前元素的位置，上部是否有充裕空间显示tooltip，可以使用viewport更好计算，如果没有在下面显示 
+
+        //
+        // const bindTooltipDomEvent = function () {
+        //     tooltipDom.addEventListener('mouseover', function () {
+        //         // clearTimeout(hideTimer);
+        //     });
+        //     tooltipDom.addEventListener('mouseout', function () {
+        //         doHide();
+        //     });
+        // }
+    </script>
+
+</body>
+
+</html>
