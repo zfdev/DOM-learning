@@ -7,11 +7,11 @@
         body {
             height: 1000px;
         }
-
+        
         .selected {
             background: #0f0;
         }
-
+        
         li {
             cursor: pointer;
         }
@@ -35,34 +35,55 @@
         // ...your code...
         //Checking the type of parameter and return value when you call a method. 
         const container = document.querySelector('ul');
-        const handler = function (e) {
-            const target = e.target;
-            console.dir(e);
-            if (container.contains(target)) {
-                if (e.metaKey || e.ctrlKey) {
-                    target.classList.add('selected');
-                    e.preventDefault();
-                } else {
-                    container.querySelectorAll('li.selected').forEach((li) => {
-                        li.classList.remove('selected');
-                    });
-                    target.classList.add('selected');
+        const allLi = Array.from(document.querySelectorAll('ul li'));
+        const removeAllSelectedClass = function() {
+            allLi.forEach(li => li.classList.remove('selected'));
+        }
+        const handler = function(e) {
+            let clickLi = event.target;
+            if (container.contains(clickLi) && clickLi.tagName.toLowerCase() === 'li') {
+                if (!(e.ctrlKey || e.metaKey)) {
+                    removeAllSelectedClass();
                 }
-
+                clickLi.classList.add('selected');
             }
 
-            console.log('Which mouse key is press:', e.which);
+            console.log('e.which', e.which);
+            console.log('e.clientX', e.clientX);
+            console.log('e.clientX', e.clientY);
+            console.log('e.pageX', e.pageX);
+            console.log('e.pageY', e.pageY);
 
-            console.log('Mouse Position Window-relative X', e.clientX);
-            console.log('Mouse Position Window-relative Y', e.clientY);
+            // const target = e.target;
+            // console.dir(e);
+            // if (container.contains(target)) {
+            //     if (e.metaKey || e.ctrlKey) {
+            //         target.classList.add('selected');
+            //         e.preventDefault();
+            //     } else {
+            //         container.querySelectorAll('li.selected').forEach((li) => {
+            //             li.classList.remove('selected');
+            //         });
+            //         target.classList.add('selected');
+            //     }
 
-            console.log('Mouse Position Document-relative X', e.pageX);
-            console.log('Mouse Position Document-relative Y', e.pageY);
+            // }
+
+            // console.log('Which mouse key is press:', e.which);
+
+            // console.log('Mouse Position Window-relative X', e.clientX);
+            // console.log('Mouse Position Window-relative Y', e.clientY);
+
+            // console.log('Mouse Position Document-relative X', e.pageX);
+            // console.log('Mouse Position Document-relative Y', e.pageY);
 
 
         }
-
+        const preventSelect = function(e) {
+            e.preventDefault();
+        }
         container.addEventListener('click', handler);
+        container.addEventListener('mousedown', preventSelect);
     </script>
 
 </body>
