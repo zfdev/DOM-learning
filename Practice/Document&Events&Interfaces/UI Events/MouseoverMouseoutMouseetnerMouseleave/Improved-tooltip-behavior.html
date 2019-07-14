@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            height: 2000px;
+            /* the tooltip should work after page scroll too */
+        }
+
+        .tooltip {
+            position: fixed;
+            z-index: 100;
+
+            padding: 10px 20px;
+
+            border: 1px solid #b3c9ce;
+            border-radius: 4px;
+            text-align: center;
+            font: italic 14px/1.3 sans-serif;
+            color: #333;
+            background: #fff;
+            box-shadow: 3px 3px 3px rgba(0, 0, 0, .3);
+        }
+
+        #house {
+            margin-top: 50px;
+            width: 400px;
+            border: 1px solid brown;
+        }
+
+        #roof {
+            width: 0;
+            height: 0;
+            border-left: 200px solid transparent;
+            border-right: 200px solid transparent;
+            border-bottom: 20px solid brown;
+            margin-top: -20px;
+        }
+
+        p {
+            text-align: justify;
+            margin: 10px 3px;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <div data-tooltip="Here is the house interior" id="house">
+        <div data-tooltip="Here is the roof" id="roof"></div>
+
+        <p>Once upon a time there was a mother pig who had three little pigs.</p>
+
+        <p>The three little pigs grew so big that their mother said to them, "You are too big to live here any longer.
+            You must go and build houses for yourselves. But take care that the wolf does not catch you."
+
+            <p>The three little pigs set off. "We will take care that the wolf does not catch us," they said.</p>
+
+            <p>Soon they met a man. <a href="https://en.wikipedia.org/wiki/The_Three_Little_Pigs"
+                    data-tooltip="Read on…">Hover over me</a></p>
+
+    </div>
+
+    <script>
+        // ...your code...
+        class NestedToolTip {
+            constructor(config) {
+                this.config = config;
+                this.container = this.config.container;
+                this.el = null;
+                this.target = null;
+                // this.init();
+            }
+            init() {
+                this.render();
+                this.bindEvent();
+            }
+            createDOM() {
+                let tooltip = document.createElement('div');
+                tooltip.classList.add('tooltip');
+                tooltip.hidden = true;
+                document.body.append(tooltip);
+                this.el = tooltip;
+            }
+            render() {
+                if (!this.el) {
+                    this.createDOM();
+                }
+            }
+            showTip(tipTarget) {
+                if (tipTarget == this.target) {
+                    return;
+                }
+                let tipTargetRect = tipTarget.getBoundingClientRect();
+                this.el.hidden = false;
+                this.el.innerHTML = tipTarget.dataset.tooltip;
+                let tipHeight = this.el.offsetHeight;
+                let tipWidth = this.el.offsetWidth;
+                let tipPosTop = tipTargetRect.top - tipHeight;
+                let tipPosLeft = tipTargetRect.left + (tipTarget.offsetWidth - tipWidth) / 2;
+                if (tipPosLeft < 0) {
+                    tipPosLeft = 0;
+                }
+                if (tipPosTop < 0) {
+                    tipPosTop = tipTargetRect.bottom;
+                }
+                this.el.style.left = tipPosLeft + 'px';
+                this.el.style.top = tipPosTop + 'px';
+                this.target = tipTarget;
+                console.log('show');
+            }
+            hideTip() {
+                this.el.hidden = true;
+                console.log('hide');
+            }
+            mouseoverDelegattion(e) {
+                let target = e.target;
+                if (target.dataset.tooltip) {
+                    this.showTip(target);
+                }
+            }
+            mouseoutDelegation(e) {
+                if (this.target == null) {
+                    return;
+                }
+                let currentTarget = e.relatedTarget;
+                if (currentTarget === null) {
+                    return;
+                }
+                let isInTooltipContainer = false;
+                while (currentTarget) {
+                    if (this.container.contains(currentTarget) && currentTarget.hasAttribute('data-tooltip')) {
+                        if (currentTarget.dataset.tooltip) {
+                            isInTooltipContainer = true;
+                            break;
+                        }
+                    }
+                    currentTarget = currentTarget.parentNode;
+                }
+                if (!isInTooltipContainer && this.target) {
+                    this.hideTip();
+                    this.target = null;
+                }
+
+            }
+            bindEvent() {
+                this.container.addEventListener('mouseover', this.mouseoverDelegattion.bind(this));
+                this.container.addEventListener('mouseout', this.mouseoutDelegation.bind(this));
+            }
+            distroy() {
+                this.container.removeEventListener('mouseover', this.mouseoverDelegattion.bind(this));
+                this.container.removeEventListener('mouseout', this.mouseoutDelegation.bind(this));
+                this.el.remove();
+                this.el = null;
+                this.target = null;
+                this.config = null;
+                this.container = null;
+            }
+        }
+
+        let nestedToolTip = new NestedToolTip({
+            container: document.body
+        });
+        nestedToolTip.init();
+
+        // let testBreakNumber = 9;
+        // while (testBreakNumber > 0) {
+        //     testBreakNumber--;
+        //     if (testBreakNumber === 3) {
+        //         stop the while loop with break
+        //         break;
+        //     }
+        //     console.log(testBreakNumber);
+        // }
+    </script>
+
+</body>
+
+</html>

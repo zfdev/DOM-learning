@@ -1,0 +1,184 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        #text {
+            display: block;
+            height: 100px;
+            width: 456px;
+        }
+
+        #table th {
+            text-align: center;
+            font-weight: bold;
+        }
+
+        #table td {
+            width: 150px;
+            white-space: nowrap;
+            text-align: center;
+            vertical-align: bottom;
+            padding-top: 5px;
+            padding-bottom: 12px;
+        }
+
+        #table .nw {
+            background: #999;
+        }
+
+        #table .n {
+            background: #03f;
+            color: #fff;
+        }
+
+        #table .ne {
+            background: #ff6;
+        }
+
+        #table .w {
+            background: #ff0;
+        }
+
+        #table .c {
+            background: #60c;
+            color: #fff;
+        }
+
+        #table .e {
+            background: #09f;
+            color: #fff;
+        }
+
+        #table .sw {
+            background: #963;
+            color: #fff;
+        }
+
+        #table .s {
+            background: #f60;
+            color: #fff;
+        }
+
+        #table .se {
+            background: #0c3;
+            color: #fff;
+        }
+
+        #table .highlight {
+            background: red;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <table id="table">
+        <tr>
+            <th colspan="3"><em>Bagua</em> Chart: Direction, Element, Color, Meaning</th>
+        </tr>
+        <tr>
+            <td class="nw"><strong>Northwest</strong>
+                <br>Metal
+                <br>Silver
+                <br>Elders
+            </td>
+            <td class="n"><strong>North</strong>
+                <br>Water
+                <br>Blue
+                <br>Change
+            </td>
+            <td class="ne"><strong>Northeast</strong>
+                <br>Earth
+                <br>Yellow
+                <br>Direction
+            </td>
+        </tr>
+        <tr>
+            <td class="w"><strong>West</strong>
+                <br>Metal
+                <br>Gold
+                <br>Youth
+            </td>
+            <td class="c"><strong>Center</strong>
+                <br>All
+                <br>Purple
+                <br>Harmony
+            </td>
+            <td class="e"><strong>East</strong>
+                <br>Wood
+                <br>Blue
+                <br>Future
+            </td>
+        </tr>
+        <tr>
+            <td class="sw"><strong>Southwest</strong>
+                <br>Earth
+                <br>Brown
+                <br>Tranquility
+            </td>
+            <td class="s"><strong>South</strong>
+                <br>Fire
+                <br>Orange
+                <br>Fame
+            </td>
+            <td class="se"><strong>Southeast</strong>
+                <br>Wood
+                <br>Green
+                <br>Romance
+            </td>
+        </tr>
+
+    </table>
+
+    <script>
+        //Because elem.mouseenter and elem.mouseleave are not support delegation. So we use elem.mouseover and elem.mouseout, but we need to resolve the repeat call problem, so we add a condition in the the delegation method. If the target is the child of td, we ingnore the callback. The important point is save the current highlight td to a extral variable and remove the its style when the parent of mouseout related target is not td.
+        let table = document.querySelector('table');
+        let currendTd = null;
+        let overDelegation = function (e) {
+            if (currendTd) {
+                return;
+            }
+            let target = e.target.closest('td');
+            if (!target || !e.currentTarget.contains(target)) {
+                return;
+                // console.dir(target);
+            }
+            target.style.backgroundColor = 'pink';
+            currendTd = target;
+        }
+        let outDelegation = function (e) {
+            if (!currendTd) {
+                return;
+            }
+            // let target = e.target.closest('td');
+            // if (target && e.currentTarget.contains(target)) {
+            //     target.style.backgroundColor = '';
+            //     console.dir(target);
+            //     console.dir(e.relatedTarget);
+            // }
+            let currentTarget = e.relatedTarget;
+            if (currentTarget) {
+                //If the current moveout target is the child of td, we will ingnore the remove style callback 
+
+                while (currentTarget) { //loop condition: currentTarget is not null
+                    if (currentTarget === currendTd) {
+                        return;
+                    }
+                    currentTarget = currentTarget.parentNode;
+                }
+            }
+            currendTd.style.backgroundColor = '';
+            currendTd = null;
+
+
+        }
+        table.addEventListener('mouseover', overDelegation);
+        table.addEventListener('mouseout', outDelegation);
+    </script>
+
+</body>
+
+</html>
