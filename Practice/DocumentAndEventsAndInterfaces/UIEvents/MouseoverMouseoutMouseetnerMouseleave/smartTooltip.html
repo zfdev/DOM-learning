@@ -18,11 +18,12 @@
         <span class="seconds">00</span>
     </div>
 
-    <div id="tooltip" hidden>Tooltip</div>
+    <div class="tooltip" hidden>Tooltip</div>
 
     <script>
         // for the demo
-        setTimeout(function () {
+        let tooltip = document.querySelector('.tooltip');
+        setTimeout(function() {
             new HoverIntent({
                 elem,
                 over() {
