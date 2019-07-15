@@ -63,7 +63,7 @@
     <script>
         // ...your code...
         class NestedToolTip {
-            constructor(config) {
+            constructor(config = {}, container = null) {
                 this.config = config;
                 this.container = this.config.container;
                 this.el = null;
