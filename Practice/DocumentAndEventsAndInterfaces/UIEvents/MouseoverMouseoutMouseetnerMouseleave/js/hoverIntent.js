@@ -16,7 +16,7 @@ class HoverIntent {
         this.elem = elem;
         this.over = over;
         this.out = out;
-        this.isShow = false;
+        this.isOverElement = false;
         this.checkSpeedInterval = null;
 
         // make sure "this" is the object in event handlers.
@@ -35,40 +35,37 @@ class HoverIntent {
 
     onMouseOver(event) {
         /* ... */
-        if (this.isShow) {
+        if (this.isOverElement) { //Important point
             return;
         }
-        let target = event.target;
-        while (target) {
-            if (target == this.elem) {
-                this.startTime = Date.now();
-                this.prevPosX = event.pageX;
-                this.prevPosY = event.pageY;
-                elem.addEventListener('mousemove', this.onMouseMove);
-                this.checkSpeedInterval = window.setInterval(this.trackSpeed, this.interval);
-                return;
-            }
-            target = target.parentElement;
-        }
+        this.isOverElement = true; //Important point
+
+        this.startTime = Date.now();
+        this.prevPosX = event.pageX;
+        this.prevPosY = event.pageY;
+
+        elem.addEventListener('mousemove', this.onMouseMove); //Important point
+        this.checkSpeedInterval = window.setInterval(this.trackSpeed, this.interval); //Important point
+
 
     }
 
     onMouseOut(event) {
-        if (!this.isShow) {
-            return;
-        }
         let target = event.relatedTarget;
-        while (target) {
-            if (target == this.elem) {
-                return;
+        if (!target || !this.elem.contains(target)) { //Important point
+            this.isOverElement = false;
+            elem.removeEventListener('mousemove', this.onMouseMove);
+            window.clearInterval(this.checkSpeedInterval);
+            if (this.isHover) { //Important point
+                this.isHover = false;
+                this.out.call(this.elem, event);
+                console.log('out');
             }
-            target = target.parentElement;
+
         }
-        this.out.call(this.elem, event);
-        this.isShow = false;
-        elem.removeEventListener('mousemove', this.onMouseMove);
-        window.clearInterval(this.checkSpeedInterval);
-        console.log('out');
+
+
+
     }
 
     trackSpeed() {
@@ -87,8 +84,8 @@ class HoverIntent {
 
         // console.log(speed);
         if (speed < this.sensitivity) {
+            this.isHover = true; //Important point
             this.over.call(this.elem, event);
-            this.isShow = true;
             window.clearInterval(this.checkSpeedInterval);
             console.log('over');
         } else {
@@ -117,9 +114,10 @@ class HoverIntent {
         // continue from this point
         elem.removeEventListener('mousemove', this.onMouseMove);
         window.clearInterval(this.checkSpeedInterval);
-        this.checkSpeedInterval = null;
-        this.isShow = undefined;
+        delete this.checkSpeedInterval;
+        delete this.isOverElement;
         this.elem = null;
+        delete this.elem;
         this.over = null;
         this.out = null;
     }
