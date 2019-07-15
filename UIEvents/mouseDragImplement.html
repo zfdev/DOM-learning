@@ -1,0 +1,168 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #gate {
+            cursor: pointer;
+            margin-bottom: 100px;
+            width: 83px;
+            height: 46px;
+        }
+
+        #ball {
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+        }
+    </style>
+</head>
+
+<body style="height: 200px">
+
+    <p>Drag the ball.</p>
+    <img src="https://en.js.cx/clipart/soccer-gate.svg" id="gate" class="droppable">
+
+    <img src="https://js.cx/clipart/ball.svg" width="40" height="40" id="ball">
+
+
+
+    <script>
+        // ball.onmousedown = function (event) { // (1) start the process
+
+        //     // (2) prepare to moving: make absolute and top by z-index
+        //     ball.style.position = 'absolute';
+        //     ball.style.zIndex = 1000;
+        //     document.body.appendChild(ball);
+        //     // ...and put that absolutely positioned ball under the cursor
+        //     moveAt(event.pageX, event.pageY);
+
+        //     // centers the ball at (pageX, pageY) coordinates
+        //     function moveAt(pageX, pageY) {
+        //         ball.style.left = pageX - ball.offsetWidth / 2 + 'px';
+        //         ball.style.top = pageY - ball.offsetHeight / 2 + 'px';
+        //     }
+
+        //     function onMouseMove(event) {
+        //         moveAt(event.pageX, event.pageY);
+        //     }
+
+        //     // (3) move the ball on mousemove
+        //     document.addEventListener('mousemove', onMouseMove);
+
+        //     // (4) drop the ball, remove unneeded handlers
+        //     ball.onmouseup = function () {
+        //         document.removeEventListener('mousemove', onMouseMove);
+        //         ball.onmouseup = null;
+        //     };
+
+        // };
+
+        class Dragable {
+            constructor(
+                config = {}
+            ) {
+                this.config = config;
+                this.elem = config.elem;
+                this.enterDragable = config.enterDragable;
+                this.leaveDragable = config.leaveDragable;
+                this.init();
+            }
+            init() {
+                //Bind method to the this context and save it to property of instance.
+                this.onMousedown = this.onMousedown.bind(this);
+                this.onMouseup = this.onMouseup.bind(this);
+                this.onMousemove = this.onMousemove.bind(this);
+                this.setPosByMouse = this.setPosByMouse.bind(this);
+                this.preventImageDrag = this.preventImageDrag.bind(this);
+                this.drag = this.drag.bind(this);
+                this.bindEvent();
+            }
+            createDOM() {
+
+            }
+            render() {
+
+            }
+            onMousedown(e) {
+                this.ballAbsoluteX = e.clientX - this.elem.offsetLeft;
+                this.ballAbsoluteY = e.clientY - this.elem.offsetTop;
+                this.elem.style.position = 'absolute';
+                this.elem.style.zIndex = 9999;
+                document.body.append(this.elem);
+
+                document.addEventListener('mousemove', this.onMousemove);
+                this.elem.addEventListener('mouseup', this.onMouseup);
+            }
+            onMouseup(e) {
+                document.removeEventListener('mousemove', this.onMousemove);
+                this.elem.removeEventListener('mouseup', this.onMouseup);
+            }
+            onMousemove(e) {
+                let mousePosX = e.pageX;
+                let mousePosY = e.pageY;
+                this.setPosByMouse(mousePosX - this.ballAbsoluteX, mousePosY - this.ballAbsoluteY);
+                this.drag(e);
+            }
+            drag(e) {
+                let elementBelowMouse;
+                this.elem.hidden = true;
+                elementBelowMouse = document.elementFromPoint(e.clientX, e.clientY);
+                this.elem.hidden = false;
+                if (!elementBelowMouse) {
+                    return;
+                }
+                let dragBelow = elementBelowMouse.closest('.droppable');
+                if (dragBelow) {
+                    if (!this.dragableElement) {
+                        this.enterDragable.call(this, dragBelow);
+                        this.dragableElement = dragBelow;
+                    } else {
+                        if (this.dragableElement != dragBelow) {
+                            this.enterDragable.call(this, dragBelow);
+                            this.dragableElement = dragBelow;
+                        }
+                    }
+                } else {
+                    if (this.dragableElement) {
+                        this.leaveDragable.call(this, this.dragableElement);
+                        this.dragableElement = null;
+                    }
+                }
+            }
+            preventImageDrag(e) {
+                e.preventDefault();
+            }
+            setPosByMouse(x, y) {
+                this.elem.style.left = x + 'px';
+                this.elem.style.top = y + 'px';
+            }
+            bindEvent() {
+                this.elem.addEventListener('mousedown', this.onMousedown);
+                this.elem.addEventListener('dragstart', this.preventImageDrag);
+            }
+            destory() {
+                this.elem.removeEventListener('mousedown', this.onMousedown);
+                this.elem.removeEventListener('mouseup', this.onMouseup);
+                this.elem.removeEventListener('dragstart', this.preventImageDrag);
+                document.removeEventListener('mousemove', this.onMousemove);
+            }
+        }
+
+        let dragBall = new Dragable({
+            elem: document.querySelector('#ball'),
+            enterDragable(elem) {
+                // console.dir(elem);
+                elem.style.backgroundColor = 'red';
+            },
+            leaveDragable(elem) {
+                // console.dir(elem);
+                elem.style.backgroundColor = '';
+            }
+        });
+    </script>
+
+</body>
+
+</html>
