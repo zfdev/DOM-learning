@@ -13,7 +13,7 @@
             margin: 5px;
             position: relative;
         }
-
+        
         .thumb {
             width: 10px;
             height: 30px;
@@ -32,7 +32,7 @@
     <div id="slider" class="slider">
         <div class="thumb"></div>
     </div>
-    <input type="number" name="num" id="">
+    <input type="number" name="num" min="0" max="100" id="">
 
     <script>
         // ...your code...
@@ -86,17 +86,17 @@
                 // this.container.addEventListener('mouseleave', this.onMouseleave);
             }
             onMousemove(e) {
-                let thumbX = e.clientX - this.container.getBoundingClientRect().left - this.offsetX;
-                if (thumbX >= 0 && thumbX <= this.thumbMax) {
-                    let outputValue = Math.round(this.range * (thumbX / this.thumbMax));
-                    this.setThumbPos(thumbX);
-                    this.moveStep && this.moveStep(outputValue);
-                    this.isMoving = true;
+                    let thumbX = e.clientX - this.container.getBoundingClientRect().left - this.offsetX;
+                    if (thumbX >= 0 && thumbX <= this.thumbMax) {
+                        let outputValue = Math.round(this.range * (thumbX / this.thumbMax));
+                        this.setThumbPos(thumbX);
+                        this.moveStep && this.moveStep(outputValue);
+                        this.isMoving = true;
+                    }
                 }
-            }
-            // onMouseleave() {
-            // this.moveOver();
-            // }
+                // onMouseleave() {
+                // this.moveOver();
+                // }
             moveOver() {
                 document.removeEventListener('mousemove', this.onMousemove);
                 this.container.removeEventListener('mouseup', this.onMouseup);
@@ -131,7 +131,7 @@
                 // this.thumb.removeEventListener('mouseleave', this.onMouseleave);
             }
         }
-        let cEvent = function (value) {
+        let cEvent = function(value) {
             return new CustomEvent('dataUpdate', {
                 detail: value
             });
@@ -146,12 +146,12 @@
                 document.dispatchEvent(cEvent(value));
             }
         });
-        numberInput.addEventListener('input', function (e) {
+        numberInput.addEventListener('input', function(e) {
             let value = this.value;
             document.dispatchEvent(cEvent(value));
         });
 
-        document.addEventListener('dataUpdate', function (e) {
+        document.addEventListener('dataUpdate', function(e) {
             let value = e.detail;
             slider.setValue(value);
             numberInput.value = value;
