@@ -9,17 +9,18 @@
             background: #E0E0E0;
             background: linear-gradient(left top, #E0E0E0, #EEEEEE);
             width: 310px;
-            height: 15px;
+            height: 20px;
             margin: 5px;
+            position: relative;
         }
 
         .thumb {
             width: 10px;
-            height: 25px;
+            height: 30px;
             border-radius: 3px;
-            position: relative;
-            left: 10px;
+            position: absolute;
             top: -5px;
+            opacity: .5;
             background: blue;
             cursor: pointer;
         }
@@ -31,9 +32,130 @@
     <div id="slider" class="slider">
         <div class="thumb"></div>
     </div>
+    <input type="number" name="num" id="">
 
     <script>
         // ...your code...
+        class Slider {
+            constructor(
+                config = {}
+            ) {
+                this.config = config;
+                this.container = config.container;
+                this.moveStep = config.moveStep;
+                this.thumb = this.container.querySelector('.thumb');
+                this.init();
+            }
+            init() {
+                this.isMoving = false;
+                this.range = this.config.max - this.config.min;
+                this.thumbMax = this.container.offsetWidth - this.thumb.offsetWidth;
+                this.onMousedown = this.onMousedown.bind(this);
+                this.onMousemove = this.onMousemove.bind(this);
+                this.onMouseup = this.onMouseup.bind(this);
+                this.onMouseout = this.onMouseout.bind(this);
+                this.preventDrag = this.preventDrag.bind(this);
+                this.setValue = this.setValue.bind(this);
+                // this.onMouseleave = this.onMouseleave.bind(this);
+                // this.setThumbPos = this.setThumbPos.bind(this);
+                this.bindEvent();
+            }
+            creatDOM() {
+
+            }
+            render() {
+
+            }
+            setThumbPos(x) {
+                this.thumb.style.left = x + 'px';
+            }
+            setValue(value) {
+                value = parseInt(value);
+                value = Math.max(this.config.min, value);
+                value = Math.min(this.config.max, value);
+                let percentForValue = value / this.range;
+                let absolutePosX = this.thumbMax * percentForValue;
+                this.setThumbPos(absolutePosX);
+            }
+            onMousedown(e) {
+                // let mouseX = e.clientX;
+                // this.setThumbPos(mouseX);
+                this.offsetX = e.clientX - this.thumb.getBoundingClientRect().left;
+                document.addEventListener('mousemove', this.onMousemove);
+                this.container.addEventListener('mouseup', this.onMouseup);
+                // this.container.addEventListener('mouseleave', this.onMouseleave);
+            }
+            onMousemove(e) {
+                let thumbX = e.clientX - this.container.getBoundingClientRect().left - this.offsetX;
+                if (thumbX >= 0 && thumbX <= this.thumbMax) {
+                    let outputValue = Math.round(this.range * (thumbX / this.thumbMax));
+                    this.setThumbPos(thumbX);
+                    this.moveStep && this.moveStep(outputValue);
+                    this.isMoving = true;
+                }
+            }
+            // onMouseleave() {
+            // this.moveOver();
+            // }
+            moveOver() {
+                document.removeEventListener('mousemove', this.onMousemove);
+                this.container.removeEventListener('mouseup', this.onMouseup);
+                this.isMoving = false;
+            }
+            onMouseup(e) {
+                this.moveOver();
+            }
+            onMouseout(e) {
+                if (!this.isMoving) {
+                    return;
+                }
+                let outTarget = e.relatedTarget;
+                if (this.container.contains(outTarget)) {
+                    return;
+                }
+                this.moveOver();
+            }
+            preventDrag(e) {
+                e.preventDefault();
+            }
+            bindEvent() {
+                this.container.addEventListener('mousedown', this.onMousedown);
+                this.container.addEventListener('mouseout', this.onMouseout);
+                this.thumb.addEventListener('tragstart', this.preventDrag);
+            }
+            distory() {
+                this.moveOver();
+                this.container.removeEventListener('mousedown', this.onMousedown);
+                this.container.removeEventListener('mouseout', this.onMouseout);
+                this.thumb.removeEventListener('tragstart', this.preventDrag);
+                // this.thumb.removeEventListener('mouseleave', this.onMouseleave);
+            }
+        }
+        let cEvent = function (value) {
+            return new CustomEvent('dataUpdate', {
+                detail: value
+            });
+        }
+
+        let numberInput = document.querySelector('input[name="num"]');
+        let slider = new Slider({
+            container: document.querySelector('#slider'),
+            min: 0,
+            max: 100,
+            moveStep(value) {
+                document.dispatchEvent(cEvent(value));
+            }
+        });
+        numberInput.addEventListener('input', function (e) {
+            let value = this.value;
+            document.dispatchEvent(cEvent(value));
+        });
+
+        document.addEventListener('dataUpdate', function (e) {
+            let value = e.detail;
+            slider.setValue(value);
+            numberInput.value = value;
+        });
     </script>
 
 </body>
