@@ -11,6 +11,21 @@
 
     <script>
         // ... your code ...
+        let doc = document.documentElement;
+        let writeDateString = function () {
+            let date = new Date();
+            document.body.insertAdjacentHTML('beforeend', `<p>${date.toString()}</p>`);
+        }
+
+        while (doc.clientHeight === doc.scrollHeight) {
+            writeDateString();
+        }
+        window.addEventListener('scroll', function (e) {
+            let bottomDistance = doc.scrollHeight - doc.scrollTop - doc.clientHeight;
+            if (bottomDistance < 100) {
+                writeDateString();
+            }
+        });
     </script>
 
 </body>
