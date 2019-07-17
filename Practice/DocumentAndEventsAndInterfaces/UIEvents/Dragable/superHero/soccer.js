@@ -42,12 +42,12 @@ class DragableDelegate {
         posY = Math.min(posY, document.documentElement.scrollHeight - this.currentTarget.offsetHeight);
         this.setTargePos(posX, posY);
         let clientTop = this.currentTarget.getBoundingClientRect().top;
-        let clientBottom = this.currentTarget.getBoundingClientRect().bottom - window.pageYOffset;
+        let clientBottom = this.currentTarget.getBoundingClientRect().bottom;
         if (clientTop < 0) {
             window.scrollBy(0, clientTop);
         }
         if (clientBottom > document.documentElement.clientHeight) {
-            window.scrollBy(0, clientBottom - document.documentElement.clientHeight);
+            window.scrollBy(0, Math.abs(document.documentElement.clientHeight - clientBottom));
         }
     }
     preventDrag(e) {
