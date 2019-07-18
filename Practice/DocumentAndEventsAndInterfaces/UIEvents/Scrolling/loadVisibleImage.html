@@ -32,7 +32,8 @@
         All planets have almost circular orbits that lie within a nearly flat disc called the ecliptic.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/planets.jpg" width="640" height="360">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/planets.jpg" width="640" height="360">
     </figure>
 
     <h1>Sun</h1>
@@ -44,7 +45,8 @@
         mostly radiated into space as electromagnetic radiation peaking in visible light.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/sun.jpg" width="658" height="658">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/sun.jpg" width="658" height="658">
     </figure>
 
     <h1>Mercury</h1>
@@ -59,7 +61,8 @@
         giant impact; or, that it was prevented from fully accreting by the young Sun's energy.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/mercury.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/mercury.jpg" width="390" height="390">
     </figure>
 
     <h1>Venus</h1>
@@ -75,7 +78,8 @@
 
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/venus.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/venus.jpg" width="390" height="390">
     </figure>
 
     <h1>Earth</h1>
@@ -90,7 +94,8 @@
         in the Solar System.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/earth.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/earth.jpg" width="390" height="390">
     </figure>
 
     <h1>Mars</h1>
@@ -104,7 +109,8 @@
         Mars has two tiny natural satellites (Deimos and Phobos) thought to be captured asteroids.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/mars.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/mars.jpg" width="390" height="390">
     </figure>
 
     <h1>Jupiter</h1>
@@ -119,7 +125,8 @@
 
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/jupiter.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/jupiter.jpg" width="390" height="390">
     </figure>
 
     <h1>Saturn</h1>
@@ -134,7 +141,8 @@
         and the only satellite in the Solar System with a substantial atmosphere.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/saturn.jpg" width="805" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/saturn.jpg" width="805" height="390">
     </figure>
 
     <h1>Uranus</h1>
@@ -147,7 +155,8 @@
 
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/uranus.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/uranus.jpg" width="390" height="390">
     </figure>
 
     <h1>Neptune</h1>
@@ -161,68 +170,147 @@
         that are in 1:1 resonance with it.</p>
 
     <figure>
-        <img src="placeholder.svg" data-src="https://en.js.cx/clipart/solar/neptune.jpg" width="390" height="390">
+        <img src="https://zh.js.cx/task/load-visible-img/solution/placeholder.svg"
+            data-src="https://en.js.cx/clipart/solar/neptune.jpg" width="390" height="390">
     </figure>
 
     <script>
-        /**
-         * Tests if the element is visible (within the visible part of the page)
-         * It's enough that the top or bottom edge of the element are visible
-         */
-        function isVisible(elem) {
+        // /**
+        //  * Tests if the element is visible (within the visible part of the page)
+        //  * It's enough that the top or bottom edge of the element are visible
+        //  */
+        // function isVisible(elem) {
 
-            let coords = elem.getBoundingClientRect();
+        //     let coords = elem.getBoundingClientRect();
 
-            let windowHeight = document.documentElement.clientHeight;
+        //     let windowHeight = document.documentElement.clientHeight;
 
-            // top elem edge is visible OR bottom elem edge is visible
-            let topVisible = coords.top > 0 && coords.top < windowHeight;
-            let bottomVisible = coords.bottom < windowHeight && coords.bottom > 0;
+        //     // top elem edge is visible OR bottom elem edge is visible
+        //     let topVisible = coords.top > 0 && coords.top < windowHeight;
+        //     let bottomVisible = coords.bottom < windowHeight && coords.bottom > 0;
 
-            return topVisible || bottomVisible;
-        }
+        //     return topVisible || bottomVisible;
+        // }
 
-        /**
-        A variant of the test that considers the element visible if it's no more than
-        one page after/behind the current screen.
+        // /**
+        // A variant of the test that considers the element visible if it's no more than
+        // one page after/behind the current screen.
 
-        function isVisible(elem) {
+        // function isVisible(elem) {
 
-          let coords = elem.getBoundingClientRect();
+        //   let coords = elem.getBoundingClientRect();
 
-          let windowHeight = document.documentElement.clientHeight;
+        //   let windowHeight = document.documentElement.clientHeight;
 
-          let extendedTop = -windowHeight;
-          let extendedBottom = 2 * windowHeight;
+        //   let extendedTop = -windowHeight;
+        //   let extendedBottom = 2 * windowHeight;
 
-          // top visible || bottom visible
-          let topVisible = coords.top > extendedTop && coords.top < extendedBottom;
-          let bottomVisible = coords.bottom < extendedBottom && coords.bottom > extendedTop;
+        //   // top visible || bottom visible
+        //   let topVisible = coords.top > extendedTop && coords.top < extendedBottom;
+        //   let bottomVisible = coords.bottom < extendedBottom && coords.bottom > extendedTop;
 
-          return topVisible || bottomVisible;
-        }
-        */
+        //   return topVisible || bottomVisible;
+        // }
+        // */
 
-        function showVisible() {
-            for (let img of document.querySelectorAll('img')) {
-                let realSrc = img.dataset.src;
-                if (!realSrc) continue;
+        // function showVisible() {
+        //     for (let img of document.querySelectorAll('img')) {
+        //         let realSrc = img.dataset.src;
+        //         if (!realSrc) continue;
 
-                if (isVisible(img)) {
-                    // disable caching
-                    // this line should be removed in production code
-                    realSrc += '?nocache=' + Math.random();
+        //         if (isVisible(img)) {
+        //             // disable caching
+        //             // this line should be removed in production code
+        //             realSrc += '?nocache=' + Math.random();
 
-                    img.src = realSrc;
+        //             img.src = realSrc;
 
-                    img.dataset.src = '';
+        //             img.dataset.src = '';
+        //         }
+        //     }
+
+        // }
+
+        // window.addEventListener('scroll', showVisible);
+        // showVisible();
+
+
+        class LazyLoadImage {
+            constructor(
+                config = {}
+            ) {
+                this.config = config;
+                this.elem = config.elem
+                this.init();
+            }
+            init() {
+                this.updateImage = this.updateImage.bind(this);
+                this.loadDone = this.loadDone.bind(this);
+                this.loadFailed = this.loadFailed.bind(this);
+                this.bindEvent();
+            }
+            isInSight() {
+                let imagePosYToWindowTop = this.elem.getBoundingClientRect().top;
+                let imagePosYToWindowBottom = this.elem.getBoundingClientRect().bottom;
+                let windowHeight = document.documentElement.clientHeight;
+                let topVisible = (windowHeight - imagePosYToWindowTop) > 0 &&
+                    imagePosYToWindowTop > 0;
+                let bottomVisible = imagePosYToWindowBottom > 0 && imagePosYToWindowBottom < windowHeight;
+                return topVisible || bottomVisible;
+            }
+            loadImage() {
+                let image = this.elem;
+                image.src = image.dataset.src;
+                image.addEventListener('load', this.loadDone);
+                image.addEventListener('error', this.loadFailed);
+            }
+            loadDone(e) {
+                this.elem.setAttribute('loaded', 'true');
+                this.elem.removeEventListener('load', this.loadDone);
+                this.elem.removeEventListener('error', this.loadFailed);
+            }
+            loadFailed() {
+                if (!this.elem.hasAttribute('error')) {
+                    this.elem.setAttribute('error', 0);
+                } else {
+                    this.elem.setAttribute('error', parseInt(this.elem.getAttribute('error')) ++);
+                }
+
+                this.elem.removeEventListener('load', this.loadDone);
+                this.elem.removeEventListener('error', this.loadFailed);
+            }
+            isLoaded() {
+                return this.elem.hasAttribute('loaded') || (this.elem.hasAttribute('error') && parseInt(this.elem
+                    .getAttribute('error')) < 3);
+            }
+            updateImage(e) {
+                if (!this.isLoaded()) {
+                    if (this.isInSight()) {
+                        this.loadImage();
+                    }
                 }
             }
+            render() {
 
+            }
+            bindEvent() {
+                window.addEventListener('scroll', this.updateImage);
+            }
+            distory() {
+                window.removeEventListener('scroll', this.updateImage);
+                this.elem.removeEventListener('load', this.loadDone);
+                this.elem.removeEventListener('error', this.loadFailed);
+            }
         }
 
-        window.addEventListener('scroll', showVisible);
-        showVisible();
+        let allLazyLoadImages = document.querySelectorAll(
+            'img[data-src]'
+        ); //Don't set the attribute selector property with double quote, set the attribute value with double quote.
+        Array.from(allLazyLoadImages).forEach(image => {
+            let lazyLoadImage = new LazyLoadImage({
+                elem: image
+            });
+        });
     </script>
 
 </body>
