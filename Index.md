@@ -144,7 +144,7 @@ Object
     - Node.nodeName
       - 节点名称
     - Node.tagName
-      - 大写的元素标签名
+      - 大写的元素标签名，注意这里是大写，通常使用node.tagName.toLowerCase()转换成小写再进行对比
     - Element.innerHTML
       - HTML元素内容，可修改
     - Element.outerHTML
@@ -160,6 +160,7 @@ Object
     - Attributes在HTML标签中
     - Properties在DOM对象中，可以通过element[propertyName]访问
     - DOM属性的类型 string或者boolean
+      - 即使是数字存储的时候也是以string的形式
     - dataset
       - 可以通过element.dataset[attributeName]直接访问到html tag上的`data-attribute-name`的值
     - 检查HTML标签的attribute
@@ -217,8 +218,8 @@ Object
     - 元素外部尺寸，不包括margin，但是包含border width
       - elem.offsetLeft 元素距离定位父元素左上角的横向距离
       - elem.offsetTop 元素距离定位父元素左上角的纵向距离
-      - elem.offsetWidth 元素外部宽度
-      - elem.offsetHeight 元素外部高度
+      - elem.offsetWidth 元素外部宽度，包含border的宽度
+      - elem.offsetHeight 元素外部高度，包含border的高度
     - 元素内部尺寸
       - elem.clientLeft 从元素内部内容左上角到元素外部左上角的横向距离
       - elem.clientTop 从元素内部内容左上角到元素外部左上角纵向距离
@@ -245,11 +246,11 @@ Object
       - elem.scrollIntoView(isTop) 滚动到elem可视的位置
 
   - Coordinates
-    - 获取元素相对于窗口的位置，返回值是一个对象包含了以下属性
-      - top 
-      - left
-      - right 元素右边缘距离文档左边的距离
-      - bottom 元素底部边缘距离文档顶部的距离
+    - 获取元素相对于窗口的位置，返回值是一个对象包含了以下属性，注意这个值不是固定的，当窗口滚动时，这个值会随着滚动位置的改变而改变，但是它永远是相对于窗口计算位置，注意它与elem.offsetTop/elem.offsetLeft的固定值的区别
+      - top 元素顶部相对于窗口顶部的距离，注意可以是负值，负值意味着元素的上部已经超出窗口上部边缘
+      - left 元素左边相对于窗口左侧的距离，注意可以是负值
+      - right 元素右边缘距离窗口左边的距离
+      - bottom 元素底部边缘距离窗口顶部的距离
   
     - 相对于窗口的坐标 position: fixed
       - elem.getBoundingClientRect() 
@@ -313,6 +314,7 @@ Object
           - event.type 事件类型
           - event.currentTarget 处理事件的元素，与this相同
           - event.clientX/clientY 事件发生时鼠标相对于窗口的坐标
+          - event.pageX/pgaeY 事件发生时鼠标相对于文档坐标
           - event.target 触发事件处理器的元素
           - event.detail 用于在事件处理器间传递数据的属性
 
@@ -326,7 +328,7 @@ Object
   - Bubbling and Capturing
     - 冒泡
       - 当事件发生在元素上时，首先会运行元素本身的事件处理器，然后沿着树结构向上传递，运行父元素和其他祖先元素上的事件处理器
-      - 除了focus/blur事件 其他事件都是冒泡的
+      - 除了focus/blur/mouseenter/mouseleave事件 其他事件都是冒泡的
     - Event.target与Event.currentTarget的区别
       - 父元素上的处理器总是可以捕获事件实际发生位置的详细信息
       - event.target是引发事件的目标元素，它在冒泡过程中会不断变化，基于这个特性我们才可以实现委托
@@ -344,7 +346,7 @@ Object
       - Event.eventPhase 事件当前处于的阶段
 
   - Event delegation
-    - 因为事件的捕获和冒泡的特性允许我们实现一种事件委托的强大的时间处理模式。
+    - 因为事件的捕获和冒泡的特性允许我们实现一种事件委托的强大的事件处理模式。
     - 当有很多元素需要绑定事件处理器的时候，我们不需要为每个元素都分配一个处理器，而是在他们共同的祖先元素上添加一个处理器，在这个处理器中通过对event.target进行判断并作出相应的处理。
     - 委托的实际应用
       - 通过在子元素HTML tag上添加data-action特性，在父元素的事件处理器中对event.target.dataset.action作出判断并执行相应的方法
@@ -393,7 +395,7 @@ Object
     - 自定义事件CustomEvent对象
       - `new CustomEvent(eventNameString, [, options])`
         - 由于是继承于Event，所以Event有的option它都有
-        - 它有一个特殊的属性 detail 可以用来在自定义事件中传递数据和参数
+        - 它有一个特殊的只读属性 detail 可以用来在自定义事件中传递数据和参数，detail属性只能在创建自定义的时候使用
 
     - 自定义事件的event.preventDefault()
       - 当cancelable被设定为true的时候，我们在自定义事件绑定的事件处理器中调用event.preventDefault()的时候，element.dispatchEvent(event)会返回false, 我们可以通过调用时的返回值做为判断条件执行对应的方法
@@ -403,6 +405,145 @@ Object
       - 我们可以通过使用`{setTimeout(() => elem.diapatch(new customEvent('hello'), {bubbles: true}), 0);` 强制它在下一轮event loop去执行。
   
 - UI Events
+  - Mouse events basic
+    - 鼠标事件类型
+      - 简单事件
+        - mousedown 鼠标按键(左键或者右键)在一个元素上点击
+        - mouseup 鼠标按键(左键或右键)在一个元素上释放
+        - mouseover 鼠标指针从一个元素上移入
+        - mouseout 鼠标指针从一个元素上移出
+        - mousemove 鼠标在元素上每次移动都会触发事件
+
+      - 复杂事件(由简单事件组合而成)
+        - click 鼠标左键在元素上点击
+          - 事件顺序 mousedown -> mouseup -> click
+        - contextmenu 
+          - 鼠标右键在mousedown事件触发后触发 right mousedown -> contextmenu
+          - 事件顺序 mousedown -> contextmenu
+        - dblclick 
+          - 鼠标在元素上双击后触发
+          - 事件顺序 mousedown -> mouseup -> click -> mousedown -> mouseup -> click -> dblclick
+
+      - 事件顺序
+        - 一个动作可能会触发多个事件，我们要注意事件触发的顺序，这样我们在绑定事件的时候函数能够准确被触发，当使用e.preventDefault()阻止某些默认行为时也会准确屏蔽默认行为。
+  
+    - 获取鼠标按键 which
+      - which属性用于获取当前鼠标事件是按下了哪个按键，这里的特殊情况，click事件只发生在鼠标左键，which值永远等于1，contextmenu只发生在鼠标右键，which值永远等于3
+      - mouseEvent.which = 1 left mouse
+      - mouseEvent.which = 2 middle mouse
+      - mouseEvent.which = 3 right mouse
+
+    - 组合快捷键
+      - 当我们需要检测鼠标和键盘组合按键而触发某些行为的时候，可以从event上获取这些组合键属性值，用于判断某个按键是否按下
+      - shift/alt/ctrl/meta(Command)
+      - mouseEvent.shiftKey
+      - mouseEvent.altKey
+      - mouseEvent.ctrlKey
+      - mouseEvent.metaKey (Command for Mac)
+
+    - 鼠标坐标
+      - 相对于窗口对象的坐标，类似于position: fixed
+        - mouseEvent.clientX 
+        - mouseEvent.clientY
+      - 相对于文档对象的坐标, 类似于position:absolute
+        - mouseEvent.pageX
+        - mouseEvent.pageY
+
+    - 处理鼠标点击选中文本的问题
+      - 鼠标双击可以选中文本，但是很多时候我们只想处理点击事件，额外的选择影响操作体验
+        - use-select: none; 缺点是正常的选择文本操作也被屏蔽了
+        - mousedown mouseEvent.preventDefault() 文本选中的默认行为发生在mousedown上，所以我阻止mousedown的默认行为就可以了
+
+  - Moving: mouseover/mouseout, mouseenter/mouseleave
+    - mouseover
+      - 鼠标指针出现在一个元素上时，事件被触发
+      - event.target 鼠标当前所在的元素
+      - event.relatedTarget 鼠标上一次经过的元素
+    - mouseout
+      - 鼠标指针离开一个元素时，事件被触发
+      - event.target 鼠标离开的元素
+      - event.relatedTarget 鼠标当前指针位置下的元素，注意这里与mouseover的不同
+
+    - relatedTarget可以为null的情况，注意使用属性时null的判断
+      - 比如鼠标从窗口以外快速移动到元素上时，mouseover的relatedTarget就是null
+  
+    - 事件频率
+      - 当鼠标在元素上移动时，元素的mousemove事件就会被触发，但是并不每个像素都产生一个事件，浏览器有一个检测机制，当鼠标位置变化了就会触发相应的事件，而且有一定的触发频率，如果鼠标以非常快的速度经过元素，某些中间的元素就会被跳过，相应的事件也不会被触发，这里要注意。
+  
+    - mouseout在子元素多次触发的问题
+      - 这种情况多发生在元素进入子元素时触发了额外的mouseout事件，原因是在浏览器的逻辑里，鼠标在任意事件只会位于单个元素上，zIndex最大的那个，嵌套最深的那个元素上。所以在内部要对target和relatedTarget进行判断，如果还在元素内，则忽略这次事件，这里通常使用parent.contains(target)进行判断。
+
+    - mouseenter/mouseleave
+      - 这个事件相对更加清晰和容易理解，只有鼠标进入/离开目标元素时才会被触发，忽略子代
+      - 在子元素间移入移出时不会像mouseover/mouseout一样重复触发
+      - 事件不会冒泡，所以不能使用委托。
+  
+    - 事件委托
+      - 由于mouseenter/mouseleave不支持委托，所以无法使用它们处理大量的元素，所以我们需要使用mouseover/mouseout来实现
+      - 算法
+        - 把当前鼠标over的元素要实现委托的子元素存储在全局变量中
+        - 每次mouseover的时候，如果仍在变量子元素内部，则忽略事件
+        - 每次mouseout的时候，如果没有离开变量子元素，则忽略事件
+        - 在每次mousevoer和mouseout的时候判断全局变量中存储的当前委托子元素是否为null, 对重复触发进行忽略
+        - 在mouseover的时候，如果是子节点而且不为空，使用event.target.closest(delegationSelector)定位到目标委托元素上，并存到全局变量中
+        - 在mouseout的时候，如果relatedTarget的parent节点中含变量中存储的当前子元素，则忽略，如果没有则证明已经离开了变量子元素，执行mouseout的操作，并且把全局变量清空。
+
+  - Drag and drop with mouse events
+    - 拖放算法
+      - 在目标元素上绑定mousedown事件，初始化一些可拖动的属性，比如dragElement.position ='absolute', document.body.append(dragElement)
+      - 通常我们还要计算鼠标初始化点击时的偏移差并存储起来，这样可以有效防止移动鼠标的时候出现抖动的现象，offsetX = mouseEvent.clientX - dragElement.getBoundingClientRect().left; 在mousemove的时候减去这个偏移差, dragElement.style.left = mouseEvent.pageX - offsetX + 'px' 这里不要忘记了'px'单位
+      - 在mousedown的方法中绑定mousemove和mouseup事件
+      - 在mousemove的回调函数中，通过设定element.style.left和element.style.top的坐标实现拖动，坐标的值从mouseEvent.pageX和mouseEvent.pageY中获取，使用文档坐标，这样可以实现跨屏拖动。
+      - 在mouseup的回调函数中移除mousemove和mouseup的绑定
+      - 通常我们还需要阻止拖动元素的dragstart事件的默认行为，以防止拖动时一些怪异现象的发生
+    - 检测是否可释放
+      - 核心算法
+        - 在mousemove的过程中，通过使用document.elementFromPoint(mouseEvent.clientX,mouseEvent.clientY)获取当前鼠标下的元素，我们通过一个小技巧，在获取前先隐藏正在的拖动的元素element.hidden = 显示true，获取到之后再显示拖动的元素element.hidden = false，然后检测当前鼠标下的元素或者元素的父节点中是否含有可释放元素的属性，通常是elem.closest('classSelector')
+        - 我们在移动过程中经常还要判断当前可释放元素是否存在，然后判断是进入了可释放元素，还是离开了可释放元素，执行对应的方法
+    - 拖放中的应用
+      - 在mouseup事件中我们可以完成释放操作后，改变数据，移动元素
+      - 我们可以高亮操作的元素
+      - 我们可以把操作范围限制在某个区域内，例如slider
+      - 我们可以对mousedown/mouseup使用委托，通过检查eventTarget，对大量元素进行拖放操作
+  - Keyboard: keydown and keyup
+    - 键盘事件
+      - keydown 按下按键触发事件
+        - event.repeat这个属性值为true的时候是长按了某一个键
+      - keyup 抬起按键触发事件
+    - KeyboardEvent
+      - code 按键编码 类似'KeyA, KeyB, Enter ...' 不分大小写
+      - key 按键字符 按键的值，如果是字母会区分大小写
+  - Scrolling
+    - scroll
+      - 通常绑定在window下 window.addEventListener('scroll', scrollCallback);
+      - pageYOffset/pageXOffset获取当前面窗口滚动条的横向距离和纵向距离
+    - 阻止滚动
+      - 可以通过阻止鼠标的wheel事件的默认行为 event.preventDefault()
+      - 阻止pageUp/pageDown/Keydown事件的默认行为
+      - 更简单的方法document.body.style.overflowY = 'hidden';
+    - 实际应用
+      - 页面滚动到底部算法
+        - 注意这里要留100的差值，而不是0
+        ```
+            let doc = document.documentElement;
+            let bottomDistance = doc.scrollHeight - doc.scrollTop(滚动时变化的值) - doc.clientHeight;
+            if (bottomDistance < 100) {
+                doSomething();
+            }
+        ```
+      - 页面滚动时当前元素是否可见算法
+        - 注意理解elem.getBoundingClientRect()获取到的坐标是相对于当前窗口的上边缘和左边缘的，而且是随着滚动动态改变的。当值为负值的时候，在窗口的上边和左边不可见的区域，当值大于document.documentElement.clientHeight的时候，在窗口下边和右边不可见的区域，用这个算法可以用来做动态加载内容
+        ```
+             isInSight() {
+                let imagePosYToWindowTop = this.elem.getBoundingClientRect().top;
+                let imagePosYToWindowBottom = this.elem.getBoundingClientRect().bottom;
+                let windowHeight = document.documentElement.clientHeight;
+                let topVisible = (windowHeight - imagePosYToWindowTop) > 0 &&
+                    imagePosYToWindowTop > 0;
+                let bottomVisible = imagePosYToWindowBottom > 0 && imagePosYToWindowBottom < windowHeight;
+                return topVisible || bottomVisible;
+            }           
+        ```
   
 - Form and Controls
   - Form property and method
