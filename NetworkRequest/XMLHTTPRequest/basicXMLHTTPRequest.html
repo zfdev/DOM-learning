@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Asynchronous Request</title>
+</head>
+
+<body>
+    <form action="" method="get" name="testForm">
+        <input type="text" name="user">
+        <input type="email" name="email" id="">
+        <input type="number" name="number" id="">
+        <input type="date" name="date" id="">
+        <input type="submit" value="submit">
+    </form>
+    <script>
+        const xhr = new XMLHttpRequest();
+        const form = document.forms['testForm'];
+        const formData = new FormData(form);
+        xhr.open('GET', 'https://javascript.info/article/xmlhttprequest/example/load');
+        xhr.responseType = 'text'
+        xhr.timeout = 10000;
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        xhr.send(formData);
+        xhr.addEventListener('load', function () {
+            // console.dir(xhr.status);
+            // console.dir(xhr.statusText);
+            // console.dir(xhr.readyState);
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                console.dir(xhr.response);
+            } else {
+                console.dir('Error');
+            }
+
+        });
+
+        xhr.addEventListener('error', function (e) {
+            console.dir(e);
+            // console.dir(xhr.status);
+            // console.dir(xhr.statusText);
+        });
+
+        xhr.addEventListener('progress', function (e) {
+            console.dir(e.loaded);
+            console.dir(e.total);
+        });
+
+        xhr.addEventListener('timeout', function () {
+            console.dir('Request timeout.');
+        });
+
+        xhr.addEventListener('readystatechange', function () {
+            console.dir(xhr.status);
+            console.dir(xhr.statusText);
+            console.dir(xhr.readyState);
+        });
+
+        xhr.addEventListener('laodend', function () {
+            console.dir('All done!');
+        })
+
+        // xhr.abort();
+    </script>
+</body>
+
+</html>
