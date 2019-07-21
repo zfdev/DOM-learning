@@ -639,3 +639,152 @@ Object
           script.src = 'url.script';
           script.async = false;
           document.body.append(script);
+
+
+
+- XMLHttpRequest Object
+  - Basic usage
+    - constructor
+      - let xhr = new XMLHttpRequest();
+        ```
+        let xhr = new XMLHttpRequest();
+        xhr.open(methodString, URL, [async, user, password]); //Does not open the connection. It's ony configures the request.
+        xhr.send([body]); //Send it out.Some request methods like GET do not have a body, and some of them like POST use body to send the data to the server. We'll see examples later.
+        xhr.addEventListener('load', function(){
+            if(xhr.status === 200){ //Attention, here is the property status on the xhr object, not the event property.
+                //success callback
+                successCallback && successCallback(xhr.response);
+            }else{
+                //failed callback
+                console.log(xhr.status);
+                console.log(xhr.statusText);
+                failedCallback && failedCallback(xhr);
+            }
+        });
+
+        xhr.addEventListener('progress', function(e){
+            console.log('Download progress:' +  e.loaded/e.total);
+        });
+
+        xhr.addEventListener('error', function(e){
+            //Send request failed.
+            console.dir(e);
+        });
+        ```
+
+  - Property
+    - xhr.status
+      HTTP status code: 200/404/403 and so on, can be 0 in case of a non-HTTP failure.
+    - xhr.statusText
+      HTTP status message: usually OK for 200, Not Found for 404, Forbidden for 403 and so on.
+    - xhr.response(responseText)
+      The server response data.
+    - xhr.timeout
+      We can also specify a timeout using the corresponding property.
+    - xhr.responseType
+      - '' (default) get as string
+      - 'text' get as string
+      - 'arraybuffer'  get as ArrayBuffer
+      - 'blob' get as Blob
+      - 'document' get as XML document
+      - 'json'  get as JSON parsed automatically (usually use)
+    - xhr.readyState
+      An XMLHttpRequest object travels them in the order 0->1->2->3->...->3->4
+      State 3 repeats every time a data packet is received over the network.
+      - 0 UNSENT
+      - 1 OPENED
+      - 2 HEADERS_RECEIVED
+      - 3 LOADING
+      - 4 DONE
+  
+    - xhr.upload
+        If we're uploading somthing big, then we'are surely more interested in tracking the upload pregress. 
+      - Event
+        - loadstart upload started
+        - progress triggers periodically during the upload
+        - abort upload aborted
+        - error non-HTTP error
+        - load upload finished successfully
+        - timeout upload timed out(if timeout property is set)
+        - loadend upload finished with either success or error
+         
+
+  - Event
+    - loadstart
+    - progress
+      Trigger periodically during the downloaded, reports how much downloaded.
+    - abort
+      The event is triggered when the abort method is called.
+    - error
+      When the request couldn't be made, e.g. network down or invalid URL.
+    - load
+      When the result is ready, that includes HTTP errors like 404 500
+      If the xhr.status is 200, the response data is returned successful.
+    - timeout 
+      We can also specify a timeout using the corresponding property.
+    - loadend
+    - readystatechange
+      The event is triggered when the xhr.readyState is changed. Nowdays, we use load/error/progress handlers deprecate it.
+  
+  - Method
+    - xhr.open(methodTypeString, URL, [async, user, password]);
+      Config the request, does not open the connection.
+      - method HTTP-method, usually 'POST' or 'GET'
+      - URL the URL to request
+      - async If explicitly set to false, then the request is synchronous. Synchronous requests are used very sparingly, almost never.
+  
+    - xhr.send([formData]);
+      This method opens the connection and sends the request to server. The optional body parameter contains the request body.
+      ```
+      //Send a json to server
+      let xhr = new XMLHttpRequest();
+      let json = JSON.stringify({
+          name: 'Jason',
+          surname: 'Zhang'
+      });
+      xhr.open('POST', '/submit');
+      xhr.setReqeustHeader('Content-Type', 'application/json; charset=utf-8');
+      xhr.send(json);
+      ```
+  
+    - xhr.abort();
+      We can terminate the request at any time. That triggers abort event, and xhr.status becomes 0;
+    - xhr.setRequestHeader(key, value);
+        - HTTP-headers
+          Send custom headers.
+          For exmaple: 
+          `xhr.setRequestHeader('Content-Type', 'application/json')`
+    - xhr.getResponseHeader(key);
+      Get the reponse header with the given name.
+        For example:
+        `xhr.getResponseHeader('Content-Type')`
+    - xhr.getAllResponseHeaders();
+        For example:
+        ```
+        let headers = xhr.getAllResponseHeaders().
+            .split('\n\r')
+            .reduce((result, cur) => {
+                let [name, value] = cur.split(': ');
+                result[name] = value;
+                return result;
+            }, {});
+            //We can use reduce to add step result into a object
+        ```
+      
+- Other useful object
+  - URL
+    - Example
+    ```
+    let url = new URL(urlString);
+    url.searchParams.set('q', 'test me');
+    xhr.open('GET', url);
+    xhr.send(); //https://.../?q=test+me
+    ```
+  - FormData
+    - Example
+    ```
+    let formData = new FormData([form]);
+    formData.append(name, value);
+    xhr.open('POSt', ...);
+    xhr.send(formData);
+    ```
