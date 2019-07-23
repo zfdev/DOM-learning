@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //match string and match position
+        let replaceString = 'HO-Ho-ho';
+        let repalcer = function (matchStr, offset, originalString) {
+            console.log(`Found ${matchStr} at position ${offset} in string ${originalString}`);
+            return matchStr.toLowerCase();
+        }
+        let result = replaceString.replace(/ho/ig, repalcer);
+        console.log(result);
+
+        //match selector in callback function
+        let replaceName = 'Jason Zhang';
+        let nameReplacer = function (matchStr, firstName, lastName, offset, originalString) {
+            return lastName + ', ' + firstName;
+        }
+        let replaceNameResult = replaceName.replace(/(Jason) (Zhang)/, nameReplacer);
+        console.log(replaceNameResult);
+
+        //RegExp find match in string
+        let testString = 'I love Javascript';
+        let testRegexp = /love/ig;
+        console.log(testRegexp.test(testString));
+        console.log(testString.search(testRegexp) != -1);
+
+        //RegExp exec find all match string, contains selector
+        let execString = "A lot about JavaScript at https://javascript.info";
+
+        let execRegexp = /JAVA(SCRIPT)/ig;
+
+        let matchOne = execRegexp.exec(execString);
+        console.log(matchOne);
+        console.log(execRegexp.lastIndex);
+
+        let matchTwo = execRegexp.exec(execString);
+        console.log(matchTwo);
+        console.log(execRegexp.lastIndex);
+
+        let matchThree = execRegexp.exec(execString);
+        console.log(matchThree);
+        console.log(execRegexp.lastIndex);
+
+        //Loop exec 
+        let loopExecRegexp = /javascript/ig;
+        let loopExecResult;
+        while (loopExecResult = loopExecRegexp.exec(execString)) {
+            console.log(`Found ${loopExecResult[0]} at ${loopExecResult.index}`);
+        }
+
+        //Find match from start position by setting lastIndex
+        //loopExecRegexp.lastIndex = 30;
+
+        //y high performace search in lastIndex
+        let yReg = /javascript/iy;
+        console.log(yReg.lastIndex);
+        console.log(testString.match(yReg));
+
+        yReg.lastIndex = 7;
+        console.log(testString.match(yReg));
+    </script>
+</body>
+
+</html>

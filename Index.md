@@ -723,6 +723,7 @@ Object
     - timeout 
       We can also specify a timeout using the corresponding property.
     - loadend
+      All done event. Even if the request is error or success.
     - readystatechange
       The event is triggered when the xhr.readyState is changed. Nowdays, we use load/error/progress handlers deprecate it.
   
@@ -770,21 +771,111 @@ Object
             }, {});
             //We can use reduce to add step result into a object
         ```
-      
-- Other useful object
-  - URL
-    - Example
-    ```
-    let url = new URL(urlString);
-    url.searchParams.set('q', 'test me');
-    xhr.open('GET', url);
-    xhr.send(); //https://.../?q=test+me
-    ```
-  - FormData
-    - Example
-    ```
-    let formData = new FormData([form]);
-    formData.append(name, value);
-    xhr.open('POSt', ...);
-    xhr.send(formData);
-    ```
+        
+  - Other useful object
+    - URL
+        - Example
+        ```
+        let url = new URL(urlString);
+        url.searchParams.set('q', 'test me');
+        xhr.open('GET', url);
+        xhr.send(); //https://.../?q=test+me
+        ```
+    - FormData
+        - Example
+        ```
+        let formData = new FormData([form]);
+        formData.append(name, value);
+        xhr.open('POSt', ...);
+        xhr.send(formData);
+        ```
+
+
+    - RegExp Object and String
+      - Patterns and flags
+        - Create a RegExp Object语法
+          - RegExp Constructor
+            `let regexp = new RegExp('patternString', 'flags');`
+          - Pattern Expression
+            `let regexp = /pattern/flags`
+
+        - Usage
+          `String.search(regExp);`
+          return {Number} search result index 没有找到返回 -1
+
+        - 修饰符
+          - i 搜索时不区分大小写
+          - g 查找所有的匹配项，而不只是第一个
+          - m 多行模式
+          - u 开启完整的unicode支持
+          - y 粘滞模式
+
+
+      - Method of RegExp and String
+        正则表达式通常和string的方法一起使用来查找字符，除此之外RegExp上也有一些方法用来匹配字符。
+        - String上的方法
+          - str.search(regExp); 查找第一个匹配的位置索引
+          - str.match(regExp);
+            - 没有g修饰符只查找第一个匹配项，返回的结果为一个带有index，和input的数组对象，并且支持括号匹配选择器，匹配结果是数组的第一项，选择器匹配是数组第二项
+            ```
+                let str = 'Javascript.';
+                let result = str.match(/JAVA(SCRIPT)/i)
+                result[0] //Javascript
+                result[1] //script
+                result.index // 0
+                result.input // 'Javascript.'
+            ```
+            - 使用g修饰符时返回所有匹配项组成的数组
+              返回结果是一个没有额外属性的含有匹配结果的数组，注意如果没有匹配，返回值是null而不是空数组。而且不支持括号匹配选择器
+          - str.split(regExp);
+            常常用于把字符串分隔为数组
+          - str.replace(regExp|func);
+            - 特殊符号指代匹配结果
+              str.replace(regExp, 'replaceWithSepicalString')
+              - $& 整个匹配项
+              - $n 括号选择器里的内容 从左到右表示第1-n个括号里的内容
+              - $` 匹配项前面的字符串
+              - $' 匹配项后面的字符串
+            - replacer function callback
+              str.replace(regExp, function(matchStr, [selector1, [...selectorN]], offset, originalString){
+                  return //somthing you want to do with the stringj;
+              });
+        - RegExp上的方法
+          - regexp.test(str); 检测字符串是否含有匹配结果，返回true或者false
+          - regexp.exec(str); 
+            最强大的匹配，支持任意模式，包括选择器
+            - 没有g返回第一个匹配项，和str.match(reg)结果相同
+            - 含有g,能够获取所有匹配项, 返回结果为带有index和input的数组，同时含有括号选择器的匹配项，在regexp对象上有一个lastIndex属性是可读写的，用来指定下一次调用从哪里开始搜索，默认值是0，即从头开始搜索。
+            ```
+            while(result = regexp.exec(str)){
+                console.log(`Found ${result[0]} at ${result.index}`);
+            }
+            ```
+
+      - 字符合集表达式
+        字符类是一种特殊符号，它匹配集合中的任何字符。
+        - \d 0到9的数字 来源于digit
+        - \D \d的反义集合，除了数字之外的任何字符，例如一个字母
+        - \s 一个空格字符，来源于space: 包括空格，制表符，换行符
+        - \S 除了空格字符之外的任何字符，例如一个字母
+        - \w 一个单字字符，来源于word: 一个字符或者一个数字或者一个下划线
+        - \W 除了\w之外的任何字符
+        - . 除了换行符以外的任何字符
+        - \b 单词的边界，只适用于英文单词。边界校验会检测非单词的边界，例如单词结尾是表单符号，单词开头是空格。
+        - \B \b的反向检测
+        - 空格 空格也是一个正则字符，不能忽略，否则会影响匹配结果
+
+      - 转义和特殊字符
+      - 集合和范围
+      - unicode标记
+      - 量词
+      - 贪婪量词和惰性量词
+      - 捕获组
+      - 反向引用
+      - 选择
+      - 字符串的开始和结束
+      - 多行模式
+      - 前瞻断言和后瞻断言
+      - 前瞻断言正在进行
+      - 无限回溯问题
+      - Unicode属性匹配
