@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let parse = function(expressionStr) {
+            let regExp = /(-?\d+(?:\.\d+)?)\s*([+=*/])\s*(-?\d+(?:\.\d+)?)/;
+            let result = expressionStr.match(regExp);
+            return [result[1], result[2], result[3]]
+        }
+
+        let [a, op, b] = parse("1.2 * 3.4");
+        console.log(a); // 1.2
+        console.log(op); // *
+        console.log(b); // 3.4
+    </script>
+</body>
+
+</html>
