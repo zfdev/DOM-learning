@@ -1,4 +1,4 @@
-DOM Learning Path
+Javascript Learning Path
 =====
 
 - 熟悉DOM底层API属性和方法
@@ -6,6 +6,9 @@ DOM Learning Path
 - 可以简单封装一个自己的库，不过最后写MVC程序时也要封装，也可以后面再做
 - 使用chrome工具可以很方便地查看DOM结构，CSSDOM渲染的style，DOM绑定的事件回调函数，DOM的属性继承等。
 - 整理一个结构图，而且使用自己的记忆总结，这样的好处是不至于黑瞎子掰苞米，学过的很快就忘记了。不过切记很详细。结构清晰就好。
+- 看完就忘记，学习效率等于0%，时间浪费率100%，所以不要着急追求速度。记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。
+- 可以选择性的看一些知识点，尤其是一些临界知识，花同样的时间可以获得最大的提升，以前经常犯的错误就是每次都从头开始看重复的知识，往往看了一段疲倦了就放弃了，导致一直在开头那一点知识，包括笔记本记的笔记也是，基本记了几页这个笔记本就没再用过。
+- 计划没有变化快，所以我现在都不列计划，以前列了计划也一定按时完成，不如把列计划的时间花在执行上，每天根据现有进度持续执行。比空头计划要有价值。
 
 参考资料
 ---
@@ -14,6 +17,10 @@ DOM Learning Path
 - [DOM]https://developer.mozilla.org/zh-CN/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents
 - [ES6]https://babeljs.io/docs/en/learn
 - [MVC]http://todomvc.com/
+
+JavaScript Core
+---
+
 
 What is DOM?
 ---
@@ -43,6 +50,28 @@ Object
 
 知识点总结
 ---
+- JavaScript Core
+  - An Introduction
+  - Javascript Fundamentals
+  - Code quality
+  - Object: the basics
+    - Objects
+    - Garbage collection
+    - Symbol type
+    - Object mothods, "this"
+    - Object to primitive conversion
+    - Constructor, operator "new"
+  - Data types
+  - Advanced working with functions
+  - Object properties configuration
+  - Prototypes, inheritance
+  - Classes
+  - Error handling
+  - Promises, async/await
+  - Generators, advanced iteration
+  - Modules
+  - Miscellaneous
+
 
 - Document
   - Browser
@@ -791,91 +820,192 @@ Object
         ```
 
 
-    - RegExp Object and String
-      - Patterns and flags
-        - Create a RegExp Object语法
-          - RegExp Constructor
-            `let regexp = new RegExp('patternString', 'flags');`
-          - Pattern Expression
-            `let regexp = /pattern/flags`
+- RegExp Object and String
+  - Patterns and flags
+    - Create a RegExp Object语法
+      - RegExp Constructor
+        `let regexp = new RegExp('patternString', 'flags');`
+      - Pattern Expression
+        `let regexp = /pattern/flags`
 
-        - Usage
-          `String.search(regExp);`
-          return {Number} search result index 没有找到返回 -1
+    - Usage
+      `String.search(regExp);`
+      return {Number} search result index 没有找到返回 -1
 
-        - 修饰符
-          - i 搜索时不区分大小写
-          - g 查找所有的匹配项，而不只是第一个
-          - m 多行模式
-          - u 开启完整的unicode支持
-          - y 粘滞模式
+    - 修饰符
+      - i 搜索时不区分大小写
+      - g 查找所有的匹配项，而不只是第一个
+      - m 多行模式
+      - u 开启完整的unicode支持
+      - y 粘滞模式
 
 
-      - Method of RegExp and String
-        正则表达式通常和string的方法一起使用来查找字符，除此之外RegExp上也有一些方法用来匹配字符。
-        - String上的方法
-          - str.search(regExp); 查找第一个匹配的位置索引
-          - str.match(regExp);
-            - 没有g修饰符只查找第一个匹配项，返回的结果为一个带有index，和input的数组对象，并且支持括号匹配选择器，匹配结果是数组的第一项，选择器匹配是数组第二项
-            ```
-                let str = 'Javascript.';
-                let result = str.match(/JAVA(SCRIPT)/i)
-                result[0] //Javascript
-                result[1] //script
-                result.index // 0
-                result.input // 'Javascript.'
-            ```
-            - 使用g修饰符时返回所有匹配项组成的数组
-              返回结果是一个没有额外属性的含有匹配结果的数组，注意如果没有匹配，返回值是null而不是空数组。而且不支持括号匹配选择器
-          - str.split(regExp);
-            常常用于把字符串分隔为数组
-          - str.replace(regExp|func);
-            - 特殊符号指代匹配结果
-              str.replace(regExp, 'replaceWithSepicalString')
-              - $& 整个匹配项
-              - $n 括号选择器里的内容 从左到右表示第1-n个括号里的内容
-              - $` 匹配项前面的字符串
-              - $' 匹配项后面的字符串
-            - replacer function callback
-              str.replace(regExp, function(matchStr, [selector1, [...selectorN]], offset, originalString){
-                  return //somthing you want to do with the stringj;
-              });
-        - RegExp上的方法
-          - regexp.test(str); 检测字符串是否含有匹配结果，返回true或者false
-          - regexp.exec(str); 
-            最强大的匹配，支持任意模式，包括选择器
-            - 没有g返回第一个匹配项，和str.match(reg)结果相同
-            - 含有g,能够获取所有匹配项, 返回结果为带有index和input的数组，同时含有括号选择器的匹配项，在regexp对象上有一个lastIndex属性是可读写的，用来指定下一次调用从哪里开始搜索，默认值是0，即从头开始搜索。
-            ```
-            while(result = regexp.exec(str)){
-                console.log(`Found ${result[0]} at ${result.index}`);
-            }
-            ```
+  - Method of RegExp and String
+    正则表达式通常和string的方法一起使用来查找字符，除此之外RegExp上也有一些方法用来匹配字符。
+    - String上的方法
+      - str.search(regExp); 查找第一个匹配的位置索引
+      - str.match(regExp);
+        - 没有g修饰符只查找第一个匹配项，返回的结果为一个带有index，和input的数组对象，并且支持括号匹配选择器，匹配结果是数组的第一项，选择器匹配是数组第二项
+        ```
+            let str = 'Javascript.';
+            let result = str.match(/JAVA(SCRIPT)/i)
+            result[0] //Javascript
+            result[1] //script
+            result.index // 0
+            result.input // 'Javascript.'
+        ```
+        - 使用g修饰符时返回所有匹配项组成的数组
+          返回结果是一个没有额外属性的含有匹配结果的数组，注意如果没有匹配，返回值是null而不是空数组。而且不支持括号匹配选择器
+      - str.split(regExp);
+        常常用于把字符串分隔为数组
+      - str.replace(regExp|func);
+        - 特殊符号指代匹配结果
+          str.replace(regExp, 'replaceWithSepicalString')
+          - $& 整个匹配项
+          - $n 括号选择器里的内容 从左到右表示第1-n个括号里的内容
+          - $` 匹配项前面的字符串
+          - $' 匹配项后面的字符串
+        - replacer function callback
+          str.replace(regExp, function(matchStr, [selector1, [...selectorN]], offset, originalString){
+              return //somthing you want to do with the stringj;
+          });
+    - RegExp上的方法
+      - regexp.test(str); 检测字符串是否含有匹配结果，返回true或者false
+      - regexp.exec(str); 
+        最强大的匹配，支持任意模式，包括选择器
+        - 没有g返回第一个匹配项，和str.match(reg)结果相同
+        - 含有g,能够获取所有匹配项, 返回结果为带有index和input的数组，同时含有括号选择器的匹配项，在regexp对象上有一个lastIndex属性是可读写的，用来指定下一次调用从哪里开始搜索，默认值是0，即从头开始搜索。
+        ```
+        while(result = regexp.exec(str)){
+            console.log(`Found ${result[0]} at ${result.index}`);
+        }
+        ```
 
-      - 字符合集表达式
-        字符类是一种特殊符号，它匹配集合中的任何字符。
-        - \d 0到9的数字 来源于digit
-        - \D \d的反义集合，除了数字之外的任何字符，例如一个字母
-        - \s 一个空格字符，来源于space: 包括空格，制表符，换行符
-        - \S 除了空格字符之外的任何字符，例如一个字母
-        - \w 一个单字字符，来源于word: 一个字符或者一个数字或者一个下划线
-        - \W 除了\w之外的任何字符
-        - . 除了换行符以外的任何字符
-        - \b 单词的边界，只适用于英文单词。边界校验会检测非单词的边界，例如单词结尾是表单符号，单词开头是空格。
-        - \B \b的反向检测
-        - 空格 空格也是一个正则字符，不能忽略，否则会影响匹配结果
+  - 字符合集表达式
+    字符类是一种特殊符号，它匹配集合中的任何字符。
+    - \d 0到9的数字 来源于digit
+    - \D \d的反义集合，除了数字之外的任何字符，例如一个字母
+    - \s 一个空格字符，来源于space: 包括空格，制表符，换行符
+    - \S 除了空格字符之外的任何字符，例如一个字母
+    - \w 一个单字字符，来源于word: 一个字符或者一个数字或者一个下划线
+    - \W 除了\w之外的任何字符
+    - . 除了换行符以外的任何字符
+    - \b 单词的边界，只适用于英文单词。边界校验会检测非单词的边界，例如单词结尾是表单符号，单词开头是空格。
+    - \B \b的反向检测
+    - 空格 空格也是一个正则字符，不能忽略，否则会影响匹配结果
 
-      - 转义和特殊字符
-      - 集合和范围
-      - unicode标记
-      - 量词
-      - 贪婪量词和惰性量词
-      - 捕获组
-      - 反向引用
-      - 选择
-      - 字符串的开始和结束
-      - 多行模式
-      - 前瞻断言和后瞻断言
-      - 前瞻断言正在进行
-      - 无限回溯问题
-      - Unicode属性匹配
+  - 转义和特殊字符
+    - 特殊符号的转义
+      - `[ \ ^ $ . | ? * + ( ) /` 这些符号在正则表达式中有特殊的含义，如果我们查找他们的字符串，需要在他们前面加一个`\`, 例如 `\\` 表示 `\`
+    - 使用new RegExp的方式创建正则实例时需要额外转义
+      - new RegExp("regStr") 因为""操作符会尝试把`\`去掉，把`\n`变成换行字符，所以转义字符就会失效，所以这里我们需要使用`\\`进行转义,例如`\d`应该变成`\\d`，经过字符串解析之后才会工作正常。
+  - 集合和范围
+    - 集合中其中一个 [abc]匹配的是a或b或c其中一个字符，当然也同时支持字符合集的联合使用例如`[\w-]`代表任意字母数字和_加上额外的-这个在邮箱正则中经常使用
+    - 范围 [a-z] 匹配a到z范围内的任意一个字母
+    - 字符合集缩写
+      - \d [0-9]
+      - \w [0-9a-zA-Z_]
+      - \s [\t\n\v\f\r ]
+      - [\s\S]代表任何空格或非空格字符，也就是所有字符，比`.`除了换行符之外的所有字符范围更广
+    - 排除范围
+      - [^...]排除范围的匹配，匹配所有给定字符之外的任意字符
+      - [^0-9] 数字之外的任意字符，也可以用`\D`来表示
+      - [^\s]匹配任何非空字符，也可用`\S`来表示
+
+    -[...]范围中的特殊字符不需要转义 `let reg = /[-().^+]/g`，当然转义了也没什么影响，所以还是统一转义的好。
+  - unicode标记
+    - `/.../u` 启用对UTF16的正确编码。
+    - `alert( '𝒳'.match(/[𝒳𝒴]/u) );`
+  - 量词
+    - `{n}` 前面的表达式匹配重复n次 
+    - `{m, n}` 重复次数的范围
+    - `{m,}` m到无限多个重复次数
+    - 缩写
+      - `+` 1个或者多个 `{1,}`
+      - `?` 0个或1个`{0, 1}`
+      - `*` 0个或多个`{0,}`
+    - 要匹配的更精确，就要仔细分析每一个字符可能得情况，写出更复杂的表达式
+  - 贪婪量词和惰性量词
+    - 正则表达式引擎算法
+      - 对于字符串的每一个字符执行
+        - 用当前的表达式去匹配这个字符
+        - 如果当前表达式匹配到字符，用下一个表达式继续
+        - 如果无匹配，移动到下一个字符
+    - 贪婪搜索
+      - 默认正则表达式引擎尝试用.+*去获取尽可能多的重复量词，在贪婪匹配后，通过回朔的方式去匹配剩余的表达式，如果没有匹配，通过减少重复匹配的数量并再次尝试匹配，所以会产生匹配过多字符的情况。
+    - 懒惰搜索
+      - 懒惰模式想要的重复最少的次数，我们可以通过在量词末尾加上一个`?`来启用懒惰模式，懒惰模式并不是匹配尽可能多的字符，而是从剩余表达式条件开始去匹配当前字符并不断向后查找。可以解决匹配过多字符的问题
+        - `*? or +? or ??`
+    - 懒惰搜索的替代方案
+      - 例如我们可以通过`"[^"]+"`来找到带双引号的字符，而不是通过懒惰模式`"[\s\S]+?"`，引擎会在匹配到结尾引号的时候就停止重复匹配`+`了，这样也同样起到了避免重复量词贪婪模式匹配过多字符的问题。我们可以根据需求灵活使用两种不同的搜索方式去匹配包含相同字符的匹配情况。
+  - 捕获组
+    - 通过`(...)`构建一个捕获组
+      - `alert( 'Gogogo now!'.match(/(go)+/i) ); // "Gogogo"`
+    - String.match(reg) and RegExp.exec(str) 中可以通过指定捕获组，在结果中返回捕获组的内容 result[groupN]
+    - 嵌套捕获组
+      - 捕获组嵌套时，返回结果的顺序是按照从左到右左括号的顺序排列的，不过我们要记得结果里的第一项永远是完整的匹配结果，后面开始才是匹配组
+      - 如果某个匹配组是可选的`a(b)?(c)?`，那么在相应的匹配结果中，该项目依然存在，值为undefinded
+    - 非捕获组
+      - 如果我们只是想通过捕获组设置正确的量词，而不想捕获结果出现在结果数组中，可以使用`?:`标记非捕获组
+      - `let reg = /(?:go)+ (\w+)/i;`
+  - 反向引用
+    - String.replace中的可以用`$n`访问第n个捕获组
+      - `name = name.replace(/(\w+) (\w+)/i, "$2, $1");`
+    - 在正则表达式中我们使用`\n`来引用捕获组
+      - `let reg = /['"](.*?)['"]/g;` the same as below
+      - `let reg = /(['"])(.*?)\1/g;`
+    - 在组内使用 ?: 则无法引用到该组。正则表达式引擎不会记住被排除在捕获 (?:...) 之外的组。
+  - 选择
+    - 选择表达式相比于字符集合不同的地方在于选择表达式是在正则表达式级别的，不仅仅是字符
+      - 使用方法`(expressionA|expressionB)`
+      - 不要忘记括号不然会产生一些错误
+      - 例子
+        ```
+        let reg = /([01]\d|2[0-3]):[0-5]\d/g;
+        alert("00:00 10:10 23:59 25:99 1:2".match(reg)); // 00:00,10:10,23:59
+        ```
+  - 字符串的开始和结束
+    - `^`用于匹配字符串的开始
+    - `$`用于匹配字符串的结束
+    - 它们都是锚，并没有长度，只匹配位置，和`\b`一样，用于判定特定开头结尾的条件。
+    - Example
+      ```
+        let str = "#abcdef";
+        alert( /^#[0-9a-f]{6}$/i.test(str) ); // true
+      ``` 
+  - 多行模式
+    - `/.../m`通过flag m开启多行模式，
+    - 多行模式会影响`^` and `$`的锚行为模式，它们会匹配每一行的开始和结束。
+    - `^`,`$`对比`\n`
+      - `\n`并不是锚，会消耗位置，同时在结果中也会显示换行符，而且它不支持匹配字符串的开头结尾，因为他们是空的。
+  - 前瞻断言和后瞻断言
+    用于想根据前后上下文来筛选出一些结果的时候，我们可以使用前瞻断言和后瞻断言。
+    - 前瞻肯定断言 `x(?=y)` 匹配 x ，仅当后面跟着 y
+      ```
+      let str = "1 turkey costs 30€";
+      alert( str.match(/\d+(?=€)/) ); // 30 （正确地跳过了单个的数字 1）
+      ```
+    - 前瞻否定断言 `x(?!y)` 匹配 x ，仅当后面不跟 y
+      ```
+      let str = "2 turkeys cost 60€";
+      alert( str.match(/\d+(?!€)/) ); // 2（正确地跳过了价格
+      ```
+    - 后瞻肯定断言 `(?<=y)x` 匹配 x ，仅当跟在 y 后面
+      ```
+      let str = "1 turkey costs $30";
+      alert( str.match(/(?<=\$)\d+/) ); // 30 （跳过了单个的数字 1
+      ```
+    - 后瞻否定断言 `(?<!y)x` 匹配 x ，仅当不跟在 y 后面
+      ```
+      let str = "2 turkeys cost $60";
+      alert( str.match(/(?<!\$)\d+/) ); // 2 (跳过了价格)
+      ```
+    - 断言捕获组
+      - 断言不会出现在匹配结果的捕获组中，如果我们想得到它，使用括号把它转换成捕获组
+        - `let str = "1 turkey costs 30€"; let reg = /\d+(?=(€|kr))/; alert( str.match(reg) ); // 30, €`
+  - 无限回溯问题
+    - 因为贪婪模式的回朔问题，导致正则引擎进入了大量子匹配组合的递归运算。导致浏览器引擎卡死。
+    - 解决方法
+      - `(?=(repeatExpression+))\1`
+  - Unicode属性匹配
+    - 可以用来匹配中文

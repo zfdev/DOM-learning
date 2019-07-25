@@ -1,0 +1,26 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="multiplyNumericTest.js"></script>
+<script>
+    let menu = {
+        width: 200,
+        height: 300,
+        title: "My menu"
+    };
+
+
+    function multiplyNumeric(obj) {
+        for (let name in obj) {
+            if (typeof obj[name] === 'number') {
+                obj[name] *= 2;
+            }
+        }
+
+    }
+
+    multiplyNumeric(menu);
+
+    alert("menu width=" + menu.width + " height=" + menu.height + " title=" + menu.title);
+</script>
+
+</html>

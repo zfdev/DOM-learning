@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Checking Empty Object</title>
+</head>
+
+<body>
+    <script src="https://zh.js.cx/test/libs.js"></script>
+    <script src="checkEmptyObjectTest.js"></script>
+    <script>
+        let isEmpty = function (obj) {
+            // let keyLength = 0;
+            // for (let key in obj) {
+            //     if (key) {
+            //         keyLength++;
+            //         break;
+            //     }
+            // }
+            // return keyLength === 0;
+
+            //More simple
+            for (key in obj) {
+                return false;
+            };
+            return true;
+        }
+    </script>
+</body>
+
+</html>
