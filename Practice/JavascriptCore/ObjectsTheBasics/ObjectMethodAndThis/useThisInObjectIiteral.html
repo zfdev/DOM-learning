@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function makeUser() {
+            return {
+                name: "John",
+                ref: this
+            };
+        };
+
+        let user = makeUser();
+        console.dir(user.ref);
+        console.log(user.ref.name);
+
+
+        function makeUserMethodBind() {
+            return {
+                name: "John",
+                ref: function () {
+                    return this;
+                }
+            };
+        };
+
+        let userBind = makeUserMethodBind();
+        console.dir(userBind.ref());
+        console.log(userBind.ref().name);
+    </script>
+</body>
+
+</html>

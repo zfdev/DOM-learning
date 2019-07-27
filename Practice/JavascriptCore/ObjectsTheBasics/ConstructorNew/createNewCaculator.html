@@ -1,0 +1,20 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/createNewCaculator.js"></script>
+<script>
+    let Calculator = function () {
+
+    }
+    Calculator.prototype.read = function () {
+        this.number1 = parseInt(window.prompt('Number1', 0));
+        this.number2 = parseInt(window.prompt('Number2', 0));
+    }
+    Calculator.prototype.sum = function () {
+        return this.number1 + this.number2;
+    }
+    Calculator.prototype.mul = function () {
+        return this.number1 * this.number2;
+    }
+</script>
+
+</html>

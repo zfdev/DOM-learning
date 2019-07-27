@@ -6,7 +6,8 @@ Javascript Learning Path
 - 可以简单封装一个自己的库，不过最后写MVC程序时也要封装，也可以后面再做
 - 使用chrome工具可以很方便地查看DOM结构，CSSDOM渲染的style，DOM绑定的事件回调函数，DOM的属性继承等。
 - 整理一个结构图，而且使用自己的记忆总结，这样的好处是不至于黑瞎子掰苞米，学过的很快就忘记了。不过切记很详细。结构清晰就好。
-- 看完就忘记，学习效率等于0%，时间浪费率100%，所以不要着急追求速度。记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。
+- **看完就忘记，学习效率等于0%，时间浪费率100%，所以不要着急追求速度。定期回顾加深记忆。以防做无用功。**
+- 记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。
 - 可以选择性的看一些知识点，尤其是一些临界知识，花同样的时间可以获得最大的提升，以前经常犯的错误就是每次都从头开始看重复的知识，往往看了一段疲倦了就放弃了，导致一直在开头那一点知识，包括笔记本记的笔记也是，基本记了几页这个笔记本就没再用过。
 - 计划没有变化快，所以我现在都不列计划，以前列了计划也一定按时完成，不如把列计划的时间花在执行上，每天根据现有进度持续执行。比空头计划要有价值。
 
@@ -56,11 +57,153 @@ Object
   - Code quality
   - Object: the basics
     - Objects
+      - 理解对象
+        - 把对象想象成存放文件的橱柜，文件按照他们的名字key来排列，这样我们就很容易根据文件名来找到，添加，或者删除一个文件了。
+      - 对象的存储的键值对
+        - 对象的key名是string类型，即使是数字和符号也都是以string的形式存储的。
+        - 属性的键必须是字符串或者Symbol符号
+        - 值可以是任何类型
+      - 获取对象的属性值
+        - 点符号 object.property
+        - 方括号 object['property'] 方括号中可以使用变量 object[variableKey]，有时我们需要从变量中计算对象的属性名
+      - 对象操作
+        - 删除属性 delete object.property
+        - 检查属性是否存在 'key' in object
+        - 遍历对象 for(let key in object) 循环
+      - 对象是根据引用来赋值的，在变量中存储不是对象的值，而是对象的引用，也就是内存地址，所以赋值变量时只是复制了指针，而且多个引用操作都作用于同一个对象。当两个引用指向同一个对象的时候他们相等，objectA === objectB
+      - 对象的深度copy需要处理对象属性值是对象的情况，所以需要使用递归判断进行遍历copy，或者使用lodash的cloneDeep(object),对于简单对象的浅copy可以使用`let clone = Object.assign({}, object)`用要复制的对象和空对象merge, 这个方法也可以用来合并多个对象，key相同的前面的值会被后面的覆盖 `Object.assign(dest[, src1, src2, src3...])`。
+      - 对象属性名排序问题
+        - 如果对象的属性名是一个可以转换成整数的string number，那么在循环中遍历输出对象key的时候是按照数字从小到大得顺序的。
+      - 常量对象可以修改，因为变量存储的是对象的内存地址，对象内部的值如果修改并不影响。
+        - 例子
+        ```
+        const user = {
+            name: "John"
+        };
+        user.age = 25; // (*)
+        alert(user.age); // 25
+        ```
+      - 属性名和变量名相同时可以简写
+        - 例子
+        ```
+        function makeUser(name, age) {
+            return {
+                name, // 与 name: name 相同
+                age   // 与 age: age 相同
+                // ...
+            };
+        }
+        ```
     - Garbage collection
+      - 理解垃圾回收的关键是理解什么是可达性，只有不可达的对象才会被垃圾回收器处理
+        - 可达值是那些以某种方式可访问或可用的值，它们保证存储在内存中。
+        - 基本可达值，不能被释放
+          - 全局变量
+          - 当前函数的局部变量和参数
+          - 嵌套调用时，当前调用链上所有函数的变量和参数
+        - 如果一个值可以通过引用或者引用链从根值访问到，那么认为这个值可达。
+        - 如果一个对象对外引用或者几个对象相互引用，只要对象不能通过全局变量根可达，他们都是孤立数据，都会被垃圾回收器回收
+      - 垃圾回收的算法是 mark and sweep 标记清除法，所有unreachable的对象都会被清除
     - Symbol type
+      - 对象的key值只能是String类型或者Symbol类型
+      - Symbol表示唯一标识符，它具有唯一性，当它并不是String类型，类似于一个全局的uuid指针
+        - 语法
+        ```
+        let id = Symbol("id");
+
+        let user = {
+            name: "John",
+            [id]: 123 // 不仅仅是 "id：123"
+        };
+        ```
+      - 应用场景
+        - 隐藏对象属性，如果我们需要添加一个属于自己独立库的属性，而不想与其他库冲突，那么我们可以使用Symbol作为属性key，它不会出现在for...in循环中，也不会被直接访问到。
+        - Javascript有很多系统内置Symbol，例如Symbol.iterator,Symbol.toPrimitive，我们可以用来改变一些内置行为
+      - 全局Symbol
+        - 为了在全局注册表里创建或者读取Symbol我们可以用Symbol.for(key)方法按名称返回一个symbol
+        ```
+        // 从全局注册表中读取
+        let id = Symbol.for("id"); // 如果该 Symbol 不存在，则创建它
+
+        // 再次读取
+        let idAgain = Symbol.for("id");
+
+        // 相同的 Symbol
+        alert( id === idAgain ); // true
+        ```
+        - 反向调用，通过symbol查找它的name
+        ```
+        let sym = Symbol.for("name");
+        let sym2 = Symbol.for("id");
+
+        // 从 symbol 中获取 name
+        alert( Symbol.keyFor(sym) ); // name
+        alert( Symbol.keyFor(sym2) ); // id       
+        ```
     - Object mothods, "this"
+      - 存储在对象中的function被称为方法，对象执行方法object.doSomething();方法可以将对象引用为this
+      - this是运行时求值，注意绑定this的指向
+        - 函数声明使用的this只有等到调用时才会有值。我们要理解这一点才能避免this调用时指向错误的对象。
+        - object.method()这样的调用，.返回的不是一个函数,而是一个包含指向对象引用this的特殊引用类型，this总是指向object,与func = object.method这种传递函数引用的方式不同，这个表达式在传递过程会丢失特殊引用类型，从而失去this的值
+      - 箭头函数没有this，箭头函数内部访问的都是来自外部的this
+      ```
+      let user = {
+        firstName: "Ilya",
+            sayHi() {
+                let arrow = () => alert(this.firstName);
+                arrow();
+            }
+        };
+        user.sayHi(); // Ilya
+
+      ```
     - Object to primitive conversion
+      - 对象到原始值的转换，是由内置函数和操作符自动调用的。这些函数使用一个原始值作为返回值。
+      ```
+        let user = {
+        name: "John",
+            money: 1000,
+
+            [Symbol.toPrimitive](hint) {
+                alert(`hint: ${hint}`);
+                return hint == "string" ? `{name: "${this.name}"}` : this.money;
+            }
+        };
+
+        // 转换演示：
+        alert(user); // hint: string -> {name: "John"}
+        alert(+user); // hint: number -> 1000
+        alert(user + 500); // hint: default -> 1500
+      ```
+      - 它有三种类型
+        - string 比如alert和其他字符串转换
+        - number 比如数学计算
+        - default 少数操作 通常与number相同
+      - 通常的转换算法
+        - 调用object[Symbol.toPrimitive](hint)
+        - 否则如果暗示是 "string"
+            尝试 obj.toString() 和 obj.valueOf()，无论哪个存在。
+        - 否则，如果暗示 "number" 或者 "default"
+            尝试 obj.valueOf() 和 obj.toString()，无论哪个存在。
+        在实践中，为了记录或调试目的，仅实现 obj.toString() 作为“全捕获"方法通常就够了，这样所有转换都能返回一种“人类可读”的对象表达形式。
     - Constructor, operator "new"
+      - 构造函数可以用来创建多个类似的对象，Javascript提供了很多内置对象的构造函数例如 Date,Set,Map等
+      - 构造函数本质上也是普通的函数，不过我们通常注意两点
+        - 首字母大写
+        - 只能用new操作符来执行，不然就成了普通函数了
+      - new加构造函数的操作符做了什么
+        - 创建一个空对象
+        - 把函数的this作用于指向这个对象，并执行函数
+        - 把对象的__proto__指向函数的prototype
+        - 返回这个对象
+      - 如果一个构造函数里return了一个对象，返回的不是this，而是return的对象。
+        ```
+        function BigUser() {
+            this.name = "John";
+            return { name: "Godzilla" };  // <-- returns 一个 object
+        }
+        alert( new BigUser().name );  // 哇哦，得到了对象，name 属性值为 Godzilla ^^
+        ```
   - Data types
   - Advanced working with functions
   - Object properties configuration

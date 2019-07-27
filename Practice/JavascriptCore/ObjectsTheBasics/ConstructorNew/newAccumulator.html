@@ -1,0 +1,14 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/newAcc.js"></script>
+<script>
+    let Accumulator = function (startingValue) {
+        this.startingValue = startingValue;
+        this.value = this.startingValue;
+        this.read = function () {
+            this.value += parseInt(window.prompt('Accumulator number', 0));
+        }
+    }
+</script>
+
+</html>

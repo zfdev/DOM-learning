@@ -1,0 +1,26 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/cacTest.js"></script>
+<script>
+    let calculator = {
+        read() {
+            this.num1 = window.prompt('Please input the first number', 0);
+            this.num2 = window.prompt('Please input the second number', 0);
+            this.num1 = parseInt(this.num1);
+            this.num2 = parseInt(this.num2);
+
+        },
+        sum() {
+            return this.num1 + this.num2;
+        },
+        mul() {
+            return this.num1 * this.num2;
+        }
+    };
+
+    calculator.read();
+    console.log(calculator.sum());
+    console.log(calculator.mul());
+</script>
+
+</html>
