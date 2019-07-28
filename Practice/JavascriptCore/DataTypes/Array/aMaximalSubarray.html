@@ -1,0 +1,26 @@
+<!doctype html>
+
+<head>
+
+</head>
+
+<body>
+    <script src="https://zh.js.cx/test/libs.js"></script>
+    <script src="test/aMaximalSubarray.js"></script>
+    <script>
+        let getMaxSubSum = function(arr) {
+            let max = 0;
+            for (let i = 0; i < arr.length; i++) {
+                let subMax = 0;
+                for (let j = i; j < arr.length; j++) {
+                    subMax += arr[j];
+                    max = Math.max(max, subMax);
+                }
+            }
+            return max;
+        }
+    </script>
+</body>
+
+
+</html>
