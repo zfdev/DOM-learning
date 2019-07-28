@@ -1,0 +1,30 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/repeatUntilTheInputIsANumber.js"></script>
+<script>
+    let readNumber = function () {
+        // let input = window.prompt('Please input a valid number.');
+        // if (input === '') {
+        //     readNumber();
+        // }
+        // if (isFinite(input)) {
+        //     return parseInt(input);
+        // } else {
+        //     readNumber();
+        // }
+        // if (input == undefined || input === ' ') {
+        //     return null;
+        // }
+        let input;
+        do {
+            input = window.prompt('Please input a valid number', 0);
+        } while (!isFinite(input));
+        if (input === '' || input === null) {
+            return null;
+        }
+        return +input;
+    }
+    // readNumber();
+</script>
+
+</html>

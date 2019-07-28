@@ -64,14 +64,14 @@ Object
         - 属性的键必须是字符串或者Symbol符号
         - 值可以是任何类型
       - 获取对象的属性值
-        - 点符号 object.property
-        - 方括号 object['property'] 方括号中可以使用变量 object[variableKey]，有时我们需要从变量中计算对象的属性名
+        - 点符号 `object.property`
+        - 方括号 `object['property']` 方括号中可以使用变量 `object[variableKey]`，有时我们需要从变量中计算对象的属性名
       - 对象操作
-        - 删除属性 delete object.property
-        - 检查属性是否存在 'key' in object
-        - 遍历对象 for(let key in object) 循环
-      - 对象是根据引用来赋值的，在变量中存储不是对象的值，而是对象的引用，也就是内存地址，所以赋值变量时只是复制了指针，而且多个引用操作都作用于同一个对象。当两个引用指向同一个对象的时候他们相等，objectA === objectB
-      - 对象的深度copy需要处理对象属性值是对象的情况，所以需要使用递归判断进行遍历copy，或者使用lodash的cloneDeep(object),对于简单对象的浅copy可以使用`let clone = Object.assign({}, object)`用要复制的对象和空对象merge, 这个方法也可以用来合并多个对象，key相同的前面的值会被后面的覆盖 `Object.assign(dest[, src1, src2, src3...])`。
+        - 删除属性 `delete object.property`
+        - 检查属性是否存在 `'key' in object`
+        - 遍历对象 `for(let key in object)` 循环
+      - 对象是根据引用来赋值的，在变量中存储不是对象的值，而是对象的引用，也就是内存地址，所以赋值变量时只是复制了指针，而且多个引用操作都作用于同一个对象。当两个引用指向同一个对象的时候他们相等，`objectA === objectB`
+      - 对象的深度copy需要处理对象属性值是对象的情况，所以需要使用递归判断进行遍历copy，或者使用lodash的`cloneDeep(object)`,对于简单对象的浅copy可以使用`let clone = Object.assign({}, object)`用要复制的对象和空对象merge, 这个方法也可以用来合并多个对象，key相同的前面的值会被后面的覆盖 `Object.assign(dest[, src1, src2, src3...])`。
       - 对象属性名排序问题
         - 如果对象的属性名是一个可以转换成整数的string number，那么在循环中遍历输出对象key的时候是按照数字从小到大得顺序的。
       - 常量对象可以修改，因为变量存储的是对象的内存地址，对象内部的值如果修改并不影响。
@@ -141,10 +141,10 @@ Object
         alert( Symbol.keyFor(sym2) ); // id       
         ```
     - Object mothods, "this"
-      - 存储在对象中的function被称为方法，对象执行方法object.doSomething();方法可以将对象引用为this
+      - 存储在对象中的function被称为方法，对象执行方法`object.doSomething();`方法可以将对象引用为this
       - this是运行时求值，注意绑定this的指向
         - 函数声明使用的this只有等到调用时才会有值。我们要理解这一点才能避免this调用时指向错误的对象。
-        - object.method()这样的调用，.返回的不是一个函数,而是一个包含指向对象引用this的特殊引用类型，this总是指向object,与func = object.method这种传递函数引用的方式不同，这个表达式在传递过程会丢失特殊引用类型，从而失去this的值
+        - `object.method()`这样的调用，.返回的不是一个函数,而是一个包含指向对象引用this的特殊引用类型，this总是指向object,与`func = object.method`这种传递函数引用的方式不同，这个表达式在传递过程会丢失特殊引用类型，从而失去this的值
       - 箭头函数没有this，箭头函数内部访问的都是来自外部的this
       ```
       let user = {
@@ -180,7 +180,7 @@ Object
         - number 比如数学计算
         - default 少数操作 通常与number相同
       - 通常的转换算法
-        - 调用object[Symbol.toPrimitive](hint)
+        - 调用`object[Symbol.toPrimitive](hint)`
         - 否则如果暗示是 "string"
             尝试 obj.toString() 和 obj.valueOf()，无论哪个存在。
         - 否则，如果暗示 "number" 或者 "default"
@@ -205,6 +205,18 @@ Object
         alert( new BigUser().name );  // 哇哦，得到了对象，name 属性值为 Godzilla ^^
         ```
   - Data types
+    - Method of primitives
+    - Numbers
+    - Strings
+    - Arrays
+    - Array methods
+    - Iterables
+    - Map and Set
+    - WeakMap and WeakSet
+    - Object.keys, values, entries
+    - Destructuring assignment
+    - Date and time
+    - JSON methods, toJSON
   - Advanced working with functions
   - Object properties configuration
   - Prototypes, inheritance
