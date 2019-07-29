@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let range = {
+            from: 1,
+            to: 5,
+            [Symbol.iterator]() {
+                this.current = this.from;
+                return this;
+            },
+            next() {
+                if (this.current < this.to) {
+                    this.current++;
+                    return {
+                        done: false,
+                        value: this.current
+                    }
+                } else {
+                    return {
+                        done: true
+                    }
+                }
+            }
+        }
+        //分离式迭代器，额外创建对象给迭代器处理
+        // range[Symbol.iterator] = function () {
+        //     return {
+        //         current: this.from,
+        //         last: this.to,
+        //         next() {
+        //             if (this.current < this.last) {
+        //                 this.current++;
+        //                 return {
+        //                     done: false,
+        //                     value: this.current
+        //                 }
+        //             } else {
+        //                 return {
+        //                     done: true
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        let arrayLike = {
+            0: 'Hello',
+            1: 'World',
+            length: 2
+        }
+
+        let uChar = '𝒳😂';
+
+        for (let num of range) {
+            console.log(num);
+        }
+
+        let mapFnForRange = Array.from(range, num => num * num);
+
+        console.log(Array.from(range));
+        console.log(Array.from(arrayLike));
+        console.log(Array.from(uChar));
+        console.log(Array.from(mapFnForRange));
+    </script>
+</body>
+
+</html>

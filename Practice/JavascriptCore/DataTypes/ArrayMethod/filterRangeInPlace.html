@@ -1,0 +1,26 @@
+<!doctype html>
+<!-- <script src="https://zh.js.cx/test/libs.js"></script> -->
+<!-- <script src="test/filterRangeInPlace.js"></script> -->
+<script>
+    // ...你的代码...
+    let array = [5, 3, 8, 1];
+    let filterRangeInPlace = function (arr, a, b) {
+        // let result = arr.filter((item) => (item >= a && item <= b));
+        // arr.length = 0; // 这里有个大坑，就是无法直接给数组赋值为新数组，需要用修改原数组的方法来修改数组。
+        // arr.push(...result);
+
+        arr.forEach((item, index) => {
+            if (item < a || item > b) {
+                arr.splice(index, 1);
+            }
+        });
+        // arr.concat(arr.filter((item) => (item >= a && item <= b)));
+    }
+
+
+
+    filterRangeInPlace(array, 1, 4);
+    console.dir(array);
+</script>
+
+</html>

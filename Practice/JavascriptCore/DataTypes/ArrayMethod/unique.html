@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function unique(arr) {
+            /* your code */
+            // let set = new Set(arr);
+            // return Array.from(set);
+
+            let result = [];
+            arr.forEach(element => {
+                if (!result.includes(element)) {
+                    result.push(element);
+                }
+            });
+            return result;
+        }
+
+        let strings = ["Hare", "Krishna", "Hare", "Krishna",
+            "Krishna", "Krishna", "Hare", "Hare", ":-O"
+        ];
+
+        alert(unique(strings)); // Hare, Krishna, :-O
+    </script>
+</body>
+
+</html>
