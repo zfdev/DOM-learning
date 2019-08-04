@@ -206,17 +206,794 @@ Object
         ```
   - Data types
     - Method of primitives
+      - 数据类型
+        - 基本类型 6种
+          - String
+          - Boolean
+          - Number
+          - undefined
+          - null
+          - Symbol
+        - 对象类型
+          - 能存储多个值作为属性
+          - Object
+          - Function
+          - Array
+          - Date
+          - RegExp
+          - Map/Set
+        - 对象比基本类型需要更多的额外资源来支持运作，因为基本类型虽然说本质上也是对象，但是经过Javascrit引擎特殊优化。
+      - 基本类型访问时特殊转换
+        - 基本类型仍然是原始数据，提供单个值，当访问String/Number/Boolean/Symbol时的属性和方法时，创建一个特殊的临时包装对象，提供额外的功能，运行后销毁。
+        - 不推荐使用new 构造函数的方式创建基本类型，会产生一些额外的问题，比如创建过程中产生类型转换。例如`let number = new Number('123'); //string 123 will be converted to a number.`
+        - null/undefined没有任何方法
     - Numbers
+      - 缩写比较大的数字
+        - 整数
+          - number + e + 0的数量
+            `1 billion = 1000000000 = 1e9 = 1 * 1000 000 000(9个0)`
+            `1230000 = 1.23e6 = 1.23 * 1000 000(6个0)`
+        - 小数
+          - number + e + '-' + 0的数量
+            `1 ms = 0.001s = 1e-3 = 1 * 0.001(1/1000) 3个0`
+            `0.00000123 = 1.23e-6 = 1.23 * 0.000001(1/1000000) 6个0`
+      - 16进制，2进制和8进制数字
+        - 0xFF //16进制的255
+        - 0b11111111 //8进制的255
+      - 进制转换num.toString(base)
+        - 返回指定进制base的数字num字符串，base范围是2-36
+          - 16进制 0-9 A-F
+          - 2进制 0或1
+          `alert( 123456..toString(36) ); // 2n9c`
+        - 调用方法的两个.，因为javascript语法解析器会把第一个.当成小数的一部分，所以会导致调用失败
+          - 等同于`(123456).toString(36)`
+      - 四舍五入
+        - Math.floor 下舍入 3.1->3 -1.1->-2
+        - Math.ceil 上舍入 3.1->4 -1.1->-1
+        - Math.round 四舍五入 3.1->3 3.6->4  -1.1->-1
+        - Math.trunc 删除小数点不舍入，IE不支持可以自己用正则来实现
+        - num.toFixed(小数的位数四舍五入) 
+          - `(12.36).toFixed(1)//12.4` 
+          - `(12.34).toFixed(1)//12.3`
+      - 浮点数计算精度问题
+        - 对于小数的计算结果我们要相当谨慎，否则结果可能会因为精度问题出乎我们的意料。
+          `alert( 0.1 + 0.2 == 0.3 ); // false`
+        - 0.1 就是把 1 除以 10 1/10，即十分之一。在十进制数字系统中，这些数字很容易表示。将它比作三分之一：1/3。它变成了无尽的分数 0.33333(...)所以，按这种用 10 划分可以保证在十进制系统中运行良好，但用 3 划分不是。
+        `alert( 0.1.toFixed(20) ); // 0.10000000000000000555`
+        - 解决方案
+          - 将小数结果使用toFixed进行四舍五入
+          ```
+          let sum = 0.1 + 0.2;
+          alert( sum.toFixed(2) ); // 0.30
+          ```
+          - 通过乘法先转换为整数，再通过除法还原
+          ```
+          alert( (0.1 * 10 + 0.2 * 10) / 10 ); // 0.3
+          ```
+      - 数字检测isFinite(number/string) and isNaN(number)
+        - isFinite(value) 将其参数转换为数字，如果是常规数字，则返回 true，而不是 NaN / Infinity / -Infinity： ，常用于检测字符串是否是一个常规数字
+          ```
+            alert( isFinite("15") ); // true
+            alert( isFinite("str") ); // false, because a special value: NaN
+            alert( isFinite(Infinity) ); // false, because a special value: Infinity
+          ```
+        - isNaN(value) 将其参数转换为数字，然后测试它是否为 NaN：
+          ```
+            alert( isNaN(NaN) ); // true
+            alert( isNaN("str") ); // true          
+          ```
+        - 所有数字函数（包括 isFinite）中的空字符串或空格字符串均被视为 0
+      - parseInt(string, radix) and parseFloat(string)
+        - parseInt(string, radix) radix是进制的位数
+          - 使用加号 + 或 Number() 的数字转换是严格的，但是我们有时需要从字符串中提取一个数字出来，这就是这个方法的作用，如果无法返回数字，则会返回NaN
+          ```
+            alert( parseInt('100px') ); // 100
+            alert( parseFloat('12.5em') ); // 12.5
+          ```
+          - parseFloat(string)
+            - 用于提取一个有效的浮点数
+            ```
+            alert( parseInt('12.3') ); // 12, only the integer part is returned
+            alert( parseFloat('12.3.4') ); // 12.3, the second point stops the reading
+            ```
+      - 常用其他数学函数
+        - Math.random() 返回从 0 到 1 的随机数（不包括 1）
+          `alert( Math.random() ); // 0.1234567894322`
+        - Math.max(a, b, c...) / Math.min(a, b, c...) 从任意数量的参数中返回最大/最小值。
+          `alert( Math.max(3, 5, -10, 0, 1) ); // 5`
+        - Math.pow(n, power) 返回 n 的 power 次幂，即 n power
+          `alert( Math.pow(2, 10) ); // 2 的 10 次幂 = 1024`
     - Strings
+      - 创建字符串的三种方式
+        - 单引号
+          `let single = 'single-quoted';`
+        - 双引号
+          `let double = "double-quoted";`
+        - 反引号，最为强大的模式，我们可以嵌入表达式和变量到字符当中，而且支持多行字符串
+          ```
+            function sum(a, b) {
+                return a + b;
+            }
+
+            alert(`1 + 2 = ${sum(1, 2)}.`); // 1 + 2 = 3.          
+          ```
+      - 特殊字符
+        - 换行符`\n`,下面两行代码效果相同
+        ```
+            alert( "Hello\nWorld" ); // two lines using a "newline symbol"
+
+            // two lines using a normal newline and backticks
+            alert( `Hello
+            World` );        
+        ```
+        - 特殊字符转义，例如`'`和`\`，由于Javascript语法解析引擎对这些特殊字符作为语法解析的判断条件，但我们想让这些特殊字符作为字符串使用的时候，就需要使用`\`对齐进行转义。
+          - `'` 我们必须用反斜杠 \' 来转义单引号，否则就表示字符串结束。或者使用反引号。
+            `lert( 'I\'m the Walrus!' ); // I'm the Walrus!`
+            `lert( `I'm the Walrus!` ); // I'm the Walrus!`
+          - `\` 转义转义字符自己，既然转义字符会对特殊字符做处理，那么我们想输出一个字符串`\`呢
+            `alert( `The backslash: \\` ); // The backslash: \`
+        - 其他特殊字符
+          - \t	Tab
+          - \r	Carriage return
+          - \b	Backspace
+          - \uNNNN	16 进制的 NNNN 的unicode 符号，例如 \u00A9—— 是版权符号的 unicode ©。它必须是 4 个16 进制数字。
+          - \u{NNNNNNNN}	一些罕见字符使用两个 unicode 符号进行编码，最多占用 4 个字节。这个长的 unicode 需要它周围的括号。
+          ```
+            alert( "\u00A9" ); // ©
+            alert( "\u{20331}" ); // 佫, a rare chinese hieroglyph (long unicode)
+            alert( "\u{1F60D}" ); // 😍, a smiling face symbol (another long unicode)          
+          ```
+      - 字符串长度
+        - length 字符串长度属性
+          `alert( `My\n`.length ); //注意 \n 是一个单独的“特殊”字符，所以长度确实是 3`
+      - 访问字符
+        - 可以使用方括号 [pos] 或者调用 str.charAt(pos) 方法。第一个字符从零位置开始,如果没有找到字符，[] 返回 undefined，而 charAt 返回一个空字符串：
+          ```
+            let str = `Hello`;
+
+            // the first character
+            alert( str[0] ); // H
+            alert( str.charAt(0) ); // H
+
+            // the last character
+            alert( str[str.length - 1] ); // o
+
+            alert( str[1000] ); // undefined
+            alert( str.charAt(1000) ); // '' (an empty string)            
+          ```
+        - for..of 遍历字符
+          ```
+            for (let char of "Hello") {
+                alert(char); // H,e,l,l,o (char becomes "H", then "e", then "l" etc)
+            }
+          ```                 
+      - 字符串里的字符不能通过索引修改，只能通过赋值到新的字符串替换
+        ```
+        let str = 'Hi';
+
+        str[0] = 'h'; // error
+        alert( str[0] ); // 无法运行        
+        ```
+        - 通常的解决方法是创建一个新的字符串，并将其分配给 str 而不是以前的字符串
+          ```
+            let str = 'Hi';
+            str = 'h' + str[1];  // 字符串替换
+            alert( str ); // h
+          ```
+      - 字符串方法
+        - 改变大小写
+          - str.toUpperCase() 大写
+          - str.toLowerCase() 小写
+            ```
+            alert( 'Interface'.toUpperCase() ); // INTERFACE
+            alert( 'Interface'.toLowerCase() ); // interface            
+            ```
+        - 查找字符串
+          - str.indexOf(searchStr [,startPos])
+            - 它从给定位置 pos 开始，在 str 中查找 substr，如果没有找到，则返回 -1，否则返回匹配成功的位置。
+            ```
+                let str = 'Widget with id';
+
+                alert( str.indexOf('Widget') ); // 0，因为 'Widget' 一开始就被找到
+                alert( str.indexOf('widget') ); // -1，没有找到，检索是大小写敏感的
+
+                alert( str.indexOf("id") ); // 1，"id" 在位置 1 处（...idget 和 id）           
+            ```
+            - 在一个循环中查找所有匹配的字符串，每一次调用都发生在上一次匹配位置之后
+              ```
+                let str = 'As sly as a fox, as strong as an ox';
+                let target = 'as'; // 让我们查看一下
+                let searchPos = 0;
+                while(true){
+                    let result = str.indexOf(target, searchPos);
+                    if(reuslt === -1){
+                        break;
+                    }
+                    alert(`Found ${target} at ${result}`);
+                    searchPos = result + 1;
+                }
+              ```
+            - 注意查找字符串时判断条件，要与-1对比，而不是直接在if的条件里调用。
+              ```
+                let str = "Widget with id";
+
+                if (str.indexOf("Widget") != -1) {
+                    alert("We found it"); // 现在运行了！
+                }              
+              ```
+              - 简写if (~str.indexOf(...)) 读作 “if found”，利用了只有当 n == -1 时，~n 才为零的特性。
+                ```
+                let str = "Widget";
+
+                if (~str.indexOf("Widget")) {
+                alert( 'Found it!' ); // works
+                }                
+                ```
+          - str.includes(searchStr, pos)
+            - str中是否包含searchStr返回结果true/false，我们只是需要测试匹配不需要查找位置时使用它。第二个参数可以指定开始搜索的位置，未指定从0开始搜索。
+            ```
+            alert( "Widget with id".includes("Widget") ); // true
+            alert( "Hello".includes("Bye") ); // false            
+            ```
+          - str.startsWith(searchStr) 判断字符串str是否以searchStr开头
+          - str.endsWidth(searchStr) 判断字符串str是否以searchStr结尾
+            ```
+            alert( "Widget".startsWith("Wid") ); // true, "Widget" 以 "Wid" 开始
+            alert( "Widget".endsWith("get") );   // true, "Widget" 以 "get" 结束     
+            ```
+        - 截取字符串
+          - str.slice(start [,end]) 常用方法
+            - 返回从 start 到（但不包括）end 的字符串部分。
+            ```
+            let str = "stringify";
+            alert( str.slice(0, 5) ); // 'strin', 从 0 到 5 的子字符串（不包括 5）
+            alert( str.slice(0, 1) ); // 's', 从 0 到 1，但不包括 1，所以只有在 0 的字符    
+            ```
+            - 如果没有第二个参数，slice 运行到字符串末尾
+            ```
+            let str = "stringify";
+            alert( str.slice(2) ); // 从第二个位置直到结束           
+            ```
+            - start/end 也有可能是负值。它们的意思是位置从字符串结尾计算
+            ```
+            let str = "stringify";
+
+            // 从右边的第四个位置开始，在右边的第一个位置结束
+            alert( str.slice(-4, -1) ); // */!            
+            ```
+          - str.substring(start [, end])
+            - 返回 start 和 end 之间的字符串部分。这与 slice 几乎相同，但它允许 start大于 end。
+            ```
+            let str = "stringify";
+
+            // 这些对于子串是相同的
+            alert( str.substring(2, 6) ); // "ring"
+            alert( str.substring(6, 2) ); // "ring"            
+            ```
+          - str.sub(start, length)
+            - 从 start 开始返回给定 length 的字符串部分。与以前的方法相比，这个允许我们指定 length 而不是结束位置
+            ```
+            let str = "stringify";
+            alert( str.substr(2, 4) ); // 环，从第二位获得 4 个字符            
+            ```
+      - 比较字符串
+        - 所有的字符串都使用 UTF-16 编码。即：每个字符都有相应的数字代码。有特殊的方法可以获取代码的字符并返回。`str.codePointAt(pos)`
+        `alert( 'a' > 'Z' ); // true`
+        ```
+            // 不同的字母有不同的代码
+            alert( "z".codePointAt(0) ); // 122
+            alert( "Z".codePointAt(0) ); // 90        
+        ```
+        - 通过数字 code 创建字符 `String.fromCodePoint(code)`,现在我们看一下代码 65..220 的字符（拉丁字母和一些额外的字符），方法是创建一个字符串：
+          ```
+            let str = '';
+
+            for (let i = 65; i <= 220; i++) {
+            str += String.fromCodePoint(i);
+            }
+            alert( str );
+            // ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
+            // ¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜ          
+          ```
+
+        - 正确的比较方法`str.localeCompare(str2)`
+          `alert( 'Österreich'.localeCompare('Zealand') ); // -1`
+
+      - Unicode
+        - 大部分 symbol 都有一个 2 字节的代码。大多数欧洲语言，数字甚至大多数象形文字中的字母都有 2 字节的表示形式。但 2 字节只允许 65536 个组合，这对于每个可能的符号都是不够的。所以稀有的符号被称为“代理对”的一对 2 字节符号编码。这些符号的长度是 2
+        ```
+            alert( '𝒳'.length ); // 2, MATHEMATICAL SCRIPT CAPITAL X
+            alert( '😂'.length ); // 2, FACE WITH TEARS OF JOY
+            alert( '𩷶'.length ); // 2, a rare chinese hieroglyph        
+        ```
     - Arrays
     - Array methods
     - Iterables
+      - 可迭代对象，可以在for...of循环中使用，比如数组就是可迭代对象之一，字符串也是可迭代的。很多内建的方法和操作都依赖于它。
+      - Symbol.iterator
+        - 如果想把一个对象转换为可迭代对象，需要为对象添加一个Symbol.iterator的方法。
+        - for...of方法会自动调用这个方法，如果没有就会报错
+        - 方法必须返回一个next方法的对象，用于for...of循环调用获取下一个数值
+        - iterator.next()返回值必须是`{ done: Boolean, value: any}`, 当done==true的时候迭代结束。
+      - 可迭代对象和类数组对象的区别
+        - Array-likes 有索引属性和length属性的对象成为类数组对象，这种对象也许有其他属性和方法，但是没有数组的内建方法。例如DOM对象`HTMLCollection`和`NodeList`对象都是类数组对象，他们都有length属性，带有数组索引的每一项存储的是DOM节点。
+          ```
+            let arrayLike = {
+                0: "Hello",
+                1: "World",
+                length: 2
+            };
+
+            let arr = Array.from(arrayLike); // (*)
+            alert(arr.pop()); // World（pop 方法生效）          
+          ```
+        - Iterator是有 Symbol.iterator方法的对象。
+        - 他们都没有数组对象的方法，但是他们都可以通过方法转换成数组
+      - Array.from(obj[, mapFn, thisArg]) 
+        - 把array-likes对象或者iterator对象转换成数组对象，就可以使用数组的方法了。
+      - 字符串迭代
+        - 数组和字符串是应用最广泛的内建可迭代对象
+        ```
+        for (let char of "test") {
+            alert( char ); // t，然后 e，然后 s，然后 t
+        }
+        ```
     - Map and Set
+      - Map 键值对集合，与Object最大的区别在于它任意类型的key，Object只支持string作为key，而且Map支持链式调用
+        - 创建Map
+          - `new Map()`
+        - 方法
+          - new Map() – 创建 map。
+          - map.set(key, value) – 根据键（key）存储值（value）。
+          - map.get(key) – 根据键返回值，如果 map 中该键不存在，返回 undefined。
+          - map.has(key) – 如果键存在，返回 true，否则返回 false。
+          - map.delete(key) – 移除该键的值。map.clear() – 清空 map
+          - map.size – 返回当前元素个数。
+
+        - Object to Map
+          - `new Map(keyValueArr)`把对象转换成键值对数组作为map的构造函数的参数。
+            ```
+            // [key, value] 键值对数组
+            let map = new Map([
+                ['1',  'str1'],
+                [1,    'num1'],
+                [true, 'bool1']
+            ]);           
+            ```
+          - `new Map(Object.entries(object))`;
+            ```
+            let map = new Map(Object.entries({
+                name: "John",
+                age: 30
+            })); //Object.entries 返回了键值对数组：[ ["name","John"], ["age", 30] ]。这正是 Map 需要的。
+            ```
+        - 遍历Map
+          - map.keys() – 返回键的迭代器，
+          - map.values() – 返回值的迭代器，
+          - map.entries() – 返回 [key, value] 迭代器入口，for..of 循环会默认使用它。
+            ```
+                let recipeMap = new Map([
+                    ['cucumber', 500],
+                    ['tomatoes', 350],
+                    ['onion',    50]
+                ]);
+
+                // 迭代键（vegetables）
+                for (let vegetable of recipeMap.keys()) {
+                alert(vegetable); // cucumber, tomatoes, onion
+                }
+
+                // 迭代值（amounts）
+                for (let amount of recipeMap.values()) {
+                alert(amount); // 500, 350, 50
+                }
+
+                // 迭代键值对 [key, value]
+                for (let [key, value] of recipeMap) { // 和 recipeMap.entries() 一样
+                alert(key, value); // cucumber,500（等等）
+                }            
+            ```
+          - map.forEach() 内置迭代方法和array的forEach很像
+            ```
+            recipeMap.forEach( (value, key, map) => {
+                alert(`${key}: ${value}`); // cucumber: 500 等等
+            });          
+            ```
+
+        - 与Object的区别
+          - 对象可以作为key，Object的key只能是string
+          - 迭代顺序是插入的顺序，不会再迭代过程中因为整数key而出现排序的问题
+          - 自带很多方便快捷的方法比如map.size 元素的个数
+      - Set 包含不重复值的集合，常用于保留不重复的值的有序序列。
+        - 创建Set
+          - `new Set()`
+        - Set Methods
+          - set.add(value) – 添加值，返回 set 自身。
+          - set.delete(value) – 删除值，如果该 value 在调用方法的时候存在则返回 true ，否则返回 false。
+          - set.has(value) – 如果 set 中存在该值则返回 true ，否则返回 false。
+          - set.clear() – 清空 set。
+          - set.size – 元素个数
+        - Array to Set
+          - `new Set(array)` 把array作为set的构造函数的参数来创建set对象;
+            ```
+            let set = new Set(["oranges", "apples", "bananas"]);
+            for (let value of set) alert(value);            
+            ```
+        - Set迭代
+          - 使用for...of或者set.forEach来迭代查看set
+          ```
+            let set = new Set(["oranges", "apples", "bananas"]);
+
+            for (let value of set) alert(value);
+
+            // 和 forEach 相同：
+            set.forEach((value, valueAgain, set) => {
+                alert(value);
+            });          
+          ```
+          - set.keys() – 返回 set 中值的迭代对象，
+          - set.values() – 和 set.keys 一样，为了兼容 Map，
+          - set.entries() – 返回形如 [value, value] 的迭代对象，为了兼容 Map 而存在
+        - 与Array的区别，set不允许元素重新排序，保持插入的顺序。
     - WeakMap and WeakSet
+      - WeakMap和WeakSet对象最重要的特性就是他们适合存储引用类型的值作为key，而不需要手动释放内存，一旦引用对象被移除，储存在他们当中的对象引用也会被自动清除。
+      - WeakMap和WeakSet并不支持迭代方法，所以我们无法获取他们的所有键值。
+      - WeakMap支持的方法
+        - weakMap.get(key)
+        - weakMap.set(key, value)
+        - weakMap.delete(key, value)
+        - weakMap.has(key)
+      - WeakSet支持的方法
+        - weakSet.add(value);
+        - weakSet.has(value);
+        - weakSet.delete(value);
+
     - Object.keys, values, entries
+      - 注意与Map/Set的keys/values/entries方法区别，Map/Set返回的是可迭代对象，需要通过Array.from转换为数组，而Object的方法返回的直接就是**数组，不需要转换**。
+      - Object.keys(obj) —— 返回一个包含该对象全部的键的数组。
+      - Object.values(obj) —— 返回一个包含该对象全部的值的数组。
+      - Object.entries(obj) —— 返回一个包含该对象全部 [key, value] 键值对的数组。
+
     - Destructuring assignment
+      - 赋值解构本质上就是让我们快速把不同数据类型的值赋值到变量中，它让我们将数组或者对象拆包，存放到一系列数据结构相同的变量中。避免重复声明和赋值，当然不只是快捷那么简单，我们也可以使用赋值解构完成一些需求，比如变量数值交换。
+      - 数组解构
+        - 数组解构到变量中
+          ```
+            // 有一个存放了名字和姓氏的数组
+            let arr = ["Ilya", "Kantor"]
+
+            // 解构赋值
+            let [firstName, surname] = arr;
+            // 精简写法
+            //let firstName = arr[0];
+            //let surname = arr[1];
+
+            alert(firstName); // Ilya
+            alert(surname);  // Kantor          
+          ```
+        - 字符串解构到变量中
+          ```
+          let [firstName, surname] = "Ilya Kantor".split(' ');
+          ```
+        - 右侧任意可迭代对象
+          ```
+          let [a, b, c] = "abc"; // ["a", "b", "c"]
+          let [one, two, three] = new Set([1, 2, 3]);
+          ```
+        - 忽略元素
+          ```
+          // 不需要第一个和第二个元素
+            let [, , title] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+
+            alert( title ); // Consul
+          ```
+        - 赋值给左侧任意类型
+          ```
+            let user = {};
+            [user.name, user.surname] = "Ilya Kantor".split(' ');
+            alert(user.name); // Ilya
+          ```
+        - Object.entries(object)循环，使用赋值解构来遍历entries返回的对象键值对
+          ```
+            let user = {
+            name: "John",
+            age: 30
+            };
+
+            // 循环遍历键-值对
+            for (let [key, value] of Object.entries(user)) {
+            alert(`${key}:${value}`); // name:John, then age:30
+            }          
+          ```
+        - 剩余操作符`...`
+          - 搜集剩余元素，剩余元素会放入到数组变量中
+          ```
+            let [name1, name2, ...rest] = ["Julius", "Caesar", "Consul", "of the Roman Republic"];
+
+            alert(name1); // Julius
+            alert(name2); // Caesar
+
+            alert(rest[0]); // Consul
+            alert(rest[1]); // of the Roman Republic
+            alert(rest.length); // 2          
+          ```
+        - 默认值，我可以使用`=`指定一个默认值，当赋值解构右侧映射不到值的时候回使用默认值，这个默认值可以是复杂的表达式甚至函数调用
+          ```
+            //未赋值的变量被当作 undifined
+            let [firstName, surname] = [];
+            alert(firstName); // undefined 不会报错 
+
+            // 默认值
+            let [name = "Guest", surname = "Anonymous"] = ["Julius"];
+
+            alert(name);    // Julius (来自数组的值)
+            alert(surname); // Anonymous (默认值被使用了)
+
+            // 只会提示输入姓氏
+            let [name = prompt('name?'), surname = prompt('surname?')] = ["Julius"];
+
+            alert(name);    // Julius (来自数组)
+            alert(surname); // 你输入的值           
+          ```
+
+      - 对象解构
+        - 注意对象赋值解构的时候左侧变量名要与右侧对象的key相同
+        - `let {key1}, key2} = {key1: value1, key2: value2, ...}` 
+          - 例子
+          ```
+            // 改变 let {...} 中属性的顺序
+            let {height, width, title} = { title: "Menu", height: 200, width: 100 }
+          ```
+        - 映射到新的变量名
+          - 例子
+          ```
+            let options = {
+                title: "Menu",
+                width: 100,
+                height: 200
+            };
+
+            // { 原属性：目标变量 }
+            let {width: w, height: h, title} = options;
+
+            // width -> w
+            // height -> h
+            // title -> title
+
+            alert(title);  // Menu
+            alert(w);      // 100
+            alert(h);      // 200    
+          ```
+        - 映射结合默认值一起使用，可以作为类或者函数的参数初始化
+          - 例子
+          ```
+            let options = {
+                title: "Menu"
+            };
+
+            let {width: w = 100, height: h = 200, title} = options;
+
+            alert(title);  // Menu
+            alert(w);      // 100
+            alert(h);      // 200       
+          ```
+      - 嵌套解构，支持对象嵌套解构，对象中不存在的属性会使用默认值
+        - 例子
+        ```
+        let options = {
+            size: {
+                width: 100,
+                height: 200
+            },
+            items: ["Cake", "Donut"],
+            extra: true    // 一些不会被解构的额外属性
+        };
+
+        // 为了清晰起见，解构赋值语句被写成多行
+        let {
+            size: { // 把 size 赋值到这里
+                width,
+                height
+            },
+            items: [item1, item2], // 把 items 赋值到这里
+            title = "Menu" // 在对象中不存在的属性（会使用默认值）
+        } = options;
+
+        alert(title);  // Menu
+        alert(width);  // 100
+        alert(height); // 200
+        alert(item1);  // Cake
+        alert(item2);  // Donut        
+        ```
+      - 智能函数参数,我们可以利用赋值解构的特性灵活的给函数传入参数，而不用在意参数顺序
+        ```
+        // 清晰起见，精简了部分参数
+        function showMenu({ title = "Menu", width = 100, height = 200 } = {}) {
+            alert( `${title} ${width} ${height}` );
+        }
+
+        showMenu(); // Menu 100 200
+        ```
     - Date and time
+      - 创建时间和日期的方法
+        - new Date() 创建一个表示当前日期和时间的对象
+        - new Date(milliseconds) 从1970-01-01 00:00:00 UTC+0开始所经历的毫秒数ms(1s = 1000ms)
+          `new Date(1000) //1970-01-01 00:00:01 UTC+0`
+        - new Date(dateString) 时间字符串参数，参见Date.parse(str)算法解析
+          `new Date('2019-07-31')`
+        - new Date(year, month [date, hours, minutes, seconds, ms])
+        ```
+        let date = new Date(2011, 0, 1, 2, 3, 4, 567);
+        alert( date ); // 1.01.2011, 02:03:04.567        
+        ```
+      - 获取日期和时间的值
+        - date.getFullYear() 结果是4位数字
+        - date.getMonth() 结果是 **0-11** 注意使用时的转换
+        - date.getDate() 结果是 **1-31**，注意这个不是0开始，0代表上一个月的最后一天了
+        - date.getHours()
+        - date.getMinutes()
+        - date.getSeconds()
+        - date.getMilliseconds()
+        - date.getDay() 结果是**0-6** 对应星期天到星期六 要根据情况做转换
+
+        - date.getUTC***() 返回基于UTC+0的时间
+        - date.getTime() 从 1970-1-1 00:00:00 UTC+0 开始的毫秒数
+        - date.getTimezoneOffset() 返回时区偏移数，以分钟为单位，如果你在时区 UTC+3，输出 -180
+      - 设置时间和日期的方法
+        - date.setFullYear(year, [,month ,date]);
+        - date.setMonth(month [, date]);
+        - date.setDate(date);
+        - date.setHours(hour [, min, sec, ms]);
+        - date.setMinutes(min [, sec, ms]);
+        - date.setSeconds(sec [, ms]);
+        - date.setMilliseconds(ms);
+        
+        - date.setUTC***
+        - date.setTime(milliseconds);
+      - 自动校准
+        - 超出范围的日期会被自动校准为正确值，例如负值
+        - 获取上个月的最后一天是几号 `date.setDate(0);`
+      - 日期差值计算
+        - 日期可以相减，它们相减的结果是以毫秒为单位，在date对象上调用运算符会触发date对象的getTime()方法返回从 1970-1-1 00:00:00 UTC+0 开始的毫秒数
+        `The loop took ${end - start} ms`
+      - Date.now();
+        - 返回当前时间戳的毫秒数
+      - Date.parse(dateString);
+        - 字符串的格式是：YYYY-MM-DDTHH:mm:ss.sssZ
+          - YYYY-MM-DD —— 日期：年-月-日。
+          - 字符串 "T" 是一个分隔符。
+          - HH:mm:ss.sss —— 时间：小时，分钟，秒，毫秒。
+          - 可选字符 'Z' 代表时区。单个字符 Z 代表 UTC+0。
+
+      - 性能问题
+        - Date.now()相当于 new Date().getTime()，但它不会在中间创建一个 Date 对象。因此它更快，而且不会对垃圾处理造成额外的压力。
+  
     - JSON methods, toJSON
+      - Javascript Object Notation 
+        - 表示值和对象的通用格式，最初为Javascript而编写，服务器很多其他语言也支持它，所以使用JSON格式进行数据交换非常容易
+        - JSON支持的数据类型
+          - Object `{"name" : "Jason"}`
+          - Arrays `[1, 3, 5]`
+          - Primitives
+            - strings `"Jason"`
+            - numbers `123`
+            - boolean `true/false`
+            - null `null`
+        - JSON忽略的数据类型，为了跨语言数据规范。
+            - 注意值为undefined将被忽略
+            - Function
+            - Symbolic属性
+        - JSON不支持循环引用，后面我将会讲到如果利用replacer解决循环引用的问题
+  
+      - JSON.stringify(target[, replacer[, space]])
+        - 将对象转换成JSON字符串
+          - target 要编码的对象
+          - replacer 要编码的属性组['attribute1', 'attribute2']或者替换函数function(key, value)
+          - space 编码时生成的字符串的缩进值
+        - 注意JSON编码对象与对象字面量的重要区别
+          - 字符串使用双引号，JSON中没有单引号和反引号。'jason'会被转换成"jason"
+          - 对象的属性名也是双引号，这与对象的属性名有很大不同，所以`age:30`会被转换成`"age":30`
+          - JSON不支持任何注释，JSON是为了可靠和快速解析而设计
+        - replacer例子，注意replacer是进行预处理，处理过的结果要return回去，以便后面的程序递归结果转为JSON对象
+          - 编码特定的属性，跳过循环引用的属性
+          ```
+            let room = {
+                number: 23
+            };
+
+            let meetup = {
+                title: "Conference",
+                participants: [{name: "John"}, {name: "Alice"}],
+                place: room // meetup references room
+            };
+
+            room.occupiedBy = meetup; // room references meetup
+
+            alert( JSON.stringify(meetup, ['title', 'participants', 'place', 'name', 'number']) );
+            /*
+            {
+                "title":"Conference",
+                "participants":[{"name":"John"},{"name":"Alice"}],
+                "place":{"number":23}
+            }
+            */
+          ```
+          - 使用一个函数作为 replacer。该函数将调用每个 (key,value) 对，并且返回 “replacement” 值，它将被用来代替原来的值。
+          ```
+            let room = {
+                number: 23
+            };
+
+            let meetup = {
+                title: "Conference",
+                participants: [{name: "John"}, {name: "Alice"}],
+                place: room // meetup references room
+            };
+
+            room.occupiedBy = meetup; // room references meetup
+
+            alert( JSON.stringify(meetup, function replacer(key, value) {
+                alert(`${key}: ${value}`); // to see what replacer gets
+                return (key == 'occupiedBy') ? undefined : value;
+            }));
+
+            /* key:value pairs that come to replacer:
+            :             [object Object]
+            title:        Conference
+            participants: [object Object],[object Object]
+            0:            [object Object]
+            name:         John
+            1:            [object Object]
+            name:         Alice
+            place:        [object Object]
+            number:       23
+            */
+
+          ```
+        - object.toJSON()
+          - 如果一个对象有`toJSON`这个方法，那么JSON.stringify(object)的时候会自动调用这个方法进行转换
+          - 例子
+          ```
+            let room = {
+                number: 23,
+                toJSON() {
+                    return this.number;
+                }
+            };
+
+            let meetup = {
+                title: "Conference",
+                room
+            };
+
+            alert( JSON.stringify(room) ); // 23
+
+            alert( JSON.stringify(meetup) );
+            /*
+            {
+                "title":"Conference",
+                "room": 23
+            }
+            */          
+          ```
+
+      - JSON.parse(JSONString, [, replacer])
+        - 解码JSON字符串，转换成Javascirpt对象
+          - JSONString要解析的JSON字符串对象
+          - replacer 预处理替换函数 function(key, value)
+        - 这里要注意返回值里的一些特殊情况，比如返回的date不是对象，而是一串转换而成的string，不能在结果里直接调用对象的方法
+        - 例子，dateString预处理
+        ```
+        let str = '{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}';
+
+        let meetup = JSON.parse(str, function(key, value) {
+            if (key == 'date') return new Date(value);
+            return value;
+        });
+
+        alert( meetup.date.getDate() ); // now works!        
+        ```
+
   - Advanced working with functions
   - Object properties configuration
   - Prototypes, inheritance
