@@ -482,7 +482,7 @@ Object
         ```
             // 不同的字母有不同的代码
             alert( "z".codePointAt(0) ); // 122
-            alert( "Z".codePointAt(0) ); // 90        
+            alert( "Z".codePointAt(0) ); // 90
         ```
         - 通过数字 code 创建字符 `String.fromCodePoint(code)`,现在我们看一下代码 65..220 的字符（拉丁字母和一些额外的字符），方法是创建一个字符串：
           ```
@@ -507,7 +507,112 @@ Object
             alert( '𩷶'.length ); // 2, a rare chinese hieroglyph        
         ```
     - Arrays
+      - 数组是一种特殊的对象，适用于存储和管理有序的数据项。
+      - 创建数组的方法,尽量不要使用构造函数的方法创建数组，会产生未知问题
+        `let arr = [item1, items, ...]`
+      - length属性是数组的长度，它是数组最后一项的数字索引值加1，如果我们手动修改length，数组就会被阶段，当然我们可以利用这个特性清空数组，arr.length = 0;
+      - 数组的方法
+        - 数组末端方法
+          - arr.push(item1, item2, ...)添加元素到数组的末端，并返回数组的长度
+          - arr.pop()删除数组的最后一个元素，并返回它
+          ```
+            let fruits = ["Apple", "Orange"];
+            fruits.push("Pear");
+            alert( fruits ); // Apple, Orange, Pear
+
+            let fruits = ["Apple", "Orange", "Pear"];
+            alert( fruits.pop() ); // 移除 "Pear" 然后 alert 显示出来
+            alert( fruits ); // Apple, Orange
+          ```
+        - 数组前端方法
+          - arr.unshift(item1, item2, ...)添加元素的数组的前端，并返回数组的长度
+          - arr.shift()删除数组的第一个元素并返回它
+            ```
+            let fruits = ["Orange", "Pear"];
+            fruits.unshift('Apple');
+            alert( fruits ); // Apple, Orange, Pear
+
+            let fruits = ["Apple", "Orange", "Pear"];
+            alert( fruits.shift() ); // 移除 Apple 然后 alert 显示出来
+            alert( fruits ); // Orange, Pear
+            ```
+        - 遍历数组
+          - for 最传统的索引循环
+            ```
+            let arr = ["Apple", "Orange", "Pear"];
+
+            for (let i = 0; i < arr.length; i++) {
+                alert( arr[i] );
+            }            
+            ```
+          - for...of 可迭代对象循环
+            ```
+            let fruits = ["Apple", "Orange", "Plum"];
+
+            // 迭代数组元素
+            for (let fruit of fruits) {
+                alert( fruit );
+            }            
+            ```
+          - 如果需要索引可以使用传统的for循环或者新的arr.forEach()方法，但是不要使用for...in循环，因为for...in循环会迭代所有属性，不仅仅是索引属性，而且速度也慢很多，例如类数组对象arrayLike就有很多我们不需要的属性。
+      - 数组按引用复制，数组是一种特殊的对象。使用方括号来访问属性 arr[indexNumber] 实际上是来自于对象的语法。这个数字被用作键值。他们扩展了对象，提供了特殊的方法来处理有序的数据集合，还添加了 length 属性。但是核心还是一个对象。
+      - 性能问题
+        - 在末端操作数据push/pop性能要优于在数组前端操作数据unshift/shift，因为不需要因为增加元素而重排整个数组的索引
+      - 多维数组，在数组中存储数组，以多维数组的方法存储矩阵。
+        ```
+            let matrix = [
+                [1, 2, 3],
+                [4, 5, 6],
+                [7, 8, 9]
+            ];
+
+            alert( matrix[1][1] ); // 最中间的那个数        
+        ```
+      - toString方法
+        - 数组的toString方法会返回以逗号隔开的元素列表。由于它只实现了这个方法，所以当隐式转换的时候回直接调用这个方法。
+        ```
+            let arr = [1, 2, 3];
+
+            alert( arr ); // 1,2,3
+            alert( String(arr) === '1,2,3' ); // true        
+        ```
+        - 关于'+'操作符触发隐式转换的问题，当 "+" 操作符把一些项加到字符串后面时，加号后面的项也会被转换成字符串
+          `alert( [1] + 1 ); // "11"  alert( "1" + 1 ); // "11"`
+        
     - Array methods
+      - 修改原数组数据
+        - 添加元素
+          - arr.push(...items); 添加元素到数组结尾 返回数组长度
+          - arr.unshift(...items); 添加元素到数组开头 返回数组长度
+          - arr.splice(pos, 0, ...items); 添加元素到数组指定位置，由于没有删除元素，所以返回[]空数组
+        - 删除元素
+          - arr.pop(); 删除数组结尾的元素，并返回被删除的元素
+          - arr.shift(); 删除数组开头的元素，并返回被删除的元素
+          - arr.splice(pos, deleteCount, ...items); 删除指定位置的元素 返回被删除的元素的数组[deleteItem, ...]
+        - 排序元素
+          - arr.sort((a, b) => {return ... 1/0/-1;}) 根据比较函数的结果对数组进行排序，比如想让a和b中值比较大的排在后面 那么 `a>b return 1; a=b return0; a<b return -1;`，排序算法会根据比较函数对数组进行排序。
+          - arr.reverse() 颠倒数组中元素的顺序
+      - 不修改原数组
+        - 复制数组元素
+          - arr.slice(start, end) 从start到end但不包括end返回一个新数组。这个方法和str.slice很像
+          - arr.concat(...items) 将数组和其他数组元素组成新数组并返回，如果参数是多维数组将会被展开。
+        - 计算生成新数组并返回
+          - arr.map((item, index, array) => { return ...; }); 对数组的每个元素调用函数并返回结果数组。 
+        - 累加计算并返回结果
+          - arr.reduce/reduceRight((acc/previousValue, currentValue, index, arr) => { return ...;}, initial); 迭代每个数组元素并将计算结果返回
+        - 字符串和数组相互转化
+          - str.split(seperateStr) 字符串转数组，通过指定的seperateStr分隔符分割字符串为数组并返回
+          - arr.join(seperateStr) 数组转字符串，通过指定的seperateStr分隔字符串合并数组为字符串并返回
+      - 查询数组元素
+        - arr.indexOf/lastIndexOf(item, pos) 从指定位置pos查找item如果找到就返回索引值，否则返回-1, lastIndexOf相同只不过是从尾部开始查询, `return Number;`
+        - arr.includes(item, fromPos) 从指定索引开始fromPos查询item,如果找到则返回true，否则返回false, `return Boolean`
+        - arr.find(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回第一个匹配的item则停止，如果没找到返回undefined, `return Object/undefined`
+        - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
+        - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
+      - 迭代
+        - arr.forEach((item, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组
+      - 其他
+        - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
     - Iterables
       - 可迭代对象，可以在for...of循环中使用，比如数组就是可迭代对象之一，字符串也是可迭代的。很多内建的方法和操作都依赖于它。
       - Symbol.iterator
