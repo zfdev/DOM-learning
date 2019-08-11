@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let testNumber = 10000;
+        let startTime1 = performance.now();
+        let sumToLoop = function (n) {
+            let result = 0;
+            for (let i = 1; i <= n; i++) {
+                result += i;
+            }
+            return result;
+        }
+        sumToLoop(testNumber);
+        let endTime1 = performance.now();
+        console.log((endTime1 - startTime1) + 'ms');
+        let startTime2 = performance.now();
+        let sumToRecursion = function (n) {
+            if (n === 1) {
+                return 1;
+            } else {
+                return n + sumToRecursion(n - 1);
+            }
+        }
+        sumToRecursion(testNumber);
+        let endTime2 = performance.now();
+        console.log((endTime2 - startTime2) + 'ms');
+        let startTime3 = performance.now();
+        let sumToArithmetic = function (n) {
+            return n * (n + 1) / 2;
+        }
+        sumToArithmetic(1000)
+        let endTime3 = performance.now();
+        console.log((endTime3 - startTime3) + 'ms');
+
+        let factorial = function (n) {
+            if (n === 1) {
+                return 1;
+            } else {
+                return n * factorial(n - 1);
+            }
+        }
+        console.log(factorial(5));
+
+        let fib = function (n) {
+            let a = 1;
+            let b = 1;
+            for (let i = 3; i <= n; i++) {
+                let c = a + b;
+                a = b;
+                b = c;
+
+            }
+            return b;
+        }
+
+        let list = {
+            value: 1,
+            next: {
+                value: 2,
+                next: {
+                    value: 3,
+                    next: {
+                        value: 4,
+                        next: null
+                    }
+                }
+            }
+        };
+
+        function printList(list) {
+            // let result = list;
+            // while (result) {
+            //     console.log(result.value);
+            //     result = result.next; //注意要在原链表上继续向下遍历，不要写成list了
+            // }
+            alert(list.value); //要先输出值，再向链表的下一项查找
+            if (list.next) {
+                printList(list.next);
+            }
+        }
+
+        // printList(list);
+
+        function printReverseList(list) {
+            let temp = list;
+            let arr = [];
+
+            while (temp) {
+                arr.push(temp.value);
+                temp = temp.next;
+            }
+
+            for (let i = arr.length - 1; i >= 0; i--) {
+                console.log(arr[i]);
+            }
+        }
+
+        printReverseList(list);
+
+        function repeatStringNumTimes(str, num) {
+            // repeat after me
+            let result = '';
+            for (let i = 0; i < num; i++) {
+                result += str;
+            }
+            return result;
+        }
+
+        console.log(repeatStringNumTimes("abc", 3));
+
+        let arrayItem1 = {
+            name: 'Cindy'
+        }
+        let arrayItem2 = {
+            name: 'Andy'
+        };
+        let arrayItem3 = {
+            name: 'Jason'
+        };
+
+        function mutation(arr) {
+            arr.forEach((item, index, array) => {
+                array[index] = new Set(item.toLowerCase().split(''));
+                // item = arrayItem3;
+            });
+            return arr[1].size === Array.from(arr[0]).filter(item => {
+                return arr[1].has(item);
+            }).length;
+        }
+        console.dir(mutation(["floor", "for"]));
+        // console.dir(mutation([arrayItem1, arrayItem2]));
+
+        function chunkArrayInGroups(arr, size) {
+            // Break it up.
+            let result = [];
+            let times = Math.ceil(arr.length / size);
+            for (let i = 0; i <= times; i++) {
+                if (arr.length === 0) {
+                    return result;
+                }
+                result.push(arr.splice(0, size))
+            }
+            if (arr.length > 0) {
+                result.push(arr);
+            }
+
+            return result;
+        }
+
+        // console.dir(chunkArrayInGroups(["a", "b", "c", "d"], 2));
+        // console.dir(chunkArrayInGroups([0, 1, 2, 3, 4, 5], 2));
+        console.dir(chunkArrayInGroups([0, 1, 2, 3, 4, 5, 6, 7, 8], 2));
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/spyDecorator.js"></script>
+<script>
+    function spy(func) {
+        // your code
+        let wrapper = function () {
+            wrapper.calls.push([...arguments]);
+            return func.apply(this, arguments);
+        }
+        wrapper.calls = [];
+        return wrapper;
+    }
+</script>
+
+</html>

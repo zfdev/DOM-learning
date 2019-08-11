@@ -6,10 +6,11 @@ Javascript Learning Path
 - 可以简单封装一个自己的库，不过最后写MVC程序时也要封装，也可以后面再做
 - 使用chrome工具可以很方便地查看DOM结构，CSSDOM渲染的style，DOM绑定的事件回调函数，DOM的属性继承等。
 - 整理一个结构图，而且使用自己的记忆总结，这样的好处是不至于黑瞎子掰苞米，学过的很快就忘记了。不过切记很详细。结构清晰就好。
-- **看完就忘记，学习效率等于0%，时间浪费率100%，所以不要着急追求速度。定期回顾加深记忆。以防做无用功。**
-- 记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。
+- **看完就忘记，学习效率等于0%，时间浪费率100%，所以不要着急追求速度。定期回顾加深记忆。以防做无用功。就像我之前一个月看了本nodejs书，一个月看了本Typescript的书，现在忘的精光，几乎什么都不记得了。白白浪费了两个月。**
+- **选择合适的书籍很重要，我当时就是选择了一本nodejs烂书，那本垃圾书看完了一点提升没有，还不如看官方文档，像我现在看的Javascript教程，既有文档又有练习，加上总结回看记忆深刻，如果没有好的选择，不如看官方文档。**
+- 记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。有时你看懂了也不一定是真懂，直到自己写出代码才能确认是不是真的懂了。
 - 可以选择性的看一些知识点，尤其是一些临界知识，花同样的时间可以获得最大的提升，以前经常犯的错误就是每次都从头开始看重复的知识，往往看了一段疲倦了就放弃了，导致一直在开头那一点知识，包括笔记本记的笔记也是，基本记了几页这个笔记本就没再用过。
-- 计划没有变化快，所以我现在都不列计划，以前列了计划也一定按时完成，不如把列计划的时间花在执行上，每天根据现有进度持续执行。比空头计划要有价值。
+- 计划没有变化快，所以我现在都不列计划，以前列了计划也不一定按时完成，不如把列计划的时间花在执行上，每天根据现有进度持续执行。比空头计划要有价值。
 
 参考资料
 ---
@@ -576,8 +577,11 @@ Object
             alert( arr ); // 1,2,3
             alert( String(arr) === '1,2,3' ); // true        
         ```
-        - 关于'+'操作符触发隐式转换的问题，当 "+" 操作符把一些项加到字符串后面时，加号后面的项也会被转换成字符串
-          `alert( [1] + 1 ); // "11"  alert( "1" + 1 ); // "11"`
+        - 关于'+'操作符触发隐式转换的问题，当 "+" 操作符把一些项加到字符串后面时，加号后面的项也会被转换成字符串，字符串相加触发了后面数字的隐式转换。
+          ```
+          alert( [1] + 1 ); // "11"  
+          alert( "1" + 1 ); // "11"
+          ```
         
     - Array methods
       - 修改原数组数据
@@ -595,7 +599,7 @@ Object
       - 不修改原数组
         - 复制数组元素
           - arr.slice(start, end) 从start到end但不包括end返回一个新数组。这个方法和str.slice很像
-          - arr.concat(...items) 将数组和其他数组元素组成新数组并返回，如果参数是多维数组将会被展开。
+          - arr.concat(...items) 将数组和其他数组元素组成新数组并返回，**如果参数是多维数组将会被展开**。
         - 计算生成新数组并返回
           - arr.map((item, index, array) => { return ...; }); 对数组的每个元素调用函数并返回结果数组。 
         - 累加计算并返回结果
@@ -603,14 +607,16 @@ Object
         - 字符串和数组相互转化
           - str.split(seperateStr) 字符串转数组，通过指定的seperateStr分隔符分割字符串为数组并返回
           - arr.join(seperateStr) 数组转字符串，通过指定的seperateStr分隔字符串合并数组为字符串并返回
-      - 查询数组元素
-        - arr.indexOf/lastIndexOf(item, pos) 从指定位置pos查找item如果找到就返回索引值，否则返回-1, lastIndexOf相同只不过是从尾部开始查询, `return Number;`
-        - arr.includes(item, fromPos) 从指定索引开始fromPos查询item,如果找到则返回true，否则返回false, `return Boolean`
-        - arr.find(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回第一个匹配的item则停止，如果没找到返回undefined, `return Object/undefined`
-        - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
-        - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
+      - 查询数组元素，这些方法很容易搞混淆，
+        - 参数为要查找的元素和开始的位置，常用的就是indexOf，includes返回的true/false应用太窄
+          - arr.indexOf/lastIndexOf(item, pos) 从指定位置pos查找item如果找到就返回索引值，否则返回-1, lastIndexOf相同只不过是从尾部开始查询, `return Number;`
+          - arr.includes(item, fromPos) 从指定索引开始fromPos查询item,如果找到则返回true，否则返回false, `return Boolean`
+        - 参数为true/false函数表达式，find只查找第一个元素，没有返回的是undefinded,filter查找的是所有符合的元素，没有返回的是空数组[]
+          - arr.find(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回第一个匹配的item则停止，如果没找到返回undefined, `return Object/undefined`
+          - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
+          - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
       - 迭代
-        - arr.forEach((item, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组
+        - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`来修改原数组的项。
       - 其他
         - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
     - Iterables
@@ -685,17 +691,17 @@ Object
 
                 // 迭代键（vegetables）
                 for (let vegetable of recipeMap.keys()) {
-                alert(vegetable); // cucumber, tomatoes, onion
+                    alert(vegetable); // cucumber, tomatoes, onion
                 }
 
                 // 迭代值（amounts）
                 for (let amount of recipeMap.values()) {
-                alert(amount); // 500, 350, 50
+                    alert(amount); // 500, 350, 50
                 }
 
                 // 迭代键值对 [key, value]
                 for (let [key, value] of recipeMap) { // 和 recipeMap.entries() 一样
-                alert(key, value); // cucumber,500（等等）
+                    alert(key, value); // cucumber,500（等等）
                 }            
             ```
           - map.forEach() 内置迭代方法和array的forEach很像
@@ -1100,6 +1106,474 @@ Object
         ```
 
   - Advanced working with functions
+    - Recursion and stack
+      - 当一个函数调用自身时，就称其为递归。递归基础是函数参数使得任务很简单，不需要其它更进一步调用。
+      - 递归是一种编程模式，当一个任务可以被分割成很多相似的简单重复任务，通过条件判断是去执行简单任务，或者继续执行递归。递归用于处理特定类型的数据结构，通常是用于数据结构类似的对象的遍历。它有着比循环更强的适应性。但是因为其有堆栈限制，我们要根据实际场景需求灵活应用。
+      - 使用递归最重要的就是把任务逻辑理清，把最简单的基础任务拆分出来，通过条件判断是执行简单任务，还是执行递归，记得递归时返回值上一个递归。用逻辑图去分析通常更加透彻。
+        ```
+        function pow(x, n) {
+            if (n == 1) {
+                return x;
+            } else {
+                return x * pow(x, n - 1);
+            }
+        }
+
+        alert( pow(2, 3) ); // 8            
+        ```
+      - 执行堆栈
+        - 一个函数运行的信息被存储在它的执行上下文里，执行上下文是一个内部数据结构，它包含一个函数执行时的细节：当前工作流在哪里，当前的变量，this 的值（这里我们不使用它），以及其它一些内部细节。
+        - 每个函数调用都有与其相关联的执行上下文。当一个函数有嵌套调用时，下面的事情会发生：
+          - 当前函数被暂停；
+          - 与它关联的执行上下文被一个叫做执行上下文堆栈的特殊数据结构保存；
+          - 执行嵌套调用；
+          - 嵌套调用结束后，之前的执行上下文从堆栈中恢复，外部函数从停止的地方继续执行。
+          - 递归调用过程中，调用相同的函数，所有的函数处理过程在数据结构层面表现
+            - 当前上下文被「记录」在堆栈的顶部；
+            - 为子调用创建新上下文；
+            - 当子调用结束后 —— 前一上下文从堆栈弹出，继续执行。
+      - 性能
+        - 任何递归都可以用循环来重写。循环变体一般更加有效
+        - 但有时重写很难，尤其是函数根据条件使用不同的子调用，然后合并它们的结果，或者分支比较复杂。而且有些优化可能没有必要，完全不值得。递归能提供更简洁的代码，容易理解和维护。优化并不是处处需要，大多数时候我们需要一个好代码，这就是它被使用的原因。
+      - 递归遍历
+        - 递归另一个重要应用就是递归遍历
+          - 首先分析好数据结构，明确最简单的基础任务，条件是什么
+          - 对于需要调用递归的复杂对象拆分，想办法用N个子递归拆分成为基础任务
+      - 链表
+        - 我们要存储一个有序的对象列表，用数组有个问题。「删除元素」和「插入元素」操作代价非常大。例如，arr.unshift(obj) 操作必须对所有元素重新编号以便为新的元素 obj 腾出空间，而且如果数组很大，会很耗时。arr.shift() 同理。
+        - 如果我们真的需要快速插入、删除的话，我们可以选择另一种叫做链表的数据结构。当然，链表不总是优于数组。不然大家都去使用链表了。主要的不足就是我们无法轻易通过它的编号获取元素。在数组中却很容易：arr[n] 是一个直接引用。而在列表中，我们需要从起点元素顺着 next 找 N 次才能获取到第 N 个元素。
+          - 链表元素是一个被递归定义的对象，它有
+            - value
+            - next 属性引用下一个链表元素或者代表末尾的 null
+            ```
+            let list = {
+                value: 1,
+                next: {
+                    value: 2,
+                    next: {
+                    value: 3,
+                    next: {
+                        value: 4,
+                        next: null
+                    }
+                    }
+                }
+            };            
+            ```
+          - 我们可以在任何位置插入或移除元素
+           ```
+            let list = { value: 1 };
+            list.next = { value: 2 };
+            list.next.next = { value: 3 };
+            list.next.next.next = { value: 4 };
+
+            // 将新值添加到列表头部
+            list = { value: "new item", next: list };           
+           ```
+         - 移除中间的一个值，修改前一个元素的 next
+           ```
+           list.next = list.next.next;
+           ```
+    - Rest parameter and spread operator
+      - 当我们在代码中遇到 "..." 时，它不是 Rest 参数就是 Spread 操作符。
+      - 我们可以使用下列方法区分二者：
+        - 若 ... 出现在函数的参数列表，那它表示的就是 Rest 参数，它会把函数多余的实参收集到一个数组中。
+        ```
+        function sumAll(...args) { // 数组变量名为 args
+            let sum = 0;
+            for (let arg of args) sum += arg;
+            return sum;
+        }
+
+        alert( sumAll(1) ); // 1
+        alert( sumAll(1, 2) ); // 3
+        alert( sumAll(1, 2, 3) ); // 6        
+        ```
+        - 若 ... 出现在函数调用或类似的表达式中，那它就是 Spread 操作符，它会把一个数组展开为逗号分隔的元素列表。
+        ```
+        let arr = [3, 5, 1];
+        alert( Math.max(...arr) ); // 5（Spread 操作符把数组转为参数列表）
+        ```
+      - 使用场景：
+        - Rest 参数用于创建可接收任意个参数的函数。
+        - Spread 操作符可以在函数调用传参时，把含有参数的数组展开为函数需要的参数列表形式。
+        - 这两个操作符的出现方便了我们在参数数组和参数列表间来回转换。
+        - “旧式”的 arguments（类数组对象）也依然能够帮助我们获取函数调用时的所有参数。
+      - Array.from(arrayLikeObject/iteratorObject)和[...iteratorObject]的区别
+        - Array.from 同时适用于类数组对象和可遍历对象。
+        - Spread 操作符只能操作可遍历对象。
+        - 因此，若希望把一些“东西”转为数组，使用 Array.from 将更为通用
+
+    - Closure
+      - 词法环境(作用域scope)，每个运行的函数都有一个Lexical Environment的关联对象
+        - Environment Record把所有局部变量作为其属性的对象，操作变量实际上操作的是该对象的属性
+        - 外部环境，嵌套当前代码之外的环境
+      - 函数声明
+        - 函数声明并不像变量声明那样，代码运行到他们时，它们并不会立刻执行，而是在词法环境创建完成之后再执行。
+        - 当函数运行时，会自动创建一个新的函数词法环境 the function Lexical Environment，这个词法环境对象用于存储调用的局部变量和参数。
+        - 当代码试图访问一个变量时，它首先会在词法环境内部搜索，然后是外部环境，直到Lexical Environment链的末尾。
+        - 函数每次调用都会创建一个新的函数Lexical Environment，如果被多次调用，每次都会创建一个拥有指定局部变量和参数的Lexical Environment
+      - 嵌套函数
+        - 在函数中创建函数，可以在函数内部创建一个临时函数用于计算，也可以返回一个函数给外部调用。还可以用构造函数返回一个新对象，把函数作为对象的属性。
+        - All functions “on birth” receive a hidden property [[Environment]] with a reference to the Lexical Environment of their creation.
+        - 嵌套函数之所以能访问外层函数里的变量，就是因为函数创建时，函数自动创建的[[Environment]]的属性记录了创建时的词法环境，所以通过引用可以访问外层嵌套函数的局部变量。假如找不到，会通过外部环境引用逐级查找直到全局的null.
+        - 一次调用 —— 一个词法环境
+          - 请记住，每次函数运行会都会创建一个新的函数词法环境。如果一个函数被调用多次，那么每次调用也都会此创建一个拥有指定局部变量和参数的词法环境
+        - 词法环境是一个规范对象。我们不能在代码中获取或直接操作该对象。但 JavaScript 引擎同样可以优化它，比如清除未被使用的变量以节省内存和执行其他内部技巧等，但显性行为应该是和上述的无差。
+      - 闭包
+        - 闭包本质上就是函数能够访问外部变量，因为函数创建时自动创建[[Environment]]对象来访问创建时词法环境。
+      - 代码块，循环和IIFE立即调用函数表达式
+        - 当代码块中包含块级局部变量并运行时，会创建词法环境。
+        - 对于循环而言，每次迭代都有独立的词法环境。如果在 for 循环中声明变量，那么它在词法环境中是局部的：
+          ```
+            for (let i = 0; i < 10; i++) {
+                // 每次循环都有其自身的词法环境
+                // {i: value}
+            }
+
+            alert(i); // 错误，没有该变量          
+          ```         
+        - 立即调用函数IIFE,代码拥有自己的私有变量并立即执行。
+         ```
+            // 创建 IIFE 的方法
+
+            (function() {
+                alert("Brackets around the function");
+            })();
+
+            (function() {
+                alert("Brackets around the whole thing");
+            }());
+
+            !function() {
+                alert("Bitwise NOT operator starts the expression");
+            }();
+
+            +function() {
+                alert("Unary plus starts the expression");
+            }();         
+         ```
+          
+      - 垃圾回收
+        - 如果有一个嵌套函数在 f 结束后仍可达，那么它的 [[Environment]] 引用会继续保持着外部词法环境存在,词法环境对象在变成不可达时会被清理：当没有嵌套函数引用（它）时。在下面的代码中，在 g 变得不可达后，value 同样会被从内存中清除；
+          ```
+            function f() {
+                let value = 123;
+                function g() { alert(value); }
+                return g;
+            }
+
+            let g = f(); // g 是可达的，并且将其外部词法环境保持在内存中     
+            g = null; // ...在内存中被清理     
+          ```
+    - The old 'var'
+      - let and const有自己的块级作用域，不会产生一些怪异问题。
+      - 旧时遗留的var有很多坑，我们需要了解一下以便在旧代码中出现怪异行为时得到修复。
+        - “var” 没有块级作用域，它在if块内，for循环块内都是对外部可见的。虽然在函数体不会向外提升。
+        ```
+        if (true) {
+            var test = true; // 用 "var" 而不是 "let"
+        }
+
+        alert(test); // true，变量在 if 结束后仍存在        
+        ```
+        - var 变量会在函数开头被定义，与它在代码里定义的位置无关（这里不考虑定义在嵌套函数里的场景）。这个现象也叫变量提升。但是赋值不会。
+        ```
+        function sayHi() {
+            var phrase; // 声明在开头工作……
+            alert(phrase); // undefined
+            phrase = "Hello"; // ...赋值 — 当执行到这里时。
+        }
+
+        sayHi();        
+        ```
+    - Global object
+      - 在浏览器环境，全局变量是window，在nodejs环境，全局变量是global
+      - 由于历史原因，window不仅是全局对象，还提供访问浏览器器窗口属性的功能，例如`window.innerHeight; //浏览器窗口高度`
+      - 只有传统的`var`声明的变量会成为全局对象window的属性，现代`let/const`创建的变量并不会在window创建属性。
+      - 所有script标签里的脚本共享一个全局作用域
+      - 全局变量的作用，我们通过将一些需要全局共享的变量存储在全局对象中，以便他们在其他script标签中访问，可以通过检测全局对象验证浏览器是否支持新特性。
+        - 检测是否支持Promise
+        ```
+            if (!window.Promise) {
+            alert("Your browser is really old!");
+            }   
+        ```
+        - 创建polyfills,兼容旧浏览器让他们支持现代新特性
+        ```
+        if (!window.Promise) {
+            window.Promise = ... // 自定义实现现代语言特性
+        }        
+        ```
+    - Function object, NFE
+      - Javascript里，函数也是一个对象，我们不仅可以调用他们，也可以把他们当做对象添加删除属性。例如很多JavaScript库都使用这样方式创建，例如lodash，创建了一个_函数，然后添加了_.add, _.keyBy等属性，减少了命名冲突的可能性。
+      - Function的属性
+        - func.name 函数名, 注意匿名函数的name值为空
+          ```
+            let sayHi = function() {
+                alert("Hi");
+            }
+
+            alert(sayHi.name); // sayHi（生效了!）
+          ```
+        - func.length 函数传入参数的个数，可以用来根据参数个数实现函数重载
+          ```
+            function f1(a) {}
+            function f2(a, b) {}
+            function many(a, b, ...more) {}
+
+            alert(f1.length); // 1
+            alert(f2.length); // 2
+            alert(many.length); // 2
+          ```
+        - 自定义属性
+          - 我们可以为函数添加自定义的属性func.customProperty，注意区别与闭包的函数创建环境存储的局部变量的区别，他们之间没有任何关系，也需要注意与构造函数的属性区别，构造函数的this.property属性是存储在实例上的，不能直接通过构造函数访问。
+          - 下面的例子，count被直接储存在函数里，而不是它的创建时外部的词法环境。这样与闭包相比做最大的区别就是我们可以通过函数访问到它，假如使用闭包外部的代码是无法访问到它的。
+          ```
+            function makeCounter() {
+                // 不再用：
+                // let count = 0
+
+                function counter() {
+                    return counter.count++;
+                };
+
+                counter.count = 0;
+
+                return counter;
+            }
+
+            let counter = makeCounter();
+            alert( counter() ); // 0
+            alert( counter() ); // 1         
+          ```
+      - 命名函数表达式 Named Function Expression
+        - 带有名字的函数表达式，可以在函数体内部通过函数名访问函数自身引用。假如函数原变量可能会被外部修改，为了保持正确的调用，我们可以使用这种方法创建函数。
+          - 它允许在函数内部引用自己。
+          - 它在函数外是不可见的。
+          ```
+            let sayHi = function func(who) {
+                if (who) {
+                    alert(`Hello, ${who}`);
+                } else {
+                    func("Guest"); // 现在一切正常
+                }
+            };
+
+            let welcome = sayHi;
+            sayHi = null;
+
+            welcome(); // Hello, Guest（嵌套调用有效）          
+          ```
+    - The 'new Function' syntax
+      - 通过字符串来创建函数，传入的所有参数都是字符串，它的应用场景非常特殊，比如需要从服务端获取代码或者动态地按模板编译函数的时候才会使用。
+        ```
+        let func = new Function ([arg1[, arg2[, ...argN]],] functionBody)        
+        ```
+        - 例子
+          ```
+          let sum = new Function('a', 'b', 'return a + b');
+          alert( sum(1, 2) ); // 3        
+          ```
+        - 闭包
+          - 函数会使用一个特殊的属性 [[Environment]] 来记录函数创建时的环境，它具体指向了函数创建时的词法环境。但是如果我们使用 new Function 创建函数，函数的 [[Environment]] 并不指向当前的词法环境，而是指向全局环境。
+          - 例子
+          ```
+            function getFunc() {
+                let value = "test";
+                let func = new Function('alert(value)');
+                return func;
+            }
+
+            getFunc()(); // error：value 未定义
+
+            function getFunc() {
+                let value = "test";
+                let func = function() { alert(value); };
+                return func;
+            }
+
+            getFunc()(); // "test"，变量值取自 getFunc 的词法环境
+          ```
+
+    - Scheduling: setTimeout and setInterval
+      - windows.setTimeout/window.clearSetTimeout 延迟调度
+        - let timerId = setTimeout(func|code, delay[, arg1, arg2...])
+          - fun想要执行的函数引用名，或者是匿名函数嵌套(箭头函数)
+          - code 函数字符串，不建议使用，只是为了兼容以前的特性
+          - delay 执行前的延时 单位毫秒 1s = 1000ms
+          - arg1, arg2...要传入被执行函数的参数
+        - 例子
+          - 带参数
+          ```
+            function sayHi(phrase, who) {
+                alert( phrase + ', ' + who );
+            }
+
+            setTimeout(sayHi, 1000, "Hello", "John"); // Hello, John          
+          ```
+          - 匿名函数
+          ```
+            setTimeout(() => alert('Hello'), 1000);          
+          ```
+        - 取消调度,参数是setTimeout返回的time id
+          ```
+            let timerId = setTimeout(...);
+            clearTimeout(timerId);          
+          ```
+
+      - window.setInterval/window.clearInterval 让函数在一定时间间隔周期性执行
+        - let timerId = setInterval(func|code, delay[, arg1, arg2...])
+          - 参数与setTimeout相同
+          - 例子
+            ```
+            // 每 2 秒重复一次
+            let timerId = setInterval(() => alert('tick'), 2000);
+
+            // 5 秒之后停止
+            setTimeout(() => { clearInterval(timerId); alert('stop'); }, 5000);
+            ```
+
+      - 弹窗会让 Chrome/Opera/Safari 内的时钟停止
+          - 在众多浏览器中，IE 和 Firefox 在显示 alert/confirm/prompt 时，内部的定时器仍旧会继续滴答，但是在 Chrome、Opera 和 Safari 中，内部的定时器会暂停/冻结。
+
+      - 递归版setTimeout实现可控的周期调用,而且时间精度上比setInterval要准确多，因为setInterval调用的周期间隔还要被函数执行消耗掉一部分，假如消耗时间超过了时间间隔周期，那么下一次调用会立刻执行。而setTimeout则不会，它是在上一次调用都执行完成之后才开始下一次调度的。
+        - 例子
+          ```
+            /** 这是一种：
+            let timerId = setInterval(() => alert('tick'), 2000);
+            */
+
+            let timerId = setTimeout(function tick() {
+                alert('tick');
+                timerId = setTimeout(tick, 2000); // (*) setTimeout在这次函数执行完毕之后，立刻安排了下一次调用
+            }, 2000);          
+          ```
+        - 根据服务器负载降低请求频率
+          ```
+            let delay = 5000;
+
+            let timerId = setTimeout(function request() {
+                ...send request...
+
+                if (request failed due to server overload) {
+                    // 下一次执行的间隔是当前的 2 倍
+                    delay *= 2;
+                }
+
+                timerId = setTimeout(request, delay);
+
+            }, delay);         
+          ``` 
+      - 垃圾回收
+        - 当一个函数传入 setInterval/setTimeout 时，内部会为其创建一个引用，保存在调度器中。这样，即使这个函数没有被引用，也能防止垃圾回收器（GC）将其回收。对于 setInterval，传入的函数也是存在于内存中，直到 clearInterval 被调用。这里还要提到一个副作用。如果函数引用了外部变量（译者注：闭包），那么只要这个函数还存活着，外部变量也会随之存活，这样就可能会占用多于方法自身所需要的内存。所以，如果某个函数不需要再被调度，即使是个很小的函数，最好也将其取消。
+
+      - 使用setTimeout(...,0)分割高负载任务，不让脚步执行进入挂起状态，给浏览器时间响应并渲染界面。
+        - 关键点在于拆分任务，然后通过条件判断是否继续执行setTimeout递归，也就是任务是否执行完成。
+          ```
+            <div id="progress"></div>
+
+            <script>
+            let i = 0;
+
+            function count() {
+
+                // 每次只完成一部分 (*)
+                do {
+                i++;
+                progress.innerHTML = i;
+                } while (i % 1e3 != 0);
+
+                if (i < 1e9) {
+                setTimeout(count, 0);
+                }
+
+            }
+
+            count();
+            </script>          
+          ```
+          ```
+            let i = 0;
+
+            let start = Date.now();
+
+            function count() {
+
+                // 现在将调度放在开头
+                if (i < 1e9 - 1e6) { //只有判断任务未完成才执行递归，这也是setTimeout比较优雅的地方，执行可控
+                    setTimeout(count, 0); // 安排下一次调用,当当前代码块执行完成之后，在下一次eventLoop开始调用。
+                }
+
+                do {
+                    i++;
+                } while (i % 1e6 != 0);
+
+                if (i == 1e9) { 已经完成的条件，输出结果
+                    alert("Done in " + (Date.now() - start) + 'ms');
+                }
+
+            }
+
+            count();          
+          ```
+
+    - Decorators and forwarding, call/apply
+      - 装饰器
+        - 改变函数行为的包装器，主要工作由原函数执行，但是额外为函数增强了一些特性。通过闭包或者函数的属性存储数据。并没有改变原函数的代码，我们可以为函数添加多个装饰器，也可以为多个函数添加相同的装饰器，他们之间不会互相影响。
+        - 一个结果稳定的CPU高负载运算函数，为其添加一个缓存结果装饰器提高其性能。
+        ```
+        function cachingDecorator(func) {
+            let cache = new Map();
+            return function (...args) { //wrapper
+                let key = hash(args); //args = [].join.call(arguments);
+                if (cache.has(key)) {
+                    return cache.get(key);
+                }
+                let result = func.apply(this, args); //bind original method to context
+                cache.set(key, result);
+                return result;
+            }
+        }
+
+        function hash(args) {
+            return args.join(''); //散列函数从多个值创建一个值
+        }        
+        ```
+      - 修改函数执行的上下文context
+        - 通过使用方法`func.apply(context, args)` or `func.call(context, ...args)`，call方法中使用spread运算符将数组展开为参数列表
+        ```
+        function say(phrase) {
+            alert(this.name + ': ' + phrase);
+        }
+
+        let user = { name: "John" };
+
+        // user becomes this, and "Hello" becomes the first argument
+        say.call( user, "Hello" ); // John: Hello       
+        ```
+        - func.call(context, arg1, arg2, ...) 传入的参数为可迭代列表
+        - func.apply(context, [...args]) 传入的参数为数组
+          - 比如`Math.max(num1, num2, ...);`接收的参数是数字参数列表，但是我们可以使用func.apply支持参数为数组的特性把此方法应用于数组并返回数组的最大项，
+          `Math.max.apply(null, array);`，记得这里的作用域是global或者null，因为参数要转换成数组
+        - 这里的context虽然意义上是作用域，实际上是调用的对象上下文。
+      - 呼叫转移
+        ```
+        let wrapper = function() {
+            return anotherFunction.apply(this, arguments);
+        };        
+        ```
+        这叫做 呼叫转移。wrapper 传递它获得的所有内容：上下文 this 和 anotherFunction 的参数并返回其结果。当外部代码调用这样的 wrapper 时，它与原始函数的调用无法区分。
+      - **方法借用**,当我们从一个对象中获取一个方法并在另一个对象的上下文中“调用”它时，我们也看到了一个方法借用的例子
+        ```
+        function hash() {
+            alert( [].join.call(arguments) ); // 1,2 注意这里的arguments是一个发迭代的类数组对象，把arguments对象作为对象传入了数组的实例方法join，并不是参数，这里理解透彻，另外[]返回的是数组的实例，也可以使用Array.prototype.join作为替代，目的都是获取数组的join方法，原有的只能在数组实例上调用的方法join现在通过call方法传入其他对象作为参数并返回正确的结果，我们可以使用Javascript内部的任何内置方法作用于任何对象上，这样的特性极为强大和灵活。
+        }
+
+        hash(1, 2);        
+        ```
+    - Function binding
+    - Arrow functions revisited
   - Object properties configuration
   - Prototypes, inheritance
   - Classes
@@ -1361,7 +1835,7 @@ Object
 
       - element.addEventListener(eventName, handler, [, phase]);
         - eventName 事件名称字符串
-        - handler 处理器函数名
+        - handler 处理器函数名，这里的函数名是函数的引用，如果函数内有this指向，注意绑定this调用的对象
         - phase 是否在捕获阶段处理，默认为false, 在冒泡阶段处理
         - 支持添加多个handler, 事件触发时依次执行
 
@@ -1988,7 +2462,7 @@ Object
   - 反向引用
     - String.replace中的可以用`$n`访问第n个捕获组
       - `name = name.replace(/(\w+) (\w+)/i, "$2, $1");`
-    - 在正则表达式中我们使用`\n`来引用捕获组
+    - 在正则表达式中我们使用`\n`来引用捕获组, n start from 1.
       - `let reg = /['"](.*?)['"]/g;` the same as below
       - `let reg = /(['"])(.*?)\1/g;`
     - 在组内使用 ?: 则无法引用到该组。正则表达式引擎不会记住被排除在捕获 (?:...) 之外的组。

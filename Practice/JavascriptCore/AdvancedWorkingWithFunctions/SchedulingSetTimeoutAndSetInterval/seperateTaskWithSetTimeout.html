@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <div id="progress"></div>
+    <script>
+        let progress = document.querySelector('#progress');
+        let number = 0;
+        let printProgress = function () {
+            do {
+                number++;
+            } while (number % 1e3 != 0);
+            progress.innerHTML = number;
+            if (number < 1e6) {
+                setTimeout(printProgress, 0);
+            }
+        }
+        printProgress();
+    </script>
+</body>
+
+</html>

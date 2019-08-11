@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Caching Decorator</title>
+</head>
+
+<body>
+    <script>
+        function slow(x) {
+            // 这里可能会有重负载的CPU密集型工作
+            alert(`Called with ${x}`);
+            return x;
+        }
+
+        // let worker = {
+        //     someMethod() {
+        //         return 1;
+        //     },
+
+        //     slow(x) {
+        //         // 显然, 这里会有一个 CPU 重负载的任务
+        //         alert("Called with " + x);
+        //         return x * this.someMethod(); // (*)
+        //     }
+        // };
+
+        function cachingDecorator(func) {
+            let cache = new Map();
+            return function (...args) {
+                let key = hash(args); //args = [].join.call(arguments);
+                if (cache.has(key)) {
+                    return cache.get(key);
+                }
+                let result = func.apply(this, args);
+                cache.set(key, result);
+                return result;
+            }
+        }
+
+        function hash(args) {
+            return args.join('');
+        }
+        slow = cachingDecorator(slow);
+
+        // alert(slow(1)); // slow(1) 被缓存起来了
+        // alert("Again: " + slow(1)); // 一样的
+
+        // alert(slow(2)); // slow(2) 被缓存起来了
+        // alert("Again: " + slow(2)); // 也是一样
+
+        // alert(worker.slow(1)); // 之前的函数起作用了
+        // worker.slow = cachingDecorator(worker.slow); // 现在让它缓存起来
+        // alert(worker.slow(2)); //这里报错，因为方法里的this指向了全局对象window，所以会报错，这样调用和下面调用一样，丢失了this的上下文。
+        // let noContext = worker.slow;
+        // noContext(2);
+
+        function sayHi() {
+            alert(this.name);
+        }
+
+        let user = {
+            name: "John"
+        };
+        let admin = {
+            name: "Admin"
+        };
+
+        // sayHi.call(user); //在对象user的上下文中调用sayHi方法，就可以找到name属性了
+        // sayHi.call(admin);
+
+        let worker = {
+            slow(min, max) {
+                alert(`Called with ${min},${max}`);
+                return min + max;
+            }
+        };
+
+        function say(phrase) {
+            alert(this.name + ': ' + phrase);
+        }
+
+        let user1 = {
+            name: "John"
+        };
+        // say.call(user1, 'Steven');
+
+        worker.slow = cachingDecorator(worker.slow);
+        alert(worker.slow(3, 5)); // works
+        alert("Again " + worker.slow(3, 5)); // same (cached)
+    </script>
+</body>
+
+</html>

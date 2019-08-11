@@ -1,0 +1,52 @@
+<!doctype html>
+<!-- <script src="https://en.js.cx/test/libs.js"></script> -->
+<!-- <script src="test/debounceDecorator.js"></script> -->
+<script>
+    // ...Your code...
+    let debounce = function (func, ms) {
+        //使用Date对象实现，alert会暂停setTimeout的计时器，但是不会影响Date对象的计时，所以下面假如调用了alert方法，Date的计时仍然继续，所以并不是bug，而是不要使用阻断用户交互的方法就可以了。
+        // let debounced = function (...args) {
+        //     if (debounced.previousCall === undefined) {
+        //         debounced.previousCall = Date.now();
+        //         return func.apply(this, args);
+        //     } else {
+        //         console.log(Date.now() - debounced.previousCall);
+        //         if (Date.now() - debounced.previousCall >= ms) {
+        //             debounced.previousCall = Date.now();
+        //             return func.apply(this, args);
+        //         }
+        //     }
+        // }
+        // return debounced;
+
+        //另一种实现, 使用闭包内的局部变量，通过调用函数时创建的词法环境隔离访问，每次调用都会创建独立的词法环境用于存储局部变量。这个局部变量只能通过返回的函数访问。
+        let isInCooldown = false; //Is in the cooldown period or not
+        let debouncedSetTimeout = function (...args) {
+            if (isInCooldown) {
+                return;
+            }
+            func.apply(this, args);
+            isInCooldown = true;
+            setTimeout(() => isInCooldown = false, ms);
+        }
+        return debouncedSetTimeout;
+    }
+
+    let log = '';
+
+    function f(a) {
+        log += a;
+        console.log('Result:', log);
+    }
+
+    f = debounce(f, 1000);
+
+    f(1); // runs at once
+    f(2); // ignored
+
+    setTimeout(() => f(3), 100); // ignored (too early)
+    setTimeout(() => f(4), 1100); // runs (1000 ms passed)
+    setTimeout(() => f(5), 1500); // ignored (less than 1000 ms from the last run)
+</script>
+
+</html>

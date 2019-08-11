@@ -1,0 +1,25 @@
+<!doctype html>
+<script src="https://zh.js.cx/test/libs.js"></script>
+<script src="test/delayingDecorator.js"></script>
+<script>
+    // ...你的代码...
+    let delay = function (func, ms) {
+        return function (...args) {
+            let saveThis =
+                this; //由于setTimeout调用将this指向window or global，我们需要需要在包装器函数中绑定作用域，所以我们使用了saveThis来保存正确的作用域并将其传入setTimeout匿名函数中
+            setTimeout(function () {
+                return func.apply(saveThis, args);
+            }, ms);
+        }
+
+        //Other solution
+        return function () {
+            setTimeout(() => f.apply(this, arguments),
+                ms
+                ); //箭头函数没有自己的this和arguments, 所以f.apply的this和argumetns都是从包装器中的匿名函数也就是返回给变量的函数的作用域获取的，利用箭头函数的特性解决了setTimeout的全局作用域的问题。
+        };
+
+    }
+</script>
+
+</html>

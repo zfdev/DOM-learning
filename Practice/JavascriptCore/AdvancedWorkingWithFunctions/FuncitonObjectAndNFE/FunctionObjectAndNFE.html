@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function ask(question, ...handlers) {
+            let isYes = confirm(question);
+
+            for (let handler of handlers) {
+                if (handler.length == 0) {
+                    if (isYes) handler();
+                } else {
+                    handler(isYes);
+                }
+            }
+
+        }
+
+        // 正向回答，两个 handler 都会被调用
+        // 负向回答，只有个第二个被调用
+        // ask("Question?", () => alert('You said yes'), result => alert(result));
+
+        let sum = function (firstNum) {
+            let sumResult = firstNum;
+            let addFunc = function (num) {
+                sumResult += num;
+                return addFunc;
+            }
+            addFunc.toString = function () {
+                return sumResult;
+            }
+            return addFunc; //这里只是在不断的返回函数给下一个参数调用，并且同时把参数传进来累加，输出结果的时候使用toString方法把函数创建环境中的sumResult输出就可以了。
+        }
+        alert(sum(1)(2));
+        alert(sum(1)(2)(3));
+    </script>
+</body>
+
+</html>

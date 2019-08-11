@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let printNumbersSetTimeout = function (from, to) {
+            // if (from <= to) {
+            //     alert(from++);
+            //     setTimeout(printNumbersSetTimeout, 1000, from, to);
+            // }
+            let current = from;
+            setTimeout(function go() {
+                alert(current);
+                if (current < to) {
+                    setTimeout(go, 1000); //这里用了NFE 而且使用嵌套setTimeout实现了类似递归的效果
+                }
+                current++;
+            }, 1000);
+        };
+        // printNumbersSetTimeout(5, 10);
+
+        let printNumbersSetInterval = function (from, to) {
+            let output = setInterval(function () {
+                alert(from++);
+                if (from > to) {
+                    clearInterval(output);
+                }
+            }, 1000);
+        }
+        printNumbersSetInterval(5, 10);
+    </script>
+</body>
+
+</html>
