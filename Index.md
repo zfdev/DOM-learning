@@ -616,7 +616,7 @@ Object
           - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
           - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
       - 迭代
-        - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`来修改原数组的项。
+        - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`获取引用来修改原数组项的值。
       - 其他
         - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
     - Iterables
@@ -1572,8 +1572,309 @@ Object
 
         hash(1, 2);        
         ```
+      - 常用Decorators
+        - 延时装饰器
+        ```
+        let delay = function (func, ms) {
+            return function (...args) {
+                let saveThis =
+                    this; //由于setTimeout调用将this指向window or global，我们需要需要在包装器函数中绑定作用域，所以我们使用了saveThis来保存正确的作用域并将其传入setTimeout匿名函数中
+                setTimeout(function () {
+                    return func.apply(saveThis, args);
+                }, ms);
+            }
+
+            //Other solution
+            return function () {
+                setTimeout(() => f.apply(this, arguments),
+                    ms
+                    ); //箭头函数没有自己的this和arguments, 所以f.apply的this和argumetns都是从包装器中的匿名函数也就是返回给变量的函数的作用域获取的，利用箭头函数的特性解决了setTimeout的全局作用域的问题。
+            };
+
+        }        
+        ```
+        - 固定频率执行函数装饰器 debounce
+          ```
+            //这个方法可以限制某个函数执行的频率，只有在指定时间间隔才可以调用成功，其余时间间隔内的调用都将被忽略。
+            let debounce = function (func, ms) {
+                //使用Date对象实现，alert会暂停setTimeout的计时器，但是不会影响Date对象的计时，所以下面假如调用了alert方法，Date的计时仍然继续，所以并不是bug，而是不要使用阻断用户交互的方法就可以了。
+                // let debounced = function (...args) {
+                //     if (debounced.previousCall === undefined) {
+                //         debounced.previousCall = Date.now();
+                //         return func.apply(this, args);
+                //     } else {
+                //         console.log(Date.now() - debounced.previousCall);
+                //         if (Date.now() - debounced.previousCall >= ms) {
+                //             debounced.previousCall = Date.now();
+                //             return func.apply(this, args);
+                //         }
+                //     }
+                // }
+                // return debounced;
+
+                //另一种实现, 使用闭包内的局部变量，通过调用函数时创建的词法环境隔离访问，每次调用都会创建独立的词法环境用于存储局部变量。这个局部变量只能通过返回的函数访问。
+                let isInCooldown = false; //Is in the cooldown period or not
+                let debouncedSetTimeout = function (...args) {
+                    if (isInCooldown) {
+                        return;
+                    }
+                    func.apply(this, args);
+                    isInCooldown = true;
+                    setTimeout(() => isInCooldown = false, ms);
+                }
+                return debouncedSetTimeout;
+            }         
+          ```
+        - 节流装饰器 throttle
+          ```
+            let throttle = function (func, ms) {
+                let isThrottled = false;
+                let saveThis, saveArgruments;
+                let wrapper = function () {
+                    if (isThrottled) {
+                        saveThis = this;
+                        saveArgruments = arguments;
+                        return;
+                    }
+
+                    func.apply(this, arguments);
+                    isThrottled = true;
+                    setTimeout(() => {
+                        isThrottled = false;
+                        if (saveArgruments) {
+                            wrapper.apply(saveThis,
+                            saveArgruments); // 这里不是只是调用了func这个方法，我们需要再次执行一次wrapper进入冷却状态，并且设置超时以重置它
+                            saveArgruments = saveThis = null;
+                        }
+                    }, ms);
+                }
+                return wrapper;
+            }        
+          ```
     - Function binding
+      - 函数变量引用对象的方法导致this上下文丢失，这样的现象经常在开发过程中发生，例如setTimeout里，或者dom.addEventListener，因为传递的参数是函数的引用(函数变量名)，导致this指向了错误的对象。
+      ```
+        let user = {
+        firstName: "John",
+        sayHi() {
+            alert(`Hello, ${this.firstName}!`);
+        }
+        };
+
+        setTimeout(user.sayHi, 1000); // Hello, undefined!  
+        //上面的代码相当于
+        //let f = user.sayHi;
+        //setTimeout(f, 1000); // user上下文丢失    
+      ```
+      - 解决this丢失的方案
+        - 匿名函数包装层，将本来应该传递函数名的参数替换成匿名函数返回，并在函数内部调用带有作用域的context.method()从而绑定作用域，这个方法的弊端是，绑定之后假如绑定对象有改变会指向改变的值
+          ```
+            let user = {
+                firstName: "John",
+                sayHi() {
+                    alert(`Hello, ${this.firstName}!`);
+                }
+            };
+
+            setTimeout(function() {
+                user.sayHi(); // Hello, John!
+            }, 1000); 
+            //setTimeout(() => user.sayHi(), 1000); // Hello, John!         
+          ```
+        - 强制绑定方法为作用域context并改变方法引用为绑定的方法
+          - `let boundFunc = func.bind(context);`
+            ```
+            let user = {
+                firstName: "John",
+                sayHi() {
+                    alert(`Hello, ${this.firstName}!`);
+                }
+            };
+
+            let sayHi = user.sayHi.bind(user); // (*)
+
+            sayHi(); // Hello, John!
+
+            setTimeout(sayHi, 1000); // Hello, John!          
+            ```
+          - bindAll
+            ```
+            for (let key in user) {
+                if (typeof user[key] == 'function') {
+                    user[key] = user[key].bind(user);
+                }
+            }
+            ```
     - Arrow functions revisited
+      - 箭头函数没有this，它获取的this来自外层函数
+        ```
+        let group = {
+            title: "Our Group",
+            students: ["John", "Pete", "Alice"],
+
+            showList() {
+                this.students.forEach(
+                    student => alert(this.title + ': ' + student) //(*) this获取自外层函数，所以能获取正确的的对象group
+                );
+            }
+        };
+
+        group.showList();        
+        ```
+      - 普通匿名函数的this是undefined
+        ```
+        let group = {
+            title: "Our Group",
+            students: ["John", "Pete", "Alice"],
+
+            showList() {
+                this.students.forEach(function(student) {
+                    // Error: Cannot read property 'title' of undefined this=undefined
+                    alert(this.title + ': ' + student) 
+                });
+            }
+        };
+
+        group.showList();        
+        ```
+      - 箭头函数没有arguments，它的arguments来子外层函数
+      - 箭头函数没有this，所以不能作为构造函数使用，无法通过new调用创建对象
+      - Arrow functions VS bind
+        - func.bind(this) 创建该函数的 “绑定版本”
+        - 箭头函数 => 不会创建任何绑定。该函数根本没有 this。在外部上下文中，this 的查找与普通变量搜索完全相同。
+      - 我们可以利用箭头函数的这个特性，转发调用
+        ```
+        function defer(f, ms) {
+            return function() {
+                setTimeout(() => f.apply(this, arguments), ms) //(*)我们不必创建额外的arguments和绑定this的局部变量，箭头函数会直接从外层函数获取
+            };
+        }
+
+        function sayHi(who) {
+            alert('Hello, ' + who);
+        }
+
+        let sayHiDeferred = defer(sayHi, 2000);
+        sayHiDeferred("John"); // 2 秒后打印 Hello, John       
+
+        //不使用箭头函数的方法
+        function defer(f, ms) {
+            return function(...args) { //(*)匿名函数额外创建的args变量用于获取函数参数
+                let ctx = this; //(*)匿名函数额外创建的变量ctx用于绑定作用域
+                setTimeout(function() {
+                    return f.apply(ctx, args);
+                }, ms);
+            };
+        }         
+        ```
+    - 柯里化和偏函数
+      - bind不仅可以绑定作用域，还可以绑定固定参数，构建偏函数，适用于创建重复调用固定参数的函数
+        - 当我们确定一个函数的一些参数时，通过函数返回的固定参数函数被称为偏函数。
+        - 当我们不想一遍又一遍重复相同的参数时，偏函数很方便。比如我们有函数 send(from, to)，并且在我们的任务中 from 始终是相同的，那么我们可以构造一个偏函数然后对它进行操作。
+        - `let bound = func.bind(context, arg1, arg2, ...);`
+        - 例子,通过一个乘法函数创建一个新的函数double
+          ```
+          let mul = function(a, b){
+              return a * b;
+          }
+          let double = mul.bind(null, 2); //bind的第一个参数是context，我们必须要传入一个值，我们不想在这里使用this，那么传入一个null就可以了
+          console.log(double(3)); // 6
+          console.log(double(4)); // 8
+          console.log(double(5)); // 10
+          ```
+          
+      - 无上下文使用偏函数
+        - 构建一个只绑定参数的偏函数
+        ```
+        function partial(func, ...argsBound) {
+            return function(...args) { // (*)
+                return func.call(this, ...argsBound, ...args);
+            }
+        }    
+
+        // 用法：
+        let user = {
+            firstName: "John",
+            say(time, phrase) {
+                alert(`[${time}] ${this.firstName}: ${phrase}!`);
+            }
+        };
+
+        // 添加一个偏函数方法，现在 say 这个函数可以作为第一个函数
+        user.sayNow = partial(user.say, new Date().getHours() + ':' + new Date().getMinutes());
+
+        user.sayNow("Hello");
+        // 结果就像这样：
+        // [10:00] John: Hello!      
+        ```
+        partial(func[, arg1, arg2...]) 调用的结果是一个基于 func 的封装函数，以及：
+        - 和它传入的函数一致的 this (对于 user.sayNow 调用是 user)
+        - 然后传入 ...argsBound —— 来自偏函数调用传入的参数（"10:00"）
+        - 然后传入 ...args —— 传入封装函数的参数（Hello）  
+
+      - 函数柯里化
+        - Currying 是一项将一个调用形式为 f(a, b, c) 的函数转化为调用形式为 f(a)(b)(c) 的技术
+        - 当我们想要简单偏函数的时候，柯里化很棒。正如我们在 logging 例子中所看到的那样：通用函数 log(date, importance, message) 在柯里化之后，当我们在调用它的时候传入一个参数如 log(date) 返回偏函数todayLog 或者两个参数 log(date, importance) 返回偏函数todayDebug 的时候，返回了偏函数。
+        - 函数柯里化结合偏函数，方便的生成固定参数的偏函数，并且不影响原函数
+          - 函数柯里化创建一个常用的log函数
+            ```
+            function log(date, importance, message) {
+                alert(`[${date.getHours()}:${date.getMinutes()}] [${importance}] ${message}`);
+            }
+            log = _.curry(log); //柯里化 lodash库的方法
+            log(new Date(), "DEBUG", "some debug") //操作之后 log 依然正常运行
+            log(new Date())("DEBUG")("some debug"); // log(a)(b)(c) 柯里化格式调用
+
+            // todayLog 会是一个首个参数确定的偏函数, 让我们来创建一个获取今天的日志的简易函数
+            let todayLog = log(new Date());
+            // 使用它
+            todayLog("INFO", "message"); // [HH:mm] INFO message
+
+            //提供今天的调试信息的简便函数
+            let todayDebug = todayLog("DEBUG");
+            todayDebug("message"); // [HH:mm] DEBUG messag
+            ```
+        - 高级柯里化的实现，通过判断柯里化函数调用的参数是否小于原函数的参数，决定调用原函数还是返回偏函数
+          ```
+            function curry(func) {
+
+                return function curried(...args) {
+                    if (args.length >= func.length) { 
+                        //当函数被柯里化之后，我们需要通过两种不同的情况去执行不同的操作，主要是通过柯里化之后函数调用的参数进行判断，当参数和原函数参数相同或者更长的情况下，直接把作用域和参数传入原函数调用。并将结果返回。
+                        return func.apply(this, args);
+                    } else { 
+                        //当柯里化函数参数小于原函数参数的时候，我们要生成一个偏函数，并返回但是不是马上调用
+                        return function(...args2) {
+                            return curried.apply(this, args.concat(args2)); //递归返回合并参数的偏函数直到柯里化函数的参数长度等于原函数参数长度，直接调用原函数
+                        }
+                    }
+                };
+
+            }
+
+            function sum(a, b, c) {
+                return a + b + c;
+            }
+
+            let curriedSum = curry(sum);
+
+            // 依然可以被正常调用
+            alert( curriedSum(1, 2, 3) ); // 6
+
+            // 得到 curried(1) 的偏函数，然后用另外两个参数调用它
+            alert( curriedSum(1)(2,3) ); // 6
+
+            // 完全柯里化形式
+            alert( curriedSum(1)(2)(3) ); // 6          
+          ```
+          当我们运行它的时候，有两种结果：
+            - 立刻执行：当传入的 args 的长度和初始函数中所定义的（func.length）相同或者更长，那么直接将它传入需要执行的函数。
+            - 得到一个偏函数：当传入的 args 的长度小于初始函数中所定义的（func.length），func 暂时不被调用，取而代之的是，返回另外一层封装 pass，其中，将之前传入的参数合并新传入的参数一起应用于 curried 函数。虽然再次调用。我们要么得到一个新的偏函数（如果参数数量不够），要么，最终得到结果。
+          举个例子，让我们看看用例 sum(a, b, c) 中发生了什么。三个参数，那么 sum.lenght = 3。执行 curried(1)(2)(3)
+            - 首先调用 curried(1) 将 1 保存在词法环境中，然后返回一层封装 pass。
+            - 封装函数 pass 被调用，参数为 (2)：它会获取之前的参数 (1)，将它与 (2) 合并，一起调用 curried(1, 2)。
+            - 由于参数数量依然少于 3，curry 函数依然返回 pass。
+            - pass 再次被调用，参数为 (3), 在接下去的调用中 pass(3) 获取之前的参数 (1, 2) 并将 3 与之合并，执行调用 curried(1, 2, 3) —— 最终有 3 个参数，它们被传入最原始的函数中。
   - Object properties configuration
   - Prototypes, inheritance
   - Classes

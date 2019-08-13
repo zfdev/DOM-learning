@@ -3,6 +3,7 @@
 <!-- <script src="test/debounceDecorator.js"></script> -->
 <script>
     // ...Your code...
+    //这个方法可以限制某个函数执行的频率，只有在指定时间间隔才可以调用成功，其余时间间隔内的调用都将被忽略。
     let debounce = function (func, ms) {
         //使用Date对象实现，alert会暂停setTimeout的计时器，但是不会影响Date对象的计时，所以下面假如调用了alert方法，Date的计时仍然继续，所以并不是bug，而是不要使用阻断用户交互的方法就可以了。
         // let debounced = function (...args) {
