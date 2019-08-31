@@ -2283,7 +2283,48 @@ Object
           但是如果说 for...in 列出了所有继承属性，为什么 hasOwnProperty 这个方法没有出现在其中？答案很简单：它是不可枚举的。就像所有其他在 Object.prototype 中的属性一样。这是为什么它们没有被列出的原因。
   - Classes
     - Class basic syntax
+      - syntax
+        ```
+        class MyClass{
+            prop = value; //filed
+            constructor(...args){ //Constructor
+                ...
+            }
+            method(...){ //method
+
+            }1
+            get someProperty(){ ... } //getter method
+            set someProperty(value){ ... } //setter method
+            [Symbol.iterator](){ ... } //iterate name/symbol method
+            ...
+        }
+        ```
+        - 类方法之间没有逗号，和创建对象时的方法是不同的，而且类内部无法像函数一样通过闭包创建私有变量和私有函数。
+        - `typof class`返回的结果是 function javascript里的类本质上是函数，类可以通过函数重写
+      - 类表达式
+        - 类似于命名函数表达式（Named Function Expressions），类表达式可能也可能没有名称。
+        - syntax
+          ```
+            let User = class MyClass {
+                sayHi() {
+                    alert(MyClass); // MyClass 仅在其内部可见
+                }
+            };
+
+            new User().sayHi(); // 正常运行，显示 MyClass 中定义的内容
+
+            alert(MyClass); // 错误，MyClass 在外部不可见          
+          ```
+      - 从技术上来说，MyClass是一个函数，提供作为constructor的那个，而method,getter,settor,都被写入MyClass.prototype
+
+
     - Class inheritance
+      - syntax
+      - extend实现原理
+      - super关键字
+      - 子类重写默认构造函数
+      - `super` and `[[HomeObject]]`
+      - 箭头函数没有自己的this或super，所以他们是从上下文中获取的，在应用的过程中能融入就近的上下文。
     - Static properties and methods
     - Private and protected properties and methods
     - Extending build-in classes

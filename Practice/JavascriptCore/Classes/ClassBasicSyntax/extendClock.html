@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<script src="clock.js"></script>
+<script>
+    let clock = new Clock({
+        template: 'h:m:s'
+    });
+    clock.start();
+
+
+    /* Your class should work like this: */
+
+    class ExtendedClock extends Clock {
+        constructor({
+            template,
+            precision
+        } = {
+            precision: 1000
+        }) {
+            super({
+                template
+            });
+            this.precision = precision;
+        }
+        start() {
+            this.render(); //We can use this here, it direct to super by extends
+            this.timer = setInterval(() => this.render(), this.precision);
+        }
+    }
+
+
+
+    let lowResolutionClock = new ExtendedClock({
+        template: 'h:m:s',
+        precision: 10000
+    });
+
+    lowResolutionClock.start();
+</script>
