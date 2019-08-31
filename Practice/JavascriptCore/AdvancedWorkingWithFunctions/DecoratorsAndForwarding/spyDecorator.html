@@ -11,6 +11,46 @@
         wrapper.calls = [];
         return wrapper;
     }
+
+    // the global variable
+    var bookList = ["The Hound of the Baskervilles", "On The Electrodynamics of Moving Bodies",
+        "Philosophiæ Naturalis Principia Mathematica", "Disquisitiones Arithmeticae"
+    ];
+
+    /* This function should add a book to the list and return the list */
+    // New parameters should come before the bookName one
+
+    // Add your code below this line
+    function add(bookList, bookName) {
+        bookList.push(bookName);
+        return bookList;
+
+        // Add your code above this line
+    }
+
+    /* This function should remove a book from the list and return the list */
+    // New parameters should come before the bookName one
+
+    // Add your code below this line
+    function remove(bookList, bookName) {
+        //So I can make sure that the parameter in the function for the array is just a reference, it refers to the original global variable array, it is not a clone for the parameter, the complex data types are passed by reference. Such as the array, object, and fucntion.
+        if (bookList.indexOf(bookName) >= 0) {
+            bookList.splice(bookList.indexOf(bookName), 1);
+            return bookList;
+
+            // Add your code above this line
+        }
+    }
+
+    var newBookList = add(bookList, 'A Brief History of Time');
+    console.log(bookList);
+
+    var newerBookList = remove(bookList, 'On The Electrodynamics of Moving Bodies');
+    console.log(bookList);
+
+    var newestBookList = remove(add(bookList, 'A Brief History of Time'), 'On The Electrodynamics of Moving Bodies');
+
+    console.log(bookList);
 </script>
 
 </html>

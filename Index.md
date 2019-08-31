@@ -284,7 +284,7 @@ Object
             alert( isNaN("str") ); // true          
           ```
         - 所有数字函数（包括 isFinite）中的空字符串或空格字符串均被视为 0
-      - parseInt(string, radix) and parseFloat(string)
+      - parseInt(string, radix) and parseFloat(string) 转换出来的是10进制整数这里并不适用于其他进制的转换
         - parseInt(string, radix) radix是进制的位数
           - 使用加号 + 或 Number() 的数字转换是严格的，但是我们有时需要从字符串中提取一个数字出来，这就是这个方法的作用，如果无法返回数字，则会返回NaN
           ```
@@ -616,7 +616,7 @@ Object
           - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
           - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
       - 迭代
-        - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`获取引用来修改原数组项的值。
+        - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`获取引用来修改原数组项的值。而且不能使用`break`来终止跳出循环，所以用途非常有限，只能用来遍历数据。
       - 其他
         - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
     - Iterables
@@ -1567,7 +1567,7 @@ Object
       - **方法借用**,当我们从一个对象中获取一个方法并在另一个对象的上下文中“调用”它时，我们也看到了一个方法借用的例子
         ```
         function hash() {
-            alert( [].join.call(arguments) ); // 1,2 注意这里的arguments是一个发迭代的类数组对象，把arguments对象作为对象传入了数组的实例方法join，并不是参数，这里理解透彻，另外[]返回的是数组的实例，也可以使用Array.prototype.join作为替代，目的都是获取数组的join方法，原有的只能在数组实例上调用的方法join现在通过call方法传入其他对象作为参数并返回正确的结果，我们可以使用Javascript内部的任何内置方法作用于任何对象上，这样的特性极为强大和灵活。
+            alert( [].join.call(arguments) ); // 1,2 注意这里的arguments是一个可迭代的类数组对象，把arguments对象作为对象传入了数组的实例方法join，并不是参数，这里需要理解透彻，另外[]返回的是数组的实例，也可以使用Array.prototype.join作为替代，目的都是获取数组的join方法，原有的只能在数组实例上调用的方法join现在通过call方法传入其他对象作为参数并返回正确的结果，我们可以使用Javascript内部的任何内置方法作用于任何对象上，这样的特性极为强大和灵活。
         }
 
         hash(1, 2);        
@@ -1837,7 +1837,7 @@ Object
         - 高级柯里化的实现，通过判断柯里化函数调用的参数是否小于原函数的参数，决定调用原函数还是返回偏函数
           ```
             function curry(func) {
-
+                //创建一个函数包装器，这里只是返回柯里化的递归函数
                 return function curried(...args) {
                     if (args.length >= func.length) { 
                         //当函数被柯里化之后，我们需要通过两种不同的情况去执行不同的操作，主要是通过柯里化之后函数调用的参数进行判断，当参数和原函数参数相同或者更长的情况下，直接把作用域和参数传入原函数调用。并将结果返回。
@@ -1876,12 +1876,434 @@ Object
             - 由于参数数量依然少于 3，curry 函数依然返回 pass。
             - pass 再次被调用，参数为 (3), 在接下去的调用中 pass(3) 获取之前的参数 (1, 2) 并将 3 与之合并，执行调用 curried(1, 2, 3) —— 最终有 3 个参数，它们被传入最原始的函数中。
   - Object properties configuration
+    - Property flags and decriptors
+      - 数据属性，我们平时创建属性的时候默认都是数据属性。
+      - `let descriptor = Object.getOwnPropertyDescriptor(obj, propertyName)`
+        - obj 要获取描述符的对象
+        - propertyName 属性的名称
+        - 返回值是一个属性描述符对象
+          - 属性描述符的属性
+            - value 属性的值
+            - writable 属性值是否可以修改，默认是true.
+            - enumerable 属性是否可以在for...in循环中列出，默认值是true.
+            - configurable 属性是否可以被删除，默认值是true.
+          - 通常我们创建一个属性的时候，描述符的值都是true
+      - `Object.defineProperty(obj, propertyName, descriptor)`
+        - obj 要创建描述符的对象
+        - propertyName 要创建描述符的名称
+        - descriptor 要应用的描述对象
+          - value 属性的值
+          - writable 属性值是否可以修改，默认是true.
+          - enumerable 属性是否可以在for...in循环中列出，默认值是true.
+          - configurable 属性是否可以被删除，默认值是true.
+      - 创建只读的对象属性
+        - wriable: false的时候，对象的属性只读
+        - 例子
+          ```
+            let user = {
+                name: "John"
+            };
+
+            Object.defineProperty(user, "name", {
+                writable: false
+            });
+
+            user.name = "Pete"; // 错误：不能设置只读属性'name'...          
+          ```
+      - 对象属性不可枚举
+        - enumerable: false的时候，它不会出现在for...in循环中
+        - 例子
+          ```
+            let user = {
+                name: "John",
+                toString() {
+                    return this.name;
+                }
+            };
+
+            Object.defineProperty(user, "toString", {
+                enumerable: false
+            });
+
+            // 现在 toString 消失了：
+            for (let key in user) alert(key); // name          
+          ```
+      - 对象属性不可配置
+        - configurable: false的时候，定义出的一个不可配置的属性不能被 defineProperty 删除或修改
+        - 例子 只读的PI
+          ```
+            let descriptor = Object.getOwnPropertyDescriptor(Math, 'PI');
+
+            alert( JSON.stringify(descriptor, null, 2 ) );
+            /*
+            {
+                "value": 3.141592653589793,
+                "writable": false,
+                "enumerable": false,
+                "configurable": false
+            }
+            */          
+          ```
+      - 一次定义对象多个属性 `Object.defineProperties(obj, descriptors)`
+        - 例子
+          ```
+            Object.defineProperties(user, {
+                name: { value: "John", writable: false },
+                surname: { value: "Smith", writable: false },
+                // ...
+            });          
+          ```
+      - 一个获取对象所有的属性描述符 `Object.getOwnPropertyDescriptors(obj)`
+        - 用于完整地克隆对象所有属性的例子
+          ```
+          let clone = Object.defineProperties({}, Object.getOwnPropertyDescriptors(obj));
+          ```
+        - 普通的遍历循环赋值的方式克隆对象，会忽略Symbol属性
+          ```
+            for (let key in user) {
+                clone[key] = user[key];
+            }
+          ```
+        - 设定一个全局的封闭对象(非常用方法)
+          - Object.preventExtensions(obj) 禁止向对象添加属性。
+          - Object.seal(obj) 禁止添加/删除属性，为所有现有的属性设置 configurable: false。
+          - Object.freeze(obj)禁止添加/删除/更改属性，为所有现有属性设置 configurable: false, writable: false。还有对他们的测试：
+          - Object.isExtensible(obj) 如果添加属性被禁止，则返回 false，否则返回 true
+          - Object.isSealed(obj)如果禁止添加/删除属性，则返回 true，并且所有现有属性都具有 configurable: false。
+          - Object.isFrozen(obj)如果禁止添加/删除/更改属性，并且所有当前属性都是 configurable: false, writable: false，则返回 true。
+
+    - Property getters and setters
+      - 访问器属性，本质上是获取和设置值的函数，只不过在外部代码访问时看起来像普通的数据属性。这就给了我们足够的灵活性，在设置或读取属性的时候能够通过函数对值进行计算。
+        - Object.defineProperty(obj, key, { get(){ return ... }, set(value){ ... } });
+        - 例子
+          ```
+            let user = {
+                name: "John",
+                surname: "Smith"
+            };
+
+            Object.defineProperty(user, 'fullName', {
+                get() {
+                    return `${this.name} ${this.surname}`;
+                },
+                set(value) {
+                    [this.name, this.surname] = value.split(" ");
+                }
+            });
+
+            alert(user.fullName); // John Smith
+            for(let key in user) alert(key); // name, surname
+          ```
+      - getter and setter
+        - 语法
+          ```
+            let obj = {
+                get propName() {
+                    // getter, the code executed on getting obj.propName
+                },
+
+                set propName(value) {
+                    // setter, the code executed on setting obj.propName = value
+                }
+            };          
+          ```
+      - 访问器描述符
+        - 数据属性与访问器属性的不同，访问器属性描述符没有value, writable，但是有set,get函数
+        - get 一个没有参数的函数，在读取属性的时候工作
+        - set 一个带有参数的函数，当属性被设置时被调用
+        - enumerable 是否可遍历，与数据属性相同
+        - configurable 是否可修改和删除，与数据属性相同
+      - getter and setter 的应用
+        - 对属性值进行过滤值操作
+          ```
+            let user = {
+                get name() {
+                    return this._name;
+                },
+
+                set name(value) {
+                    if (value.length < 4) {
+                    alert("Name is too short, need at least 4 characters");
+                    return;
+                    }
+                    this._name = value;
+                }
+            };
+
+            user.name = "Pete";
+            alert(user.name); // Pete
+
+            user.name = ""; // Name is too short...          
+          ```
+        - 根据对象的值去自动计算对象的其他属性值并自动更新
+          ```
+            function User(name, birthday) {
+                this.name = name;
+                this.birthday = birthday;
+
+                // age 是由当前日期和生日计算出来的
+                Object.defineProperty(this, "age", {
+                    get() {
+                        let todayYear = new Date().getFullYear();
+                        return todayYear - this.birthday.getFullYear();
+                    }
+                });
+            }
+
+            let john = new User("John", new Date(1992, 6, 1));
+
+            alert( john.birthday ); // birthday 是可访问的
+            alert( john.age );      // ...age 也是可访问的          
+          ```
   - Prototypes, inheritance
+    - Prototypal inheritance
+      - 对象的原型继承
+        - Javascript中，所有的对象都有一个隐藏的[[prototype]]属性，引用指向继承对象的原型对象，它可以是另一个对象(继承)或者null，其他值会被忽略。
+        - 我们可以通过`childObject.__proto__ = parentObject;`实现继承，也可以通过`object.__protot__`访问到对象继承自什么对象
+        - 只能有一个[[prototype]]，对象不能继承自其他两个对象
+        - 例子, longEar继承自rabbit继承自animal
+          ```
+          let animal = {
+              eats: true,
+              walk(){
+                  alert('Animal walk');
+              }
+          }
+
+          let rabiit = {
+              jump: true,
+              __proto__: animal,
+          }
+
+          let longEar = {
+              earLength: 10, 
+              __proto__: rabbit
+          }
+
+          longEar.walk(); //From parent Animal: Animal walk
+          alert(longEar.jumps); //From parent rabbit: true
+          ```
+      - 基于原型继承的读写规则
+        - 原型继承仅仅用于读取属性。对于数据属性写和删除操作是直接在对象自己身上进行操作的，并不会影响原型继承链上的其他对象的值。记得数据属性与访问器属性getter和setter不一样，因为访问器本质上是函数。
+        - 当我们想要读取对象的属性或者调用一个方法，假如他们不存在的时候，那么Javacript会尝试在原型链中查找他们，直到顶层null。
+        - 例子
+          ```
+            let animal = {
+                eats: true,
+                walk() {
+                    /* this method won't be used by rabbit */
+                }
+            };
+
+            let rabbit = {
+                __proto__: animal
+            }
+
+            rabbit.walk = function() {
+                alert("Rabbit! Bounce-bounce!");
+            };
+
+            rabbit.walk(); // Rabbit! Bounce-bounce!          
+          ```
+      - this在继承对象中的值
+        - 在对象或者原型中，调用方法时，this始终是.之前的对象，因此方法是可以在原型链上共享的，但是对象的属性值不是。
+          ```
+            // animal has methods
+            let animal = {
+                walk() {
+                    if (!this.isSleeping) {
+                        alert(`I walk`);
+                    }
+                },
+                sleep() {
+                    this.isSleeping = true;
+                }
+            };
+
+            let rabbit = {
+                name: "White Rabbit",
+                __proto__: animal
+            };
+
+            // modifies rabbit.isSleeping
+            rabbit.sleep();
+
+            alert(rabbit.isSleeping); // true
+            alert(animal.isSleeping); // undefined (no such property in the prototype)          
+          ```
+    - F.prototype
+      - 在现代Javascript中，我们使用`__proto__`设置一个对象的原型。过去我们使用构造函数来创建对象来实现原型链的继承。
+        - Function.prototype是每个函数都有的属性,用于我们通过`new F()`的方式创建一个对象时，该对象的[[Prototype]]被设置为指向F.prototype对象。从而实现原型链继承并创建对象。
+        ```
+        let animal = {
+            eats: true
+        };
+
+        function Rabbit(name) {
+            this.name = name;
+        }
+
+        Rabbit.prototype = animal;
+
+        let rabbit = new Rabbit("White Rabbit"); //  rabbit.__proto__ == animal
+
+        alert( rabbit.eats ); // true        
+        ```
+      - 函数的构造函数
+        - Function.prototype.constructor = Function
+          - 函数的默认的prototype对象属性是一个只有属性constructor的对象，constructor指向函数本身，我们在chrome的console输出的时候回看到prototype对象还有一个__proto__属性，这个其实是个隐藏属性，不用关心它，因为Function.prototype本身也是一个对象，所有的对象都有这样一个隐藏的属性指向它继承的对象的原型。
+      - 在普通对象上，prototype属性并没有什么特别的，就是一个普通的属性而已，与函数的prototype属性不同，它不能用来创造对象。
+      - 为了确保正确的 "constructor"，我们可以选择添加/删除属性到默认 "prototype" 而不是将其整个覆盖，当然我们可以重新创建constructor属性，并将它指向正确的构造函数。
+        ```
+        function Rabbit() {}
+
+        // Not overwrite Rabbit.prototype totally
+        // just add to it
+        Rabbit.prototype.jumps = true
+        // the default Rabbit.prototype.constructor is preserved        
+        ```
+      - 默认情况下，所有的函数F.prototype = { constructor: F }，所以我们通过访问对象实例的constructor属性获取到构造函数
+    - Native prototypes
+      - Object.prototype
+        - Object.prototype是所有对象继承的原型链，所有对象的__proto__都是指向Object.prototype,从而获取对象的方法，例如`let obj = {};` 实际上是调用的构造函数`new Object()`来创建的对象，所以`obj.__proto__ === Object.prototype //true`。
+        - Object.prototype的`__proto__`值是null，是原型链向上查找的终点。
+      - 内置对象的原型继承链
+        - 在原型链上如果对象已经有同名的方法，就会调用在对象上的方法，而且同名方法的实现也通常不同，例如`arr.toString()`会把数组对象的每一项转换成参数序列，而`object.toString()`会把尝试把对象转换字符串，而使用`'' + object`也会触发object的隐式转换，暗示是字符串，所以调用了`object.toString()`, 使用`+ object`会触发object的隐式转换，暗示是数字，所以调用了`parseInt(obj)`尝试把对象转换为数字。
+        - 内置对象的原型链继承
+          - Array
+            ```
+            let arr = [1, 2, 3];
+            arr.__proto__ === Array.prototype; //true
+            arr.__proto__.__proto__ === Object.prototype; //true
+            arr.__proto__.__proto__.__proto__;// null
+            ```
+          - Function
+            ```
+            let func = function(){};
+            func.__proto__ === Function.prototype; //true
+            func.__proto__.__proto__ === Object.prototype; //true
+            func.__proto__.__proto__.__proto__;// null
+            ```
+          - Number
+            ```
+            let num = 123;
+            num.__proto__ === Number.prototype; //true
+            num.__proto__.__proto__ === Object.prototype; //true
+            num.__proto__.__proto__.__proto__;// null
+            ```
+      - 基础数据类型调用原型方法的实现
+        - 对于字符串，数字，和布尔值，我们试图访问他们的方法的时候，浏览器引擎会使用内置的包装器创建一个临时的包装对象，他们由内置的构造函数`String, Number, Boolean`实现，通过他们的原型链`String.prototype, Number.prototype, Boolean.prototype`获取方法，计算完成再销毁临时包装对象返回值。
+        - “值 null 和 undefined 没有对象包装” 特殊值 null 和 undefined 要被区分看待。它们没有对象包装，所以它们没有自己的方法和属性。并且它们没有相应的原型。
+      - 从原型中借用方法
+        - 我们可以把内置对象上原型链上的方法通过结合func.apply(obj, argsArr),func.call(obj, param1, param2, ...)的方式调用
+        ```
+        function showArgs() {
+            // 从数组借用 join 方法并在 arguments 的上下文中调用
+            alert( [].join.call(arguments, " - ") );
+            //另一种直接通过原型链获取到方法join
+            // Array.prototype.join.call(arguments, " - ")
+        }
+
+        showArgs("John", "Pete", "Alice"); // John - Pete - Alice        
+        ```
+      - 内置对象的原型可以被修改或者被新的方法填充。但是这样做是不被推荐的。只有当添加一个还没有被 JavaScript 引擎支持的新方法的时候才可能允许这样做。
+    - Prototype methods, objects without `__proto__`
+      - `__proto__` 是 [[Prototype]] 的 getter/setter，位置在 Object.prototype，和其他方法相同。
+      - Object.create(proto [, descriptors]) 利用指定的对象proto的原型对象来创建新的对象
+        - proto 创建新对象的原型对象
+        - descriptors 额外添加到对象上的数据属性或者访问器属性
+        ```
+        let animal = {
+            eats: true
+        };
+
+        // 以 animal 为原型创建一个新对象
+        let rabbit = Object.create(animal, {
+            jumps: {
+                value: true,
+                writable:true,
+                enumerable: true,
+                configurable:true,                
+            }
+        });
+
+        alert(rabbit.eats); // true
+        alert(Object.getPrototypeOf(rabbit) === animal); // 获取 rabbit 的原型
+
+        Object.setPrototypeOf(rabbit, {}); // 将 rabbit 的原型更改为 {}        
+        ```
+      - Object.getPrototypeOf(obj) 返回 obj 的 [[Prototype]]（和 `__proto__` getter 相同）。
+      - Object.setPrototypeOf(obj, proto) 将 obj 的 [[Prototype]] 设置为 proto（和 `__proto__` setter 相同）。
+      - 对象的完整复制
+        ```
+        // obj 对象的浅复制,包含了所有属性：可枚举的和不可枚举的，数据属性以及 seeters/getters —— 所有属性，以及正确的 [[Prototype]]。
+        let clone = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));        
+        ```
+      - 极简对象
+        - 我们可以不借助 prototype 创建一个对象，那就是 Object.create(null)。这些对象被用作是「纯字典」，对于它们而言 `__proto__` 作为键没有问题，因为他们没有默认对象创建时的原型链继承。
+      - 获取对象的属性
+        - Object.keys(obj) / Object.values(obj) / Object.entries(obj) —— 返回包含自身属性的名称/值/键值对的数组。不包括继承的属性。
+        - Object.getOwnPropertySymbols(obj) —— 返回包含所有自身 symbol 属性名称的数组。
+        - Object.getOwnPropertyNames(obj) —— 返回包含所有自身字符串属性名称的数组。
+        - Reflect.ownKeys(obj) —— 返回包含所有自身属性名称的数组。
+        - for...in循环会遍历继承来的属性
+          ```
+            let animal = {
+                eats: true
+            };
+
+            let rabbit = {
+                jumps: true,
+                __proto__: animal
+            };
+
+            // 这里只有自身的键
+            alert(Object.keys(rabbit)); // jumps
+
+            // 这里包含了继承得来的键
+            for(let prop in rabbit) alert(prop); // jumps，然后 eats          
+          ```
+        - 使用object.hasOwnProperty(key)来辨别名为key的属性是否是obj的自身属性
+          ```
+            let animal = {
+                eats: true
+            };
+
+            let rabbit = {
+                jumps: true,
+                __proto__: animal
+            };
+
+            for(let prop in rabbit) {
+                let isOwn = rabbit.hasOwnProperty(prop);
+                alert(`${prop}: ${isOwn}`); // jumps:true, then eats:false
+            }          
+          ```
+          rabbit.hasOwnProperty 这个方法来自哪里？观察继承链我们发现这个方法由 Object.prototype.hasOwnProperty 提供。换句话说，它是继承得来的。
+          但是如果说 for...in 列出了所有继承属性，为什么 hasOwnProperty 这个方法没有出现在其中？答案很简单：它是不可枚举的。就像所有其他在 Object.prototype 中的属性一样。这是为什么它们没有被列出的原因。
   - Classes
+    - Class basic syntax
+    - Class inheritance
+    - Static properties and methods
+    - Private and protected properties and methods
+    - Extending build-in classes
+    - Class checking 'instanceof'
+    - Mixins
   - Error handling
   - Promises, async/await
+    - Introduction: callback
+    - Promise
+    - Promise chaining
+    - Error handing with promises
+    - Promise API
+    - Promisification
+    - Microtasks
+    - Async/await
   - Generators, advanced iteration
   - Modules
+    - Modules instruction
+    - Export and import
+    - Dynamic imports
   - Miscellaneous
 
 
@@ -2655,9 +3077,9 @@ Object
   - Method of RegExp and String
     正则表达式通常和string的方法一起使用来查找字符，除此之外RegExp上也有一些方法用来匹配字符。
     - String上的方法
-      - str.search(regExp); 查找第一个匹配的位置索引
+      - str.search(regExp); 查找第一个匹配的位置索引 `return Number`
       - str.match(regExp);
-        - 没有g修饰符只查找第一个匹配项，返回的结果为一个带有index，和input的数组对象，并且支持括号匹配选择器，匹配结果是数组的第一项，选择器匹配是数组第二项
+        - 没有g修饰符只查找第一个匹配项，返回的结果为一个带有index，和input的数组对象`return Array`，并且支持括号匹配选择器，匹配结果是数组的第一项，选择器匹配是数组第二项
         ```
             let str = 'Javascript.';
             let result = str.match(/JAVA(SCRIPT)/i)
