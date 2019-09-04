@@ -2320,11 +2320,111 @@ Object
 
     - Class inheritance
       - syntax
+        ```
+        class Child extends Parent{
+            ...
+        }
+        ```
+        通过继承，Child类能够访问Parent类中的方法，并可以使用自己的方法扩展他们。
       - extend实现原理
-      - super关键字
+        - 例子
+          ```
+          class Parent{
+              constructor(name){
+                  this.name = name;
+              }
+              sayHi(){
+                  alert(`Hello, everyone.`);
+              }
+          }
+
+          class Child extends Parent{
+              introduceMyself(){
+                  alert(`My name is ${this.name}.`);
+              }
+          }
+
+          let childInstance = new Child('Jason');
+          childInstance.sayHi(); //Hello, everyone.
+          childInstance.introduceMyself(); //My name is Jason.
+          ```
+          - 通过extends添加了`[[prototype]]`引用，从Child.prototype指向Parent.prototype，当childInstance从Child类中没有找到某个方法，就会尝试从Parent.prototype中获取它。
+          - 引用关系
+            ```
+            childInstance.__proto__ === Child.prototype //true
+            Child.prototype.__proto__ === Parent.prototype //true
+
+            //类的构造函数关系
+            Parent.prototype.constructor === Parent
+            Parent.constructor.prototype === Parent.prototype
+            Child.prototype.constructor === Child
+            Child.constructor.prototype === Child.prototype
+
+            //Method searching path
+            childInstance.sayHi() -> childInstance.__proto__.sayHi() -> Child.prototype.sayHi() -> Child.prototype.__proto__.sayHi() -> Parent.prototype.sayHi()//got it -> ...
+            ```
+          - Javascript内置的对象也是同样基于原型继承的，例如Date对象，它也可以使用所有的Object对象的方法
+            ```
+            Date.prototype.__proto__ === Object.prototype
+            ```
+      - 重写方法和super关键字
+        - 通常我们不希望替换父类的方法，而是希望基于它做一些功能的调整和扩展，在我们重写的方法中做一些事情，但是在我们的方法执行过程中调用父类方法。
+        - `super.method(...)`调用父类方法
+        - `super(...)`调用父类构造函数，在子类的constructor中调用
+        - 例子
+          ```
+          //重写父类的方法，基于上个例子的继承关系
+          class Child extends Parent{
+              //Rewrite the parent method sayHi
+              sayHi(){
+                  super.sayHi();//Call the parent method
+                  alert('Nice to meet you!'); //Add new feature
+                  this.introduceMyself(); //Call its method
+              }
+          }
+          ```
+
       - 子类重写默认构造函数
+        - 自动创建的默认构造函数，如果一个类继承了另一个类但是没有声明自己的constructor，默认会创建一个如下的构造函数
+        ```
+        class Child extends Parent{
+            constructor(...args){
+                super(...args);
+            }
+        }
+        ```
+        - 重写子类构造函数
+          - 在子类constructor中重写构造函数过程中，一定要在子类this之前调用super();
+            - 在 JavaScript 中，“继承类的构造函数”与所有其他的构造函数之间存在区别。在继承类中，相应的构造函数会被标记为特殊的内部属性 [[ConstructorKind]]:"derived"。
+            - 不同点就在于：
+              - 当一个普通构造函数执行时，它会创建一个空对象作为 this 并继续执行。
+              - 但是当继承的构造函数执行时，它并不会做这件事。它期望父类的构造函数来完成这项工作。
+              因此，如果我们构建了我们自己的构造函数，我们必须调用 super，因为如果不这样的话 this 指向的对象不会被创建。并且我们会收到一个报错。
+          - 例子
+            ```
+            class Child extends Parent{
+                constructor(name, childName){
+                    super(name);
+                    this.childName = childName;
+                }
+                ...
+            }
+            ```
       - `super` and `[[HomeObject]]`
+        - 当一个函数被定义为类或者对象方法时，它的 [[HomeObject]] 属性就成为那个对象。然后 super 使用它来解析父类原型和它自己的方法。
+        - 方法在内部 [[HomeObject]] 属性中记住它们的类/对象。这就是 super 如何解析父类方法的。
+        - 因此，将一个带有 super 的方法从一个对象复制到另一个对象是不安全的。
+        
       - 箭头函数没有自己的this或super，所以他们是从上下文中获取的，在应用的过程中能融入就近的上下文。
+        - 例子
+        ```
+        //setTimeout在调用过程会有this作用域的问题，但是我们通过使用箭头函数将作用域指向外层函数。
+        class Child extends Parent{
+            sayHi(){
+                setTimeout(() => super.sayHi(), 1000); //Call the parent method sayHi after 1 second
+            }
+        }
+        ```
     - Static properties and methods
     - Private and protected properties and methods
     - Extending build-in classes
