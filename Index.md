@@ -11,6 +11,7 @@ Javascript Learning Path
 - 记住了但是不懂得应用，知识利用率只有25%，所以只有真正运用起来才算理解了。有时你看懂了也不一定是真懂，直到自己写出代码才能确认是不是真的懂了。
 - 可以选择性的看一些知识点，尤其是一些临界知识，花同样的时间可以获得最大的提升，以前经常犯的错误就是每次都从头开始看重复的知识，往往看了一段疲倦了就放弃了，导致一直在开头那一点知识，包括笔记本记的笔记也是，基本记了几页这个笔记本就没再用过。
 - 计划没有变化快，所以我现在都不列计划，以前列了计划也不一定按时完成，不如把列计划的时间花在执行上，每天根据现有进度持续执行。比空头计划要有价值。
+- 我现在存在的问题是知识总结了之后，长时间不使用就会忘记，虽然可以脱离框架做开发了，但是明显项目经验还不够丰富，一个是之前的项目毕竟难度不是很大。我现在想提升一个level需要更多的训练，但是工作中要想针对性的训练还是比较难的。
 
 参考资料
 ---
@@ -148,8 +149,8 @@ Object
         - `object.method()`这样的调用，.返回的不是一个函数,而是一个包含指向对象引用this的特殊引用类型，this总是指向object,与`func = object.method`这种传递函数引用的方式不同，这个表达式在传递过程会丢失特殊引用类型，从而失去this的值
       - 箭头函数没有this，箭头函数内部访问的都是来自外部的this
       ```
-      let user = {
-        firstName: "Ilya",
+        let user = {
+            firstName: "Ilya",
             sayHi() {
                 let arrow = () => alert(this.firstName);
                 arrow();
@@ -162,7 +163,7 @@ Object
       - 对象到原始值的转换，是由内置函数和操作符自动调用的。这些函数使用一个原始值作为返回值。
       ```
         let user = {
-        name: "John",
+            name: "John",
             money: 1000,
 
             [Symbol.toPrimitive](hint) {
@@ -427,7 +428,7 @@ Object
                 let str = "Widget";
 
                 if (~str.indexOf("Widget")) {
-                alert( 'Found it!' ); // works
+                    alert( 'Found it!' ); // works
                 }                
                 ```
           - str.includes(searchStr, pos)
@@ -460,7 +461,7 @@ Object
             let str = "stringify";
 
             // 从右边的第四个位置开始，在右边的第一个位置结束
-            alert( str.slice(-4, -1) ); // */!            
+            alert( str.slice(-4, -1) ); //           
             ```
           - str.substring(start [, end])
             - 返回 start 和 end 之间的字符串部分。这与 slice 几乎相同，但它允许 start大于 end。
@@ -490,7 +491,7 @@ Object
             let str = '';
 
             for (let i = 65; i <= 220; i++) {
-            str += String.fromCodePoint(i);
+                str += String.fromCodePoint(i);
             }
             alert( str );
             // ABCDEFGHIJKLMNOPQRSTUVWXYZ[\]^_`abcdefghijklmnopqrstuvwxyz{|}~
@@ -511,7 +512,7 @@ Object
       - 数组是一种特殊的对象，适用于存储和管理有序的数据项。
       - 创建数组的方法,尽量不要使用构造函数的方法创建数组，会产生未知问题
         `let arr = [item1, items, ...]`
-      - length属性是数组的长度，它是数组最后一项的数字索引值加1，如果我们手动修改length，数组就会被阶段，当然我们可以利用这个特性清空数组，arr.length = 0;
+      - length属性是数组的长度，它是数组最后一项的数字索引值加1，如果我们手动修改length，数组就会被截断，当然我们可以利用这个特性清空数组，arr.length = 0;
       - 数组的方法
         - 数组末端方法
           - arr.push(item1, item2, ...)添加元素到数组的末端，并返回数组的长度
@@ -579,7 +580,7 @@ Object
         ```
         - 关于'+'操作符触发隐式转换的问题，当 "+" 操作符把一些项加到字符串后面时，加号后面的项也会被转换成字符串，字符串相加触发了后面数字的隐式转换。
           ```
-          alert( [1] + 1 ); // "11"  
+          alert( [1] + 1 ); // "11"  [1].toString() + 1
           alert( "1" + 1 ); // "11"
           ```
         
@@ -589,13 +590,16 @@ Object
           - arr.push(...items); 添加元素到数组结尾 返回数组长度
           - arr.unshift(...items); 添加元素到数组开头 返回数组长度
           - arr.splice(pos, 0, ...items); 添加元素到数组指定位置，由于没有删除元素，所以返回[]空数组
+
         - 删除元素
           - arr.pop(); 删除数组结尾的元素，并返回被删除的元素
           - arr.shift(); 删除数组开头的元素，并返回被删除的元素
           - arr.splice(pos, deleteCount, ...items); 删除指定位置的元素 返回被删除的元素的数组[deleteItem, ...]
+
         - 排序元素
           - arr.sort((a, b) => {return ... 1/0/-1;}) 根据比较函数的结果对数组进行排序，比如想让a和b中值比较大的排在后面 那么 `a>b return 1; a=b return0; a<b return -1;`，排序算法会根据比较函数对数组进行排序。
           - arr.reverse() 颠倒数组中元素的顺序
+
       - 不修改原数组
         - 复制数组元素
           - arr.slice(start, end) 从start到end但不包括end返回一个新数组。这个方法和str.slice很像
@@ -607,18 +611,22 @@ Object
         - 字符串和数组相互转化
           - str.split(seperateStr) 字符串转数组，通过指定的seperateStr分隔符分割字符串为数组并返回
           - arr.join(seperateStr) 数组转字符串，通过指定的seperateStr分隔字符串合并数组为字符串并返回
+
       - 查询数组元素，这些方法很容易搞混淆，
         - 参数为要查找的元素和开始的位置，常用的就是indexOf，includes返回的true/false应用太窄
           - arr.indexOf/lastIndexOf(item, pos) 从指定位置pos查找item如果找到就返回索引值，否则返回-1, lastIndexOf相同只不过是从尾部开始查询, `return Number;`
           - arr.includes(item, fromPos) 从指定索引开始fromPos查询item,如果找到则返回true，否则返回false, `return Boolean`
-        - 参数为true/false函数表达式，find只查找第一个元素，没有返回的是undefinded,filter查找的是所有符合的元素，没有返回的是空数组[]
+        - 参数为返回值true/false函数表达式，**find只查找第一个元素，没有返回的是undefinded, filter查找的是所有符合的元素，没有返回的是空数组[]**
           - arr.find(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回第一个匹配的item则停止，如果没找到返回undefined, `return Object/undefined`
           - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
-          - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, `return Number`
+          - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, 查找的是第一个匹配的索引  `return Number`
+
       - 迭代
         - arr.forEach((itemValue, index, array) => { ... }); 对数组每个元素执行函数，不修改元素，也不返回结果，只是用来遍历数组，这里的item有个大坑，它并不代码数组的项引用，而只是数组项的值，要在这里修改原数组还要使用`array[index] = newValue;`获取引用来修改原数组项的值。而且不能使用`break`来终止跳出循环，所以用途非常有限，只能用来遍历数据。
+
       - 其他
         - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
+
     - Iterables
       - 可迭代对象，可以在for...of循环中使用，比如数组就是可迭代对象之一，字符串也是可迭代的。很多内建的方法和操作都依赖于它。
       - Symbol.iterator
@@ -635,7 +643,7 @@ Object
                 length: 2
             };
 
-            let arr = Array.from(arrayLike); // (*)
+            let arr = Array.from(arrayLike); // (*) 类数组对象转数组
             alert(arr.pop()); // World（pop 方法生效）          
           ```
         - Iterator是有 Symbol.iterator方法的对象。
@@ -671,13 +679,14 @@ Object
                 [true, 'bool1']
             ]);           
             ```
-          - `new Map(Object.entries(object))`;
+          - `new Map(Object.entries(object))`; 普通对象转Map对象
             ```
             let map = new Map(Object.entries({
                 name: "John",
                 age: 30
             })); //Object.entries 返回了键值对数组：[ ["name","John"], ["age", 30] ]。这正是 Map 需要的。
             ```
+
         - 遍历Map
           - map.keys() – 返回键的迭代器，
           - map.values() – 返回值的迭代器，
@@ -700,7 +709,7 @@ Object
                 }
 
                 // 迭代键值对 [key, value]
-                for (let [key, value] of recipeMap) { // 和 recipeMap.entries() 一样
+                for (let [key, value] of recipeMap) { // 和 recipeMap.entries() 一样，并且使用了数组变量赋值解构
                     alert(key, value); // cucumber,500（等等）
                 }            
             ```
@@ -715,21 +724,25 @@ Object
           - 对象可以作为key，Object的key只能是string
           - 迭代顺序是插入的顺序，不会再迭代过程中因为整数key而出现排序的问题
           - 自带很多方便快捷的方法比如map.size 元素的个数
+
       - Set 包含不重复值的集合，常用于保留不重复的值的有序序列。
         - 创建Set
           - `new Set()`
+
         - Set Methods
           - set.add(value) – 添加值，返回 set 自身。
           - set.delete(value) – 删除值，如果该 value 在调用方法的时候存在则返回 true ，否则返回 false。
           - set.has(value) – 如果 set 中存在该值则返回 true ，否则返回 false。
           - set.clear() – 清空 set。
           - set.size – 元素个数
+
         - Array to Set
           - `new Set(array)` 把array作为set的构造函数的参数来创建set对象;
             ```
             let set = new Set(["oranges", "apples", "bananas"]);
             for (let value of set) alert(value);            
             ```
+
         - Set迭代
           - 使用for...of或者set.forEach来迭代查看set
           ```
@@ -737,7 +750,7 @@ Object
 
             for (let value of set) alert(value);
 
-            // 和 forEach 相同：
+            // 和 Array.forEach 相同：
             set.forEach((value, valueAgain, set) => {
                 alert(value);
             });          
@@ -745,7 +758,9 @@ Object
           - set.keys() – 返回 set 中值的迭代对象，
           - set.values() – 和 set.keys 一样，为了兼容 Map，
           - set.entries() – 返回形如 [value, value] 的迭代对象，为了兼容 Map 而存在
+
         - 与Array的区别，set不允许元素重新排序，保持插入的顺序。
+
     - WeakMap and WeakSet
       - WeakMap和WeakSet对象最重要的特性就是他们适合存储引用类型的值作为key，而不需要手动释放内存，一旦引用对象被移除，储存在他们当中的对象引用也会被自动清除。
       - WeakMap和WeakSet并不支持迭代方法，所以我们无法获取他们的所有键值。
@@ -782,15 +797,18 @@ Object
             alert(firstName); // Ilya
             alert(surname);  // Kantor          
           ```
+
         - 字符串解构到变量中
           ```
           let [firstName, surname] = "Ilya Kantor".split(' ');
           ```
+
         - 右侧任意可迭代对象
           ```
           let [a, b, c] = "abc"; // ["a", "b", "c"]
           let [one, two, three] = new Set([1, 2, 3]);
           ```
+
         - 忽略元素
           ```
           // 不需要第一个和第二个元素
@@ -798,24 +816,27 @@ Object
 
             alert( title ); // Consul
           ```
+
         - 赋值给左侧任意类型
           ```
             let user = {};
             [user.name, user.surname] = "Ilya Kantor".split(' ');
             alert(user.name); // Ilya
           ```
+
         - Object.entries(object)循环，使用赋值解构来遍历entries返回的对象键值对
           ```
             let user = {
-            name: "John",
-            age: 30
+                name: "John",
+                age: 30
             };
 
             // 循环遍历键-值对
             for (let [key, value] of Object.entries(user)) {
-            alert(`${key}:${value}`); // name:John, then age:30
+                alert(`${key}:${value}`); // name:John, then age:30
             }          
           ```
+
         - 剩余操作符`...`
           - 搜集剩余元素，剩余元素会放入到数组变量中
           ```
@@ -828,6 +849,7 @@ Object
             alert(rest[1]); // of the Roman Republic
             alert(rest.length); // 2          
           ```
+
         - 默认值，我可以使用`=`指定一个默认值，当赋值解构右侧映射不到值的时候回使用默认值，这个默认值可以是复杂的表达式甚至函数调用
           ```
             //未赋值的变量被当作 undifined
@@ -849,10 +871,10 @@ Object
 
       - 对象解构
         - 注意对象赋值解构的时候左侧变量名要与右侧对象的key相同
-        - `let {key1}, key2} = {key1: value1, key2: value2, ...}` 
+        - `let {key1, key2} = {key1: value1, key2: value2, ...}` 
           - 例子
           ```
-            // 改变 let {...} 中属性的顺序
+            // 改变 let {...} 中属性的顺序，对结果没有影响，只要保证变量名和对象key对应就可以了
             let {height, width, title} = { title: "Menu", height: 200, width: 100 }
           ```
         - 映射到新的变量名
@@ -864,7 +886,7 @@ Object
                 height: 200
             };
 
-            // { 原属性：目标变量 }
+            // { 原属性：目标变量 }，目标的变量名的值就会等于赋值解构对象中对应的key的值
             let {width: w, height: h, title} = options;
 
             // width -> w
@@ -875,7 +897,8 @@ Object
             alert(w);      // 100
             alert(h);      // 200    
           ```
-        - 映射结合默认值一起使用，可以作为类或者函数的参数初始化
+
+        - 映射结合默认值一起使用，可以作为类或者函数的参数初始化，如果赋值解构右侧对象未找到对应的key，则使用=右侧的默认值
           - 例子
           ```
             let options = {
@@ -888,6 +911,7 @@ Object
             alert(w);      // 100
             alert(h);      // 200       
           ```
+
       - 嵌套解构，支持对象嵌套解构，对象中不存在的属性会使用默认值
         - 例子
         ```
@@ -918,13 +942,14 @@ Object
         ```
       - 智能函数参数,我们可以利用赋值解构的特性灵活的给函数传入参数，而不用在意参数顺序
         ```
-        // 清晰起见，精简了部分参数
+        // 清晰起见，精简了部分参数，首先默认值指向了一个空对象，因为参数是一个对象，然后进入对象内部的赋值解构，由于空对象没有找到对应的key，所以会使用默认值。
         function showMenu({ title = "Menu", width = 100, height = 200 } = {}) {
             alert( `${title} ${width} ${height}` );
         }
 
         showMenu(); // Menu 100 200
         ```
+
     - Date and time
       - 创建时间和日期的方法
         - new Date() 创建一个表示当前日期和时间的对象
@@ -940,7 +965,7 @@ Object
       - 获取日期和时间的值
         - date.getFullYear() 结果是4位数字
         - date.getMonth() 结果是 **0-11** 注意使用时的转换
-        - date.getDate() 结果是 **1-31**，注意这个不是0开始，0代表上一个月的最后一天了
+        - date.getDate() 结果是 **1-31**，注意这个不是0开始，**0代表上一个月的最后一天了**
         - date.getHours()
         - date.getMinutes()
         - date.getSeconds()
@@ -950,6 +975,7 @@ Object
         - date.getUTC***() 返回基于UTC+0的时间
         - date.getTime() 从 1970-1-1 00:00:00 UTC+0 开始的毫秒数
         - date.getTimezoneOffset() 返回时区偏移数，以分钟为单位，如果你在时区 UTC+3，输出 -180
+
       - 设置时间和日期的方法
         - date.setFullYear(year, [,month ,date]);
         - date.setMonth(month [, date]);
@@ -961,14 +987,18 @@ Object
         
         - date.setUTC***
         - date.setTime(milliseconds);
+
       - 自动校准
         - 超出范围的日期会被自动校准为正确值，例如负值
         - 获取上个月的最后一天是几号 `date.setDate(0);`
+
       - 日期差值计算
         - 日期可以相减，它们相减的结果是以毫秒为单位，在date对象上调用运算符会触发date对象的getTime()方法返回从 1970-1-1 00:00:00 UTC+0 开始的毫秒数
         `The loop took ${end - start} ms`
+
       - Date.now();
         - 返回当前时间戳的毫秒数
+
       - Date.parse(dateString);
         - 字符串的格式是：YYYY-MM-DDTHH:mm:ss.sssZ
           - YYYY-MM-DD —— 日期：年-月-日。
@@ -990,17 +1020,19 @@ Object
             - numbers `123`
             - boolean `true/false`
             - null `null`
+
         - JSON忽略的数据类型，为了跨语言数据规范。
             - 注意值为undefined将被忽略
-            - Function
+            - Function，其他语言不支持Javascripit的function
             - Symbolic属性
+
         - JSON不支持循环引用，后面我将会讲到如果利用replacer解决循环引用的问题
   
       - JSON.stringify(target[, replacer[, space]])
         - 将对象转换成JSON字符串
           - target 要编码的对象
           - replacer 要编码的属性组['attribute1', 'attribute2']或者替换函数function(key, value)
-          - space 编码时生成的字符串的缩进值
+          - space 编码时生成的字符串的缩进值，这个通常用于调试时console.log无法将对象展开的问题，通过`JSON.stringify(obj, null, 4);`把对象打印输出到console控制台
         - 注意JSON编码对象与对象字面量的重要区别
           - 字符串使用双引号，JSON中没有单引号和反引号。'jason'会被转换成"jason"
           - 对象的属性名也是双引号，这与对象的属性名有很大不同，所以`age:30`会被转换成`"age":30`
@@ -1108,7 +1140,7 @@ Object
   - Advanced working with functions
     - Recursion and stack
       - 当一个函数调用自身时，就称其为递归。递归基础是函数参数使得任务很简单，不需要其它更进一步调用。
-      - 递归是一种编程模式，当一个任务可以被分割成很多相似的简单重复任务，通过条件判断是去执行简单任务，或者继续执行递归。递归用于处理特定类型的数据结构，通常是用于数据结构类似的对象的遍历。它有着比循环更强的适应性。但是因为其有堆栈限制，我们要根据实际场景需求灵活应用。
+      - 递归是一种编程模式，当一个任务可以被分割成很多相似的简单重复任务，通过条件判断是去执行简单任务，或者继续执行递归。递归用于处理特定类型的数据结构，通常是用于数据结构类似的对象的遍历。它有着比循环更强的适应性。但是因为其有堆栈限制，我们要根据实际场景需求灵活应用。另外在实际应用过程中，比如一些数学计算，递归可能会执行很多重复的运算，我们要对此进行优化以提升性能。
       - 使用递归最重要的就是把任务逻辑理清，把最简单的基础任务拆分出来，通过条件判断是执行简单任务，还是执行递归，记得递归时返回值上一个递归。用逻辑图去分析通常更加透彻。
         ```
         function pow(x, n) {
@@ -1135,10 +1167,12 @@ Object
       - 性能
         - 任何递归都可以用循环来重写。循环变体一般更加有效
         - 但有时重写很难，尤其是函数根据条件使用不同的子调用，然后合并它们的结果，或者分支比较复杂。而且有些优化可能没有必要，完全不值得。递归能提供更简洁的代码，容易理解和维护。优化并不是处处需要，大多数时候我们需要一个好代码，这就是它被使用的原因。
+
       - 递归遍历
         - 递归另一个重要应用就是递归遍历
           - 首先分析好数据结构，明确最简单的基础任务，条件是什么
           - 对于需要调用递归的复杂对象拆分，想办法用N个子递归拆分成为基础任务
+
       - 链表
         - 我们要存储一个有序的对象列表，用数组有个问题。「删除元素」和「插入元素」操作代价非常大。例如，arr.unshift(obj) 操作必须对所有元素重新编号以便为新的元素 obj 腾出空间，而且如果数组很大，会很耗时。arr.shift() 同理。
         - 如果我们真的需要快速插入、删除的话，我们可以选择另一种叫做链表的数据结构。当然，链表不总是优于数组。不然大家都去使用链表了。主要的不足就是我们无法轻易通过它的编号获取元素。在数组中却很容易：arr[n] 是一个直接引用。而在列表中，我们需要从起点元素顺着 next 找 N 次才能获取到第 N 个元素。
@@ -1174,6 +1208,7 @@ Object
            ```
            list.next = list.next.next;
            ```
+
     - Rest parameter and spread operator
       - 当我们在代码中遇到 "..." 时，它不是 Rest 参数就是 Spread 操作符。
       - 我们可以使用下列方法区分二者：
@@ -1194,11 +1229,13 @@ Object
         let arr = [3, 5, 1];
         alert( Math.max(...arr) ); // 5（Spread 操作符把数组转为参数列表）
         ```
+
       - 使用场景：
         - Rest 参数用于创建可接收任意个参数的函数。
         - Spread 操作符可以在函数调用传参时，把含有参数的数组展开为函数需要的参数列表形式。
         - 这两个操作符的出现方便了我们在参数数组和参数列表间来回转换。
         - “旧式”的 arguments（类数组对象）也依然能够帮助我们获取函数调用时的所有参数。
+
       - Array.from(arrayLikeObject/iteratorObject)和[...iteratorObject]的区别
         - Array.from 同时适用于类数组对象和可遍历对象。
         - Spread 操作符只能操作可遍历对象。
@@ -1226,7 +1263,7 @@ Object
         - 当代码块中包含块级局部变量并运行时，会创建词法环境。
         - 对于循环而言，每次迭代都有独立的词法环境。如果在 for 循环中声明变量，那么它在词法环境中是局部的：
           ```
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 10; i++) {//注意这里声明i的方式是let而不是var，所以外部才会无法访问到
                 // 每次循环都有其自身的词法环境
                 // {i: value}
             }
@@ -1296,7 +1333,7 @@ Object
         - 检测是否支持Promise
         ```
             if (!window.Promise) {
-            alert("Your browser is really old!");
+                alert("Your browser is really old!");
             }   
         ```
         - 创建polyfills,兼容旧浏览器让他们支持现代新特性
@@ -1468,7 +1505,7 @@ Object
       - 垃圾回收
         - 当一个函数传入 setInterval/setTimeout 时，内部会为其创建一个引用，保存在调度器中。这样，即使这个函数没有被引用，也能防止垃圾回收器（GC）将其回收。对于 setInterval，传入的函数也是存在于内存中，直到 clearInterval 被调用。这里还要提到一个副作用。如果函数引用了外部变量（译者注：闭包），那么只要这个函数还存活着，外部变量也会随之存活，这样就可能会占用多于方法自身所需要的内存。所以，如果某个函数不需要再被调度，即使是个很小的函数，最好也将其取消。
 
-      - 使用setTimeout(...,0)分割高负载任务，不让脚步执行进入挂起状态，给浏览器时间响应并渲染界面。
+      - 使用setTimeout(...,0)分割高负载任务，不让脚本执行进入挂起状态，给浏览器时间响应并渲染界面。
         - 关键点在于拆分任务，然后通过条件判断是否继续执行setTimeout递归，也就是任务是否执行完成。
           ```
             <div id="progress"></div>
@@ -1480,12 +1517,12 @@ Object
 
                 // 每次只完成一部分 (*)
                 do {
-                i++;
-                progress.innerHTML = i;
+                    i++;
+                    progress.innerHTML = i;
                 } while (i % 1e3 != 0);
 
                 if (i < 1e9) {
-                setTimeout(count, 0);
+                    setTimeout(count, 0);
                 }
 
             }
@@ -1500,7 +1537,7 @@ Object
 
             function count() {
 
-                // 现在将调度放在开头
+                // 现在将调度放在开头，条件先减去do...while循环第一次调用的1000次累加
                 if (i < 1e9 - 1e6) { //只有判断任务未完成才执行递归，这也是setTimeout比较优雅的地方，执行可控
                     setTimeout(count, 0); // 安排下一次调用,当当前代码块执行完成之后，在下一次eventLoop开始调用。
                 }
@@ -1520,7 +1557,7 @@ Object
 
     - Decorators and forwarding, call/apply
       - 装饰器
-        - 改变函数行为的包装器，主要工作由原函数执行，但是额外为函数增强了一些特性。通过闭包或者函数的属性存储数据。并没有改变原函数的代码，我们可以为函数添加多个装饰器，也可以为多个函数添加相同的装饰器，他们之间不会互相影响。
+        - 改变函数行为的包装器，主要工作由原函数执行，但是额外为函数增强了一些特性。通过闭包或者函数的属性存储数据。并没有改变原函数的代码，我们可以为函数添加多个装饰器，也可以为多个函数添加相同的装饰器，他们之间不会互相影响。而且也不会修改原函数。
         - 一个结果稳定的CPU高负载运算函数，为其添加一个缓存结果装饰器提高其性能。
         ```
         function cachingDecorator(func) {
@@ -1593,7 +1630,8 @@ Object
 
         }        
         ```
-        - 固定频率执行函数装饰器 debounce
+        - **固定频率执行函数装饰器 debounce**
+          实例应用于DOM拖拽，适合做大量重复函数执行按时间平均分配触发。
           ```
             //这个方法可以限制某个函数执行的频率，只有在指定时间间隔才可以调用成功，其余时间间隔内的调用都将被忽略。
             let debounce = function (func, ms) {
@@ -1625,8 +1663,12 @@ Object
                 return debouncedSetTimeout;
             }         
           ```
-        - 节流装饰器 throttle
+
+        - **节流装饰器 throttle**
+          给表单提交按钮添加防抖，避免多次提交。输入框AJAX验证或者自动补全，用防抖限制请求频率，防止用户输入过快产生过多请求，页面滚动到底部加载数据。总的来说，适合多次重复函数调用只响应一次。
+          
           ```
+                        
             let throttle = function (func, ms) {
                 let isThrottled = false;
                 let saveThis, saveArgruments;
@@ -1655,10 +1697,10 @@ Object
       - 函数变量引用对象的方法导致this上下文丢失，这样的现象经常在开发过程中发生，例如setTimeout里，或者dom.addEventListener，因为传递的参数是函数的引用(函数变量名)，导致this指向了错误的对象。
       ```
         let user = {
-        firstName: "John",
-        sayHi() {
-            alert(`Hello, ${this.firstName}!`);
-        }
+            firstName: "John",
+            sayHi() {
+                alert(`Hello, ${this.firstName}!`);
+            }
         };
 
         setTimeout(user.sayHi, 1000); // Hello, undefined!  
@@ -1832,7 +1874,7 @@ Object
 
             //提供今天的调试信息的简便函数
             let todayDebug = todayLog("DEBUG");
-            todayDebug("message"); // [HH:mm] DEBUG messag
+            todayDebug("message"); // [HH:mm] DEBUG message
             ```
         - 高级柯里化的实现，通过判断柯里化函数调用的参数是否小于原函数的参数，决定调用原函数还是返回偏函数
           ```
@@ -1875,6 +1917,7 @@ Object
             - 封装函数 pass 被调用，参数为 (2)：它会获取之前的参数 (1)，将它与 (2) 合并，一起调用 curried(1, 2)。
             - 由于参数数量依然少于 3，curry 函数依然返回 pass。
             - pass 再次被调用，参数为 (3), 在接下去的调用中 pass(3) 获取之前的参数 (1, 2) 并将 3 与之合并，执行调用 curried(1, 2, 3) —— 最终有 3 个参数，它们被传入最原始的函数中。
+
   - Object properties configuration
     - Property flags and decriptors
       - 数据属性，我们平时创建属性的时候默认都是数据属性。
@@ -2023,8 +2066,8 @@ Object
 
                 set name(value) {
                     if (value.length < 4) {
-                    alert("Name is too short, need at least 4 characters");
-                    return;
+                        alert("Name is too short, need at least 4 characters");
+                        return;
                     }
                     this._name = value;
                 }
@@ -2433,7 +2476,140 @@ Object
   - Error handling
   - Promises, async/await
     - Introduction: callback
+      - 回调
+        - Javascript中很多方法都需要异步调用，例如发送AJAX request在请求返回成功或者失败后执行那些方法，加载一个远程javascript脚本文件并在文件加载成功后调用文件中的function，我们就需要传一个回调函数给异步方法状态改变的方法调用内部并执行这个传入的回调函数，还可以通过参数把异步结果通过传入的回调函数传出异步方法内部在回调函数中运行。
+        - 例子: 实现一个远程加载javascript并插入到文档中成功后执行某些方法的函数
+        ```
+        let loadScript = function(src, callback){
+            const script = document.creatElement('script');
+            script.src = src;
+            script.addEventListener('load', () => callback(script));
+            document.head.append(script);
+        }
+
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.js', script => {
+            alert(`Cool, the ${script.src} is loaded`);
+            alert( _ ); // 在远程加载的js脚本中声明的函数，我们可以在这里调用
+        });
+        ```
+        - 基于上个例子，我们想实现按顺序加载多个远程javascript文件，并在都加载成功后调用里面的方法
+        ```
+        loadScript('./my/script1.js', () =>{
+            loadScript('./my/script2.js', () => {
+                loadScript('./my/script3.js', () => {
+                    //All scripts are downloaded successful.
+                    doSomething();
+                });
+            })
+        })
+        ```
+        当需要加载的脚本逐渐增多，我们会写很多层的嵌套的回调函数，这称之为回调金字塔或者回调地狱。我们在平时写代码要注意不要有过多的嵌套，会让代码的可读写变差，尤其回调函数需要参数的时候
+        - 在上个例子中，我们并没有考虑错误因素，假如加载失败会怎样，所以我们应该让方法更加严谨，能够处理各种特殊情况，各种边界值。这里我们使用一种特殊的方法给回调函数传参，我们称之为error-first callback，callback的第一个参数是为传递错误对象而保留的，一旦反生错误，就调用callback(error)，把错误对象传递给回调函数，通过判断第一个参数的错误对象是否为null，来确定是成功还是失败并作出对应的处理，假如没有错误，我们通过传递callback(null, result1, result2, ...)来传递结果。
+        ```
+        let loadScript = function(scr, callback){
+            let script = document.createElement('script');
+            script.src = src;
+            script.addEventListener('load', () => callback(null, script));
+            script.addEventListener('error', () => callback(new Error('Script load error for ${scr}')));
+            document.head.append(script);
+        }
+
+        let handleError = (err) => console.log(err);
+        
+        loadScript('./my/script1.js', (error, script) => {
+            if(error){
+                //Handle error
+                handleError(error);
+            }else{
+                //Success call
+            }
+        });
+        ```
+        我们假如有多个脚本需要加载，这个回调因为还有if...else的判断，回调地狱将会更加严重。
+        - 我们可以通过为每一个回调函数指定一个函数引用来解决回调地狱嵌套过多的问题，假如我们使用上面的方法来远程加载多个javascript文件
+        ```
+        loadScript('./my/script1.js', step1);
+
+        let handleError = (err) => console.log(err);
+
+        let step1 = function(error, script){
+            if(error){
+                handleError(error);
+            }else{
+                loadScript('./my/script2.js', step2);
+            }
+        }
+
+        let step2 = function(error, script){
+            if(error){
+                handleError(error);
+            }else{
+                loadScript('./my/script2.js', step3)
+            }
+        }
+
+        let step3 = function(error, script) {
+            if (error) {
+                handleError(error);
+            } else {
+                // ...在所有脚本被加载后继续 (*)
+            }
+        };
+        ```
+        这显然不是一个好办法，创建了一大堆step*函数，可读性非常差，我们我们使用Promise对象解决回调地狱的问题
+
+
     - Promise
+      - Promise对象就是为了解决某些异步方法或者延时执行等未来不确定什么时候执行回调的需求而存在的。我们只需要在创建Promise对象的时候，在它参数内回调函数，包装好异步对象成功回调的时候调用参数的特殊方法resolve，失败的时候调用参数的特殊方法reject，然后就什么都不用管了，Promise对象自动关联这个两种状态并在返回的链式调用方法中返回对应的结果，通过resolve把结果传递给then方法回调函数参数，通过reject把错误对象传递给catch方法回调函数参数。
+      - 这个对象比较难理解的就是，要改变之前回调函数的思维，我们只要按照逻辑在成功的条件调用resolve，失败的条件调用reject，其他的我们并不需要关心，当然记得在使用的时候其实是在Promise对象创建的回调函数内部处理这些逻辑的，然后再返回一个Promise实例。之后在then方法里处理结果就可以了。
+      - 私有属性
+        - state 最初是pendding，成功后被修改成fullfilled，失败后背修改成rejected
+        - result 最初是undefined
+      - 调用resolve时发生了什么
+        - 将state设置成了fullfilled
+        - set result to value
+      - 调用reject时发生了什么
+        - 将state设置成了rejected
+        - set result to error
+      - 例子，重写loadScript
+      ```
+      let loadScript = function(src){
+          return new Promise((resolve, reject) => {
+              let script = document.createElement('script');
+              script.src = src;
+              script.addEventListener('load', script => resolve(script));
+              script.addEventListener('error', err => reject(err));
+              document.head.append(script);
+          });
+      }
+
+      //How to use it?
+      let promise = loadScript("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.js");
+
+      promise.then(script => alert(`${script.scr} is loaded!`), error => alert(`Error: ${error.message}`));
+      promise.then(script => alert(`One more handler to do something else...`));
+      ```
+      这样改写后的好处是我们可以按照自然顺序去编写代码的逻辑，使用.then or .catch来处理结果。
+      - then方法和catch方法
+        - then
+        ```
+        promise.then(result => {
+            //handle a successful result, call this when the status of promise is resolved
+        }, error => {
+            //handle an error, call this when the status of promise is rejected
+        });
+        ```
+        - catch(handler)，其实是.then(null, handler)的简写
+        ```
+        promise.catch(error => console.log(error));
+        ```
+        - then(handler)在下一轮eventloop的开始处理，和setTimeout(handler, 0)是一样的逻辑
+        ```
+        // an immediately resolved promise
+        let promise = new Promise(resolve => resolve("done!"));
+        promise.then(alert); // 完成！（在当前代码完成之后）
+        alert("code finished"); // 这个 alert 会最先显示
+        ```
     - Promise chaining
     - Error handing with promises
     - Promise API
@@ -2443,6 +2619,7 @@ Object
   - Generators, advanced iteration
   - Modules
     - Modules instruction
+      - 
     - Export and import
     - Dynamic imports
   - Miscellaneous
@@ -2593,7 +2770,7 @@ Object
         - node.replaceWith(nodes or textStrings) 替换node
         - ndoe.remove() 移除node
       - 添加html tag string为node节点到元素指定位置
-        - elem.insertAdjacentHTML(whereString, htmlDOMString);
+        - elem.insertAdjacentHTML(posStringName, htmlDOMString);
           - beforebegin 将html插入到elem开头前面的位置
           - afterbegin 将html插入到elem开头后面的位置
           - beforeend 将html插入到elem结尾前面的位置
@@ -2617,6 +2794,7 @@ Object
         - elem.style.cssText 相当于elem tag的style特性值 string类型
     - 获取已经解析的样式
         - window.getComputedStyle(elem [, pseudo]) elem是要获取样式的元素，pseudo是伪元素选择例如::before
+
   - Element size and scrolling
     - elem.offsetParent 最近有定位属性的祖先元素 td th body 最近含有position relative属性的元素
     - 元素外部尺寸，不包括margin，但是包含border width
@@ -2680,7 +2858,7 @@ Object
         - keydown 按键按下
 
       - DocumentEvent
-        - DOMContendLoaded DOM构建时
+        - DOMContentLoaded DOM构建时
 
       - CSSEvent
         - transitionend CSS动画执行完成时
@@ -2733,15 +2911,18 @@ Object
     - 冒泡
       - 当事件发生在元素上时，首先会运行元素本身的事件处理器，然后沿着树结构向上传递，运行父元素和其他祖先元素上的事件处理器
       - 除了focus/blur/mouseenter/mouseleave事件 其他事件都是冒泡的
+
     - Event.target与Event.currentTarget的区别
       - 父元素上的处理器总是可以捕获事件实际发生位置的详细信息
       - event.target是引发事件的目标元素，它在冒泡过程中会不断变化，基于这个特性我们才可以实现委托
       - event.currentTarget(this) 是绑定事件处理器的元素，不会变化
+
     - 停止冒泡
       - event.stopPropagation(); 任何处理器都可以决定事件已经被处理完成，从而停止冒泡
       - event.stopImmediatePropagation(); 阻止当前元素上的其他处理器执行。
       - 阻止事件冒泡产生的影响
         - 使用冒泡会产生陷阱，导致一些利用委托工作的功能无法正常工作，所以使用的时候要谨慎，我们可以通过其他方式解决，比如自定义事件，或者在父元素上做逻辑判断，不要阻止冒泡，而是通过逻辑去控制事件处理器里方法的执行
+        
     - 捕获
       - DOM事件的三个阶段
         - 捕获阶段 capturing phase 事件从windo向下一直到达元素
@@ -2806,7 +2987,7 @@ Object
   
     - Events in events 事件同步处理
       - 事件通常是同步处理的，假如在处理过程中发生了一个新的事件，我们需要等待当前正在处理的event执行完毕后再处理新的事件，但是事件嵌套就不一样了，我们在一个事件处理器中触发另一个嵌套的事件，它会跳到嵌套的事件中执行之后返回，所以变成了同步处理了。
-      - 我们可以通过使用`{setTimeout(() => elem.diapatch(new customEvent('hello'), {bubbles: true}), 0);` 强制它在下一轮event loop去执行。
+      - 我们可以通过使用`{setTimeout(() => elem.diapatch(new customEvent('hello'), {bubbles: true}), 0);` 强制它在下一轮event loop去执行。所以setTimeout(fn, 0)可以用来阻止事件嵌套的同步执行。
   
 - UI Events
   - Mouse events basic
@@ -2902,7 +3083,7 @@ Object
       - 通常我们还需要阻止拖动元素的dragstart事件的默认行为，以防止拖动时一些怪异现象的发生
     - 检测是否可释放
       - 核心算法
-        - 在mousemove的过程中，通过使用document.elementFromPoint(mouseEvent.clientX,mouseEvent.clientY)获取当前鼠标下的元素，我们通过一个小技巧，在获取前先隐藏正在的拖动的元素element.hidden = 显示true，获取到之后再显示拖动的元素element.hidden = false，然后检测当前鼠标下的元素或者元素的父节点中是否含有可释放元素的属性，通常是elem.closest('classSelector')
+        - 在mousemove的过程中，通过使用document.elementFromPoint(mouseEvent.clientX,mouseEvent.clientY)获取当前鼠标下的元素，我们通过一个小技巧，在获取前先隐藏正在的拖动的元素element.hidden = 显示true，获取到之后再显示拖动的元素element.hidden = false，然后检测当前鼠标下的元素或者元素的父节点中是否含有可释放元素的属性，通常是`elem.closest('classSelector')`
         - 我们在移动过程中经常还要判断当前可释放元素是否存在，然后判断是进入了可释放元素，还是离开了可释放元素，执行对应的方法
     - 拖放中的应用
       - 在mouseup事件中我们可以完成释放操作后，改变数据，移动元素

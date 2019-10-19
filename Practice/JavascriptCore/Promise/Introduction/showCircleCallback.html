@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            background-color: #333;
+        }
+
+        .circle {
+            transition-property: background-color, width, height, margin-left, margin-top;
+            transition-duration: 2s;
+            transition-timing-function: ease-in-out;
+            position: fixed;
+            transform: translateX(-50%) translateY(-50%);
+            background-color: rgb(0, 216, 232);
+            border-radius: 50%;
+
+            width: 0;
+            height: 0;
+            /*width: 200px;*/
+            /*height: 200px;*/
+            /*top: 150px;*/
+            /*left: 150px;*/
+        }
+
+        .message-ball {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="circle"></div>
+    <button id="play">showCircle(150, 150, 100);</button>
+    <script>
+        const circle = document.querySelector('.circle');
+        const button = document.querySelector('#play');
+
+        function showCircle(cx, cy, radius) {
+            circle.style.left = cx + 'px';
+            circle.style.top = cy + 'px';
+            circle.style.width = 2 * radius + 'px';
+            circle.style.height = 2 * radius + 'px';
+            circle.style.lineHeight = 2 * radius + 'px';
+            circle.style.backgroundColor = 'pink';
+            let i = 0;
+
+            let promise = new Promise((resovle, reject) => {
+                circle.addEventListener('transitionend', (e) => {
+                    if (e.propertyName === 'width') {
+                        resovle && resovle(e.currentTarget);
+                        console.log(i++);
+                    }
+                });
+            });
+
+            return promise;
+        }
+
+        play.addEventListener('click', () => {
+            showCircle(150, 150, 100).then((el) => {
+                el.classList.add('message-ball');
+                el.append("Hello, world!");
+            });
+        });
+    </script>
+</body>
+
+</html>

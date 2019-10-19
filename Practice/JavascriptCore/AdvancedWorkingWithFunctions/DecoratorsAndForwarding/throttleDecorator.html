@@ -5,7 +5,7 @@
     // ...你的代码...
     let throttle = function (func, ms) {
         let isThrottled = false;
-        let saveThis, saveArgruments;
+        let saveThis, saveArgruments; //把变量保存在闭包的词法环境指向的变量中
         let wrapper = function () {
             if (isThrottled) {
                 saveThis = this;
@@ -19,7 +19,7 @@
                 isThrottled = false;
                 if (saveArgruments) {
                     wrapper.apply(saveThis,
-                    saveArgruments); // 这里不是只是调用了func这个方法，我们需要再次执行一次wrapper进入冷却状态，并且设置超时以重置它
+                        saveArgruments); // 这里不是只是调用了func这个方法，我们需要再次执行一次wrapper进入冷却状态，并且设置超时以重置它
                     saveArgruments = saveThis = null;
                 }
             }, ms);
