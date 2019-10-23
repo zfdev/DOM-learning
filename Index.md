@@ -2544,8 +2544,93 @@ Object
         - 内部接口 —— 可以通过类的其他方法访问，但不能从外部访问的方法和属性。
         - 外部接口 —— 也可从类的外部访问的方法和属性。
       - 受保护的属性通常以下划线 _ 作为前缀]
-      - 只读的“power”
+        - 例子，一个咖啡机类的内部属性让我们将 waterAmount 属性更改为受保护的属性以对其进行更多控制。例如，我们不希望任何人将其值设置为小于零的数.
+        ```
+        class CoffeeMachine {
+            _waterAmount = 0;
 
+            set waterAmount(value) {
+                if (value < 0) throw new Error("Negative water");
+                this._waterAmount = value;
+            }
+
+            get waterAmount() {
+                return this._waterAmount;
+            }
+
+            constructor(power) {
+                this._power = power;
+            }
+
+        }
+
+        // 创建咖啡机
+        let coffeeMachine = new CoffeeMachine(100);
+
+        // 加入水
+        coffeeMachine.waterAmount = -10; // Error: Negative water        
+        ```
+      - 只读的“power”
+        - 对于 power 属性，让我们将它设为只读的。有时候一个属性必须仅在创建时设置，然后不再修改.这就是咖啡机的实际情况：功率永远不会改变.要做到这一点，我们只需要设置 getter，而不是 setter：
+        - 例子
+        ```
+        class CoffeeMachine {
+            // ...
+
+            constructor(power) {
+                this._power = power;
+            }
+
+            get power() {
+                return this._power;
+            }
+
+        }
+
+        // 创建咖啡机
+        let coffeeMachine = new CoffeeMachine(100);
+
+        alert(`Power is: ${coffeeMachine.power}W`); // 功率是：100W
+
+        coffeeMachine.power = 25; // Error (no setter )       
+        ```
+      - 私有的“#waterLimit”
+        - 私有属性和方法应该以 # 开头。他们只能从类的内部访问。
+        - 例子
+        ```
+        class CoffeeMachine {
+            #waterLimit = 200;
+
+            #checkWater(value) {
+                if (value < 0) throw new Error("Negative water");
+                if (value > this.#waterLimit) throw new Error("Too much water");
+            }
+
+        }
+
+        let coffeeMachine = new CoffeeMachine();
+
+        // 不能从类的外部访问其私有方法
+        coffeeMachine.#checkWater(); // Error
+        coffeeMachine.#waterLimit = 1000; // Error        
+        ```
+      - 面对对象编程总结
+        - 保护用户，使他们不会误伤自己
+          - 想象一下，有一群开发人员使用咖啡机。它是由“Best CoffeeMachine”公司制造的，工作正常，但保护盖被拿走了。因此内部接口暴露了出来。
+          - 所有的开发人员都是文明的 —— 他们按照预期使用咖啡机。但其中一个人，约翰，被认为是最聪明的，并且决定让他在咖啡机内部做一些调整。然而咖啡机两天后就坏了。
+          - 这肯定不是约翰的错，而是那个取下保护套并让约翰执行自己操作的人的错。
+          - 编程也一样。如果一个类的使用者想要改变那些本不打算从外部改变的东西 —— 后果是不可预测的。
+        - 可支持的
+          - 编程的情况比现实生活中的咖啡机更复杂，因为我们不只是购买一次。代码不断经历着发展和改进。  
+        - 如果我们严格界定内部接口，那么类的开发人员可以自由地更改其内部属性和方法，即使没有通知用户
+          - 如果你是这样的类的开发者，当知道由于没有外部代码的依赖，私有方法可以安全地重命名，它们的参数可以改变，甚至可以删除是很棒的事。
+          - 对于使用者来说，当新版本出现时，它可能是全面的内部检查，但如果外部接口相同，则仍然很容易升级。
+        - 隐藏复杂性
+          - 人们喜欢使用简单的东西。至少从外部来看是这样。内部的东西则是另外一回事了。程序员也不例外。
+        - 隐藏实施细节时总是很方便，并且提供了一个简单的，记录详细的外部接口。
+          - 为了隐藏内部接口，我们使用受保护的或私有的属性：
+            - 受保护的字段以 _ 开头。这是一个众所周知的惯例，没有在语言层面强制执行。程序员只应该通过它的类和它继承的类中访问以 _ 开头的字段。
+            - 私有字段以 # 开头。JavaScript 确保我们只能访问类中的内容。
 
     - Extending build-in classes
 
