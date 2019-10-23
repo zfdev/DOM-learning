@@ -6,15 +6,21 @@
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "build": "webpack -p",
-        "watch": "webpack --watch"
+        "watch": "webpack --watch --mode=development",
+        "start": "webpack-dev-server --open"
     },
     "author": "Jason Zhang",
     "license": "ISC",
     "devDependencies": {
+        "@babel/core": "^7.6.4",
         "babel-core": "^6.26.3",
         "babel-loader": "^8.0.6",
         "babel-preset-env": "^1.7.0",
+        "jshint": "^2.10.2",
+        "jshint-loader": "^0.8.4",
         "webpack": "^4.41.2",
+        "webpack-cli": "^3.3.9",
         "webpack-dev-server": "^3.8.2"
-    }
+    },
+    "dependencies": {}
 }

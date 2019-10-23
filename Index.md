@@ -1772,12 +1772,12 @@ Object
             showList() {
                 this.students.forEach(function(student) {
                     // Error: Cannot read property 'title' of undefined this=undefined
-                    alert(this.title + ': ' + student) 
+                    alert(this.title + ': ' + student);
                 });
             }
         };
 
-        group.showList();        
+        group.showList();
         ```
       - 箭头函数没有arguments，它的arguments来子外层函数
       - 箭头函数没有this，所以不能作为构造函数使用，无法通过new调用创建对象
@@ -1876,6 +1876,7 @@ Object
             let todayDebug = todayLog("DEBUG");
             todayDebug("message"); // [HH:mm] DEBUG message
             ```
+
         - 高级柯里化的实现，通过判断柯里化函数调用的参数是否小于原函数的参数，决定调用原函数还是返回偏函数
           ```
             function curry(func) {
@@ -2468,11 +2469,224 @@ Object
             }
         }
         ```
+
+
     - Static properties and methods
+      - 我们可以把一个方法赋值给一个类方法，而不是赋给它的 "原型对象"。这样的方法我们称为静态的。
+      - 静态方法用来实现一个属于类，但不属于类的某个对象的特定方法.举个例子， 一个用来比较的方法 Article.compare(article1, article2) 或者一个工厂函数 Article.createTodays()
+      - 工厂函数例子，创建一个当天的文章
+      ```
+        class Article {
+            constructor(title, date) {
+                this.title = title;
+                this.date = date;
+            }
+
+            static createTodays() {
+                // 记住，this = Article
+                return new this("Today's digest", new Date());
+            }
+        }
+
+        let article = Article.createTodays();
+
+        alert( article.title ); // Todays digest      
+      ``` 
+      - 例子
+      ```
+        class User {
+            static staticMethod() {
+                alert(this === User);
+            }
+        }
+
+        User.staticMethod(); // true
+        //这实际上跟直接作为属性赋值做了同样的事情
+        class User() { }
+
+        User.staticMethod = function() {
+            alert(this === User); //在 User.staticMethod 方法内部，this 的值是构造函数 User 它自己（“点之前对象”[object before dot]规则）
+        };        
+      ```
+      - 静态属性
+        - 例子
+        ```
+        class Article {
+            static publisher = "Ilya Kantor";
+        }
+
+        alert( Article.publisher ); // Ilya Kantor        
+        ```
+
+      - 它们在类声明中通过 static 来标记。当我们想要存储类级别的数据时，我们会使用静态属性，而不是在实例上绑定数据
+      - 语法
+          ```
+          class MyClass {
+              static property = ...;
+
+              static method() {
+                  ...
+              }
+          }
+        ```
+      - 技术上来说，静态声明等同于直接给类本身赋值
+        ```
+        MyClass.property = ...
+        MyClass.method = ...        
+        ```
+      - 静态属性和方法是被继承的。
+        - 对于 class B extends A，类 B 的 prototype 指向了 A：B.[[Prototype]] = A。因此，如果一个字段在 B 中没有找到，会继续在 A 中查找。
+
+
     - Private and protected properties and methods
+      - 就面向对象编程（OOP）而言，内部接口与外部接口的划分称为封装。
+      - 在面向对象的编程中，属性和方法分为两组：
+        - 内部接口 —— 可以通过类的其他方法访问，但不能从外部访问的方法和属性。
+        - 外部接口 —— 也可从类的外部访问的方法和属性。
+      - 受保护的属性通常以下划线 _ 作为前缀]
+      - 只读的“power”
+
+
     - Extending build-in classes
+
+
     - Class checking 'instanceof'
+      - instanceof 操作符用于检测对象是否属于某个 class，同时，检测过程中也会将继承关系考虑在内
+        `obj instanceof Class`
+      - instanceof 在涉及多层类结构的场合中比较实用，这种情况下需要将类的继承关系考虑在内。
+        - 例子
+        ```
+        class Animal {}
+        class Rabbit extends Animal {}
+
+        let rabbit = new Rabbit();
+        alert(rabbit instanceof Animal); // true
+        // rabbit.__proto__ === Rabbit.prototype
+        // rabbit.__proto__.__proto__ === Animal.prototype (match!)        
+        ```        
+      - 下面，来总结下大家学到的类型检测方式：
+        - typeof	用于检测：基本数据类型	返回：string
+        - {}.toString	用于检测：基本数据类型、内置对象以及包含 Symbol.toStringTag 属性的对象	返回：string
+        - instanceof	用于检测：任意对象	返回：true/false
+      - {}.toString 基本就是一增强版 typeof，本质是`Object.prototype.toString.call(testObj)`。
+        - 内置的 toString 方法可以从对象中提取出来，以其他值作为上下文（context）对象进行调用，调用结果取决于传入的上下文对象。
+        - 如果传入的是 number 类型，返回 [object Number]
+        - 如果传入的是 boolean 类型，返回 [object Boolean]
+        - 如果传入 null，返回 [object Null]
+        - 传入 undefined，返回 [object Undefined]
+        - 传入数组，返回 [object Array]
+
+      - Symbol.toStringTag
+        - 对象的 toString 方法可以使用 Symbol.toStringTag 这个特殊的对象属性进行自定义输出。
+        - 例子
+        ```
+        let user = {
+            [Symbol.toStringTag]: "User"
+        };
+
+        alert( {}.toString.call(user) ); // [object User]        
+        ```
+
+
     - Mixins
+      - 在 JavaScript 中，我们只能继承单个对象。每个对象只能有一个 [[Prototype]] 原型。并且每个类只可以扩展另外一个类
+      - Mixin — 是一个通用的面向对象编程术语：一个包含其他类的方法的类
+      - JavaScript 不支持多继承，但是可以通过拷贝多个类中的方法到某个类的原型中实现 mixin。
+      - 在 JavaScript 中构造一个 mixin 最简单的方式就是构造一个拥有许多实用方法的对象，通过这个对象我们可以轻易地将这些实用方法合并到任何类的原型中
+      - 如果 Mixins 偶尔会重写原生类中的方法，那么 Mixins 可能会成为一个冲突点。因此通常情况下应该好好考虑 mixin 的命名，以减少这种冲突的可能性
+      - mixin继承例子,请注意在 sayHiMixin 内部对于父类方法 super.say() 的调用会在 mixin 的原型上查找方法而不是在 class 自身查找
+        ```
+        //Base mixin
+        const sayMixinBase = {
+            say(phrase) {
+                alert(phrase);
+            }
+        }
+        //Inherit from mixin
+        let sayHiMixin = {
+            __proto__: sayMixinBase, // （或者，我们可以在这里通过 Object.create 来设置原型。）
+
+            sayHi() {
+                // 调用父类中的方法
+                super.say(`Hello ${this.name}`);
+            },
+            sayBye() {
+                super.say(`Bye ${this.name}`);
+            }
+        }
+
+        class User {
+            constructor(name) {
+                this.name = name;
+            }
+        }
+
+        //Copy sayHiMixin method to class
+        Object.assign(User.prototype, sayHiMixin); //注意这里是类的prototype对象上复制方法
+        let user = new User("Jason");
+        user.sayHi();        
+        ```      
+      - 例子
+      ```
+        let eventMixin = {
+            /**
+            * 订阅事件，用法：
+            *  menu.on('select', function(item) { ... }
+            */
+            on(eventName, handler) {
+                if (!this._eventHandlers) this._eventHandlers = {};
+                if (!this._eventHandlers[eventName]) {
+                    this._eventHandlers[eventName] = [];
+                }
+                this._eventHandlers[eventName].push(handler);
+            },
+
+            /**
+            * 取消订阅，用法：
+            *  menu.off('select', handler)
+            */
+            off(eventName, handler) {
+                let handlers = this._eventHandlers && this._eventHandlers[eventName];
+                if (!handlers) return;
+                for (let i = 0; i < handlers.length; i++) {
+                    if (handlers[i] === handler) {
+                        handlers.splice(i--, 1);
+                    }
+                }
+            },
+
+            /**
+            * 触发事件并传递参数
+            *  this.trigger('select', data1, data2);
+            */
+            trigger(eventName, ...args) {
+                if (!this._eventHandlers || !this._eventHandlers[eventName]) {
+                    return; // 对应事件名没有事件处理函数。
+                }
+
+                // 调用事件处理函数
+                this._eventHandlers[eventName].forEach(handler => handler.apply(this, args));
+            }
+        };
+        // 新建一个 class
+        class Menu {
+            choose(value) {
+                this.trigger("select", value);
+            }
+        }
+        // 添加 mixin
+        Object.assign(Menu.prototype, eventMixin);
+
+        let menu = new Menu();
+
+        // 被选中时调用事件处理函数：
+        menu.on("select", value => alert(`Value selected: ${value}`));
+
+        // 触发事件 => 展示被选中的值：123
+        menu.choose("123"); // 被选中的值      
+      ```
+
+
   - Error handling
   - Promises, async/await
     - Introduction: callback
@@ -2562,9 +2776,31 @@ Object
     - Promise
       - Promise对象就是为了解决某些异步方法或者延时执行等未来不确定什么时候执行回调的需求而存在的。我们只需要在创建Promise对象的时候，在它参数内回调函数，包装好异步对象成功回调的时候调用参数的特殊方法resolve，失败的时候调用参数的特殊方法reject，然后就什么都不用管了，Promise对象自动关联这个两种状态并在返回的链式调用方法中返回对应的结果，通过resolve把结果传递给then方法回调函数参数，通过reject把错误对象传递给catch方法回调函数参数。
       - 这个对象比较难理解的就是，要改变之前回调函数的思维，我们只要按照逻辑在成功的条件调用resolve，失败的条件调用reject，其他的我们并不需要关心，当然记得在使用的时候其实是在Promise对象创建的回调函数内部处理这些逻辑的，然后再返回一个Promise实例。之后在then方法里处理结果就可以了。
+      - 例子,传递给 new Promise的函数称之为 executor。当 promise 被创建时，它会被自动调用。它包含生产者代码，这最终会产生一个结果。与上文类比，executor 就是“歌手”。
+        ```
+        let promise = new Promise(function(resolve, reject) {
+            // executor (生产者代码，"singer")
+            ...
+            //result condition or other asynchronous function result, such as AJAX request or setTimeout
+            resolve("done");
+            ...
+            reject(new Error("…")); // 被忽略
+            setTimeout(() => resolve("…")); // 被忽略
+        })
+        ```
+        executor 只会调用 resolve 或 reject。Promise 的最后状态一定会变化。对 resolve 和 reject 的深层调用都会被忽略
+      - Resolve/reject can be immediate
+      - 实际上，executor 通常会异步执行一些动作，然后在一段时间后调用 resolve/reject，但它不必那么做。我们可以立即调用 resolve 或 reject，就像这样：
+        ```
+        let promise = new Promise(function(resolve, reject) {
+            resolve(123); // immediately give the result: 123
+        });        
+        ```
       - 私有属性
         - state 最初是pendding，成功后被修改成fullfilled，失败后背修改成rejected
         - result 最初是undefined
+        - Promise 的 state 和 result 属性是内部的。我们不能从代码中直接访问它们，但是我们可以使用 .then/catch 来访问，下面是对此的描述。
+
       - 调用resolve时发生了什么
         - 将state设置成了fullfilled
         - set result to value
@@ -2572,57 +2808,837 @@ Object
         - 将state设置成了rejected
         - set result to error
       - 例子，重写loadScript
-      ```
-      let loadScript = function(src){
-          return new Promise((resolve, reject) => {
-              let script = document.createElement('script');
-              script.src = src;
-              script.addEventListener('load', script => resolve(script));
-              script.addEventListener('error', err => reject(err));
-              document.head.append(script);
-          });
-      }
+        ```
+        let loadScript = function(src){
+            return new Promise((resolve, reject) => {
+                let script = document.createElement('script');
+                script.src = src;
+                script.addEventListener('load', script => resolve(script));
+                script.addEventListener('error', err => reject(err));
+                document.head.append(script);
+            });
+        }
 
-      //How to use it?
-      let promise = loadScript("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.js");
+        //How to use it?
+        let promise = loadScript("https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.2.0/lodash.js");
 
-      promise.then(script => alert(`${script.scr} is loaded!`), error => alert(`Error: ${error.message}`));
-      promise.then(script => alert(`One more handler to do something else...`));
-      ```
-      这样改写后的好处是我们可以按照自然顺序去编写代码的逻辑，使用.then or .catch来处理结果。
+        promise.then(script => alert(`${script.scr} is loaded!`), error => alert(`Error: ${error.message}`));
+        promise.then(script => alert(`One more handler to do something else...`));
+        ```
+        这样改写后的好处是我们可以按照自然顺序去编写代码的逻辑，使用.then or .catch来处理结果。
+      - Promise 对象充当生产者（executor）和消费函数之间的连接 —— 那些希望接收结果/错误的函数。假设函数可以使用方法 promise.then 和 promise.catch 进行注册
+        ```
+        //then
+        promise.then(
+            function(result) { /* handle a successful result */ },
+            function(error) { /* handle an error */ }
+        );
+        //
+        let promise = new Promise(function(resolve, reject) {
+            setTimeout(() => resolve("done!"), 1000);
+        });
+
+        // resolve 在 .then 中运行第一个函数
+        promise.then(
+            result => alert(result), // 在 1 秒后显示“已经完成！”
+            error => alert(error) // 不会运行
+        );
+
+        //catch
+        let promise = new Promise(function(resolve, reject) {
+            setTimeout(() => reject(new Error("Whoops!")), 1000);
+        });
+
+        // reject 在 .then 中运行第二个函数
+        promise.then(
+            result => alert(result), // 无法运行
+            error => alert(error) // 在 1 秒后显示 "Error: Whoops!"
+        );
+        ```
       - then方法和catch方法
         - then
-        ```
-        promise.then(result => {
-            //handle a successful result, call this when the status of promise is resolved
-        }, error => {
-            //handle an error, call this when the status of promise is rejected
-        });
-        ```
+            ```
+            promise.then(result => {
+                //handle a successful result, call this when the status of promise is resolved
+            }, error => {
+                //handle an error, call this when the status of promise is rejected
+            });
+            ```
         - catch(handler)，其实是.then(null, handler)的简写
-        ```
-        promise.catch(error => console.log(error));
-        ```
+            ```
+            promise.catch(error => console.log(error));
+            ```
         - then(handler)在下一轮eventloop的开始处理，和setTimeout(handler, 0)是一样的逻辑
-        ```
-        // an immediately resolved promise
-        let promise = new Promise(resolve => resolve("done!"));
-        promise.then(alert); // 完成！（在当前代码完成之后）
-        alert("code finished"); // 这个 alert 会最先显示
-        ```
+            ```
+            // an immediately resolved promise
+            let promise = new Promise(resolve => resolve("done!"));
+            promise.then(alert); // 完成！（在当前代码完成之后）
+            alert("code finished"); // 这个 alert 会最先显示
+            ```
+        - .then/catch 的处理器总是异步的
+            ```
+            // an immediately resolved promise
+            let promise = new Promise(resolve => resolve("done!"));
+
+            promise.then(alert); // 完成！（在当前代码完成之后）
+
+            alert("code finished"); // 这个 alert 会最先显示        
+            ```
+
     - Promise chaining
+      - 什么是Promise链
+        - Promise的链式调用，由于then方法返回的也是一个promise对象，我们可以通过链式调用继续在then的回调函数中返回值一个接一个的按顺序对result进行处理，注意then里面的并不是异步的，因为当前这个链式调用的promise的对象的状态已经是fullfilled了。
+        - 例子
+        ```
+        new Promise(function(resolve, reject) {
+            setTimeout(() => resolve(1), 1000); // (*)
+        }).then(function(result) { // (**)
+            alert(result); // 1
+            return result * 2;
+        }).then(function(result) { // (***)
+            alert(result); // 2
+            return result * 2;
+        }).then(function(result) {
+            alert(result); // 4
+            return result * 2;
+        });
+        //随着 result 在处理程序链中传递，我们会看到 alert 依次显示：1 → 2 → 4。因为 promise.then 返回了一个 promise，所以我们可以用它调用下一个 .then。当控制函数返回一个值时，它会变成当前 promise 的 result，所以会用它调用下一个 .then
+        ```
+        运行流程如下：
+        1. 初始 promise 1 秒后 resolve (*)，
+        2. 然后 .then 方法被调用 (**)。
+        3. 它返回的值被传入下一个 .then 的处理程序 (***)
+        4. ……依此类推。        
+      - 如果想要在then里按顺序链式调用异步任务，可以返回一个状态为pending的新promise对象。
+        - 正常来说，.then 处理程序返回的值会立即传入下一个处理程序。但是有一个例外。
+        - 如果返回的值是一个 promise，那么直到它结束之前，下一步执行会一直被暂停。在结束之后，该 promise 的结果会传递给下一个 .then 处理程序。
+        - 例子
+        ```
+        new Promise(function(resolve, reject) {
+            setTimeout(() => resolve(1), 1000);
+        }).then(function(result) {
+            alert(result); // 1
+            return new Promise((resolve, reject) => { // (*)
+                setTimeout(() => resolve(result * 2), 1000);
+            });
+        }).then(function(result) { // (**)
+            alert(result); // 2
+            return new Promise((resolve, reject) => {
+                setTimeout(() => resolve(result * 2), 1000);
+            });
+        }).then(function(result) {
+            alert(result); // 4
+        })        
+        ```
+        这里第一个 .then 显示 1 并在 (*) 行返回 new Promise(…)，一秒之后它会 resolve 掉，然后 result（resolve 的参数，在这里它是 result*2）被传递给位于 (**) 行的第二个 .then。它会显示 2，而且执行相同的动作。所以输出还是 1 → 2 → 4，但是现在每次 alert 调用之间会有 1 秒钟的延迟。
+      - 使用Promise链重写loadScript按顺序加载多个js文件并执行脚本里的函数
+        - 例子
+        ```
+        loadScript("/article/promise-chaining/one.js")
+            .then(script => loadScript("/article/promise-chaining/two.js"))
+            .then(script => loadScript("/article/promise-chaining/three.js"))
+            .then(script => {
+                one();
+                two();
+                three();
+            });      
+        ```
+        这里每个 loadScript 调用返回一个 promise，并且在它 resolve 时运行下一个 .then。 然后它开始加载下一个脚本。所以脚本是依次被加载的。我们可以在链中添加更多的异步动作。请注意代码仍然“扁平”，它向下增长，而不是向右。没有“死亡金字塔”的迹象。
+      - Thenable对象
+        - .then 可以返回任意的 “thenable” 对象 —— 一个具有 .then 方法的任意对象，并且会被当做一个 promise 来对待
+        - 例子
+        ```
+        class Thenable{
+            constructor(num){
+                this.num = num;
+            }
+            then(resolve, reject){
+                setTimeout(() => resolve(this.num * 2), 1000);// (**)
+            }
+        }
+        new Promise(resolve => resolve(1))
+            .then(result => {
+                return new Thenable(result);// (*)
+            })
+            .then(alert);// 1000 ms 后显示 2
+        ```
+        JavaScript 在 (*) 行检查 .then 处理程序返回的对象：如果它有一个名为 then 的可调用方法，那么它会调用该方法并提供原生函数 resolve，reject 作为参数（类似于 executor）并在它被调用前一直等待。上面的例子中resolve(2)1 秒后被调用(**)`。然后 result 会延链向下传递。
+      - fetch
+        - 它发送网络请求到 url 并返回一个 promise。当远程服务器返回响应头（注意不是全部响应加载完成）时，该 promise 用一个 response 来 resolve 掉。
+        - 为了读取全部的响应，我们应该调用方法 response.text()：当全部文字内容从远程服务器上下载后，它会返回一个 resolved 状态的 promise，同时该文字会作为 result。其实还有一个方法，response.json() 会读取远程数据并把它解析成 JSON
+        - 例子，从远程服务器上下载一个json文件并把它转成JSON对象。
+        ```
+        fetch('/article/promise-chaining/user.json')
+           // 当远程服务器开始响应时，下面的 .then 执行
+           .then((response) => {
+               return response.json();// 当结束下载时，response.text() 会返回一个新的 resolved promise，该 promise 拥有全部响应文字
+           })
+           .then((user) => {
+               // ...这是远程文件内容
+               alert(user.name);
+           });
+        ```
+        - 例子: 从远程服务器获取user name然后通过github服务器进行查询，获取用户头像，添加到body，并且最后显示github的用户名
+        ```
+        //Get user name from user.json
+        function loadUserJson(url){
+            return fetch(url).then(response => response.json());
+        }
+        //Get github user information by user name
+        function loadGithubUser(name){
+            return fetch(`https://api.github.com/users/${name}`).then(response => response.json());
+        }
+        function showAvatar(githubUserData){
+            return new Promise((resolve, reject) => {
+                const img = document.createElement('img');
+                img.src = githubUserData.avatar_url;
+                img.className = "promise-avatar-example";
+                document.body.append(img);
+
+                setTimeout(() => {
+                    img.remove();
+                    resolve(githubUserData);
+                }, 3000);
+            });
+        }
+
+        loadUserJson('/article/promise-chaining/user.json')
+            .then(user => loadGithubUser(user.name))
+            .then(showAvatar)
+            .then(githubUserData => alert(`Finished showing ${githubUser.name}`));
+        ```
     - Error handing with promises
+      - 当 promise 被 reject，控制权就移交给链中最近的 rejection 处理程序。这在实际应用中很方便。
+      - 隐式 try…catch, Promise 执行（executor）和 promise 处理（handler）程序周围有一个“不可见 try..catch”。如果发生异常，它会被捕获并视为 rejection。
+      - 捕获所有错误最简单的方法是在链的末端加上 .catch
+        ```
+        fetch('/article/promise-chaining/user.json')
+            .then(response => response.json())
+            .then(user => fetch(`https://api.github.com/users/${user.name}`))
+            .then(response => response.json())
+            .then(githubUser => new Promise((resolve, reject) => {
+                let img = document.createElement('img');
+                img.src = githubUser.avatar_url;
+                img.className = "promise-avatar-example";
+                document.body.append(img);
+
+                setTimeout(() => {
+                img.remove();
+                resolve(githubUser);
+                }, 3000);
+            }))
+            .catch(error => alert(error.message));
+        //通常情况下 .catch 根本不会触发，因为没有错误发生。但是如果上述任意一个 promise reject（网络错误或者不合法的 json 等等），它就会被捕获。
+        ```
+      - 通过自定义错误准确处理错误类型并作出正确处理
+        - 我们应该将 .catch 准确放到我们想要处理错误的位置，并知道如何处理它们。处理程序应该分析错误（可以自定义错误类帮助分析）并且重新抛出未知错误。
+        ```
+        class HttpError extends Error { // (1)
+            constructor(response) {
+                super(`${response.status} for ${response.url}`);
+                this.name = 'HttpError';
+                this.response = response;
+            }
+        } 
+        function loadJson(url) { // (2)
+            return fetch(url)
+                .then(response => {
+                    if (response.status == 200) {
+                        return response.json();
+                    } else {
+                        throw new HttpError(response);
+                    }
+                })
+        } 
+        function demoGithubUser() {
+            let name = prompt("Enter a name?", "iliakan");
+
+            return loadJson(`https://api.github.com/users/${name}`)
+                .then(user => {
+                    alert(`Full name: ${user.name}.`);
+                    return user;
+                })
+                .catch(err => {
+                    if (err instanceof HttpError && err.response.status == 404) {
+                        alert("No such user, please reenter.");
+                        return demoGithubUser();
+                    } else {
+                        throw err; // (*)
+                    }
+                });
+        }
+
+        demoGithubUser();              
+        ```
+      - 重新抛出（Rethrowing）
+        - 在常规 try..catch 中，我们可以分析错误，当我们无法处理的时候可能还会重新抛出（rethrow）它。对于 promise 来说也可以这样做。
+        - 如果我们在 .catch 内 throw，此时控制移交到下一个最近的错误处理程序。如果我们处理错误并正常完成，那么它将继续到最近的成功的 .then 处理程序
+        - 在下面的例子中，我们可以看到 .catch 的另一种情况。(*) 行的处理程序捕获错误但无法处理它（例如，它只知道如何处理 URIError 错误），所以它再次被抛出：
+        ```
+        // 执行：catch -> catch -> then
+        new Promise((resolve, reject) => {
+            throw new Error("Whoops!");
+        }).catch(function(error) { // (*)
+            if (error instanceof URIError) {
+                // handle it
+            } else {
+                alert("Can't handle such error");
+                throw error; // 抛出这个或者其他的错误跳转到下一个 catch
+            }
+        }).then(function() {
+            /* 此处不会运行 */
+        }).catch(error => { // (**)
+            alert(`The unknown error has occurred: ${error}`);
+            // 不会返回任何内容 => 正常方式执行
+        });   
+        //然后执行从第一个 .catch (*) 跳到链中的下一个 (**)     
+        ```
+      - 未处理的 rejections
+        - 如果发生错误且没有 .catch 捕获，unhandledrejection 处理程序就会被触发并获取具有相关错误信息的 event 对象，此时我们就能做一些处理了。通常这种错误是不可恢复的，所以我们最好的办法是告知用户有关问题的信息，并可能将事件报告给服务器
+        - 例子
+        ```
+        window.addEventListener('unhandledrejection', function(event) {
+            // the event object has two special properties:
+            alert(event.promise); // [object Promise] - 产生错误的 promise
+            alert(event.reason); // Error: Whoops! - 未处理的错误对象
+        });
+
+        new Promise(function() {
+            throw new Error("Whoops!");
+        }); // 没有 catch 处理错误        
+        ```
+      - 在finally中作出相应，即使是产生错误
+        - 最后，如果我们有加载指示（load-indication），.finally 是一个很好的处理程序，在 fetch 完成时停止它
+        ```
+        function demoGithubUser() {
+            let name = prompt("Enter a name?", "iliakan");
+
+            document.body.style.opacity = 0.3; // (1) 开始指示（indication）
+
+            return loadJson(`https://api.github.com/users/${name}`)
+            .finally(() => { // (2) 停止指示（indication）
+                document.body.style.opacity = '';
+                return new Promise(resolve => setTimeout(resolve)); // (*)
+            })
+            .then(user => {
+                alert(`Full name: ${user.name}.`);
+                return user;
+            })
+            .catch(err => {
+                if (err instanceof HttpError && err.response.status == 404) {
+                    alert("No such user, please reenter.");
+                    return demoGithubUser();
+                } else {
+                    throw err;
+                }
+            });
+        }
+
+        demoGithubUser()        
+        ```
+
     - Promise API
+      - Promise 类有 5 种静态方法：
+        - Promise.resolve(value)
+          - `let promise = Promise.resolve(value);`
+          - 等价于`let promise = new Promise(resolve => resolve(value));` 
+          - 根据给定值返回 resolved promise。
+        - Promise.reject(error) – 根据给定错误返回 rejected promise。
+        - Promise.all(promises) 
+          - 假设我想要并行执行多个 promise，并等待所有 promise 准备就绪。
+          - `let promise = Promise.all([...promises...]);`
+          - 例子
+          ```
+            Promise.all([
+                new Promise(resolve => setTimeout(() => resolve(1), 3000)), // 1
+                new Promise(resolve => setTimeout(() => resolve(2), 2000)), // 2
+                new Promise(resolve => setTimeout(() => resolve(3), 1000))  // 3
+            ]).then(alert); 
+            // 1,2,3 当 promise 就绪：每一个 promise 即成为数组中的一员  
+            //请注意，它们的相对顺序是相同的。即使第一个 promise 需要很长的时间来 resolve，但它仍然是结果数组中的第一个。        
+          ```
+          - 实际应用例子
+          ```
+            let names = ['iliakan', 'remy', 'jeresig'];
+            let requests = names.map(name => fetch(`https://api.github.com/users/${name}`));
+
+            Promise.all(requests)
+                .then(responses => {
+                    // 所有响应都就绪时，我们可以显示 HTTP 状态码
+                    for(let response of responses) {
+                        alert(`${response.url}: ${response.status}`); // 每个 url 都显示 200
+                    }
+
+                    return responses;
+                })
+                // 映射 response 数组到 response.json() 中以读取它们的内容
+                .then(responses => Promise.all(responses.map(r => r.json())))
+                // 所有 JSON 结果都被解析：“users” 是它们的数组
+                .then(users => users.forEach(user => alert(user.name)));          
+          ```
+          - 等待所有的 promise 为 resolve 时返回存放它们结果的数组。如果任意给定的 promise 为 reject，那么它就会变成 Promise.all 的错误结果，所有的其他结果都会被忽略。
+            - 例子
+            ```
+            //如果出现错误，其他 promise 就会被忽略
+            Promise.all([
+                new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+                new Promise((resolve, reject) => setTimeout(() => reject(new Error("Whoops!")), 2000)),
+                new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+            ]).catch(alert); // Error: Whoops!            
+            ```
+          - 如果任意一个 promise 为 reject，Promise.all 返回的 promise 就会立即 reject 这个错误。
+          - Promise.all(...) 接受可迭代的 promise 集合（大部分情况下是数组）。但是如果这些对象中的任意一个不是 promise，它将会被直接包装进 Promise.resolve
+        - Promise.allSettled(promises) （新方法） – 等待所有 promise resolve 或者 reject，并以对象形式返回它们结果数组：
+            state：‘fulfilled’ 或 ‘rejected’
+            value（如果 fulfilled）或 reason（如果 rejected）
+        - Promise.race(promises) – 等待第一个 promise 被解决，其结果/错误即为结果。
+          - `let promise = Promise.race(iterablePromise);`
+          - 例子,这里的结果会是 1
+          ```
+            Promise.race([
+                new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
+                new Promise((resolve, reject) => setTimeout(() => reject(new Error("Whoops!")), 2000)),
+                new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+            ]).then(alert); // 1  
+            //在第一个 promise 被解决（“赢得比赛[wins the race]”）后，所有后面的结果/错误都会被忽略.
+          ```
+
     - Promisification
+      - Promisification指将一个接受回调的函数转换为一个返回 promise 的函数。我们创建了一个包装函数（wrapper-function）来做同样的事情，在内部调用原来的函数，但返回一个 promise。
+      - 例子，将loadScript(src, callback)进行proisify。
+        ```
+        function loadScript(src, callback) {
+            let script = document.createElement('script');
+            script.src = src;
+
+            script.onload = () => callback(null, script);
+            script.onerror = () => callback(new Error(`Script load error for ${src}`));
+
+            document.head.append(script);
+        }
+
+        // 用法：
+        // loadScript('path/script.js', (err, script) => {...})        
+
+        let loadScriptPromise = function(src) {
+            return new Promise((resolve, reject) => {
+                loadScript(scr, (err, script) => {
+                    if(err){
+                        return reject(err);
+                    }
+                    resolve(script);
+                })
+            });
+        }
+        // loadScriptPromise('path/script.js').then(...)
+        ```
+      - 由于我们可能需要 promisify 很多函数，使用一个助手（helper）很有意义。promisify(f) 接受一个要被 promisify 的函数，并返回一个包装函数。
+        ```
+        let promisify = function(fn){
+            return function(...args){
+                return new Promise((resolve, reject) => {
+                    let callback = function(err, res){
+                        if(err){
+                            return reject(err);
+                        }
+                        return resolve(res);
+                    }
+                    args.push(callback);
+                    fn.call(this, ...args);
+                });
+            }
+        }
+        ```
+
     - Microtasks
+      - Promise 的处理程序（handlers）.then、.catch 和 .finally 都是异步的。
+      - Promise微任务队列
+        - 队列是先进先出的：首先进入队列的任务会首先运行。
+        - 当一个 promise 准备就绪时，它的 .then/catch/finally 处理程序就被放入队列中。但是不会立即被执行。当 JavaScript 引擎执行完当前的代码，它会从Microtask队列中获取任务并执行它。
+        - 如果有一个 promise 链带有多个 .then/catch/finally，那么它们中每一个都是异步执行的。也就是说，它会首先排入一个队列，只有当前代码执行完毕而且先前的排好队的处理程序都完成时才会被执行。
+      - Promise 未处理的 rejection
+        - “未处理的 rejection”是指在 microtask 队列结束时未处理的 promise 错误。
+            ```
+            let promise = Promise.reject(new Error("Promise Failed!"));
+            //promise.catch(err => alert('caught')); 如果加上这段代码，下面的错误就不会被触发，因为已经被catch处理过了
+
+            // Promise Failed!
+            window.addEventListener('unhandledrejection', event => alert(event.reason));
+            ```
+      - Promise 处理始终是异步的，因为所有 promise 操作都被放入内部的“promise jobs”队列执行，也被称为“微任务队列”（v8 术语）。
+      - 因此，.then/catch/finally 处理程序总是在当前代码完成后才被调用。
+      - 如果我们需要确保一段代码在 .then/catch/finally 之后被执行，最好将它添加到 .then 的链式调用中。
+      - Event Loop 算法
+        1. 取出宏任务队列中最先进入的task并执行
+        2. 执行所有的微任务，当微任务队列不为空的时候
+          - 取出微任务队列中最先进入的task并执行
+        3. 渲染DOM如果有任何变化发生
+        4. 如果宏任务队列空了，等待下一个宏任务出现
+        5. 回到第一步
+      - 宏任务
+        - 通过使用setTimeout(fn)创建一个新的宏任务
+        - script标签/setTimeout都是宏任务
+      - 宏任务特点
+        - 宏任务可以用于拆分需要大量CPU计算的任务到子任务，浏览器能够有时间来响应用户的事件或者在子任务执行期间显示进度。
+        - 在事件函数中执行一个动作在事件冒泡结束之后。
+      - 用途
+        - 拆分高CPU负载任务
+        - 让DOM有时间去渲染任务进度
+        - 异步分发自定义事件
+      - 微任务
+        - 通过使用queueMicrotask(fn)创建一个新的微任务
+        - 通过返回一个promise对象创建一个新的微任务
+        - promise对象的then/catch/finally都是微任务
+      - 微任务特点
+        - There’s no UI or network event handling between microtasks: they run immediately one after another.
+        - 在微任务之间没有UI渲染或者事件触发器，他们一个接一个的立即执行
+      - Web Workers
+        - 对于重CPU负载的运算而且不想阻断事件循环，我们可以使用Web Worker
+        - 这是一种在另一个并行线程中执行代码的方式
+        - Web Worker可以和主线程通讯，但是他们有自己的变量和他们自己的事件循环。
+        - Web Worker没有访问DOM的权限，但是很有用，主要用于同时使用多个CPU核心计算。
+      - 微任务和宏任务的区别
+        - Event loop: microtasks and macrotasks
+          - Immediately after every macrotask, the engine executes all tasks from microtask queue, prior to running any other macrotasks or rendering or anything else.
+          - 在每个宏任务之后，引擎会执行所有微任务队列中的任务，优先于运行其他宏任务或者渲染或其他任何事情。
+            - Sample
+            ```
+            setTimeout(() => alert("timeout"));
+
+            Promise.resolve()
+                .then(() => alert("promise"));
+
+            alert("code");            
+            ```
+            输出结果是code->promise->timeout
+          - All microtasks are completed before any other event handling or rendering or any other macrotask takes place.
+          - 所有的微任务在事件触发器和DOM渲染或者其他宏任务之前执行完成。
+          
     - Async/await
+      - Async functions
+        - async这个单词表达了一个简单的事情：即这个函数总是返回一个 promise
+        - 在函数前面的「async」这个单词表达了一个简单的事情：即这个函数总是返回一个 promise。即使这个函数实际上会返回一个非 promise 的值，函数定义前加上了「async」关键字会指示 JavaScript 引擎自动将返回值包装在一个已决议（resolved）的 promise 内。
+        ```
+        async function f(){
+            return 1;
+        }
+        f().then(alert); //1
+        //async确保了函数返回值是一个promise，也会包装非promise的值。实际上代码是
+        async function f(){
+            return Promise.resolve(1);
+        }
+        f().then(alert); //1
+        ```
+        - async method in class
+          - 如果想定义一个async的类方法，直接在方法前面加上async就可以了
+          ```
+          class Waiter{
+              async wait(){
+                  return await Promise.resolve(1);
+              }
+          }
+          new Waiter().wait().then(alert); //1
+          ```
+      - Await
+        - 关键字 await 让 JavaScript 引擎等待直到 promise 完成并返回结果，只在 async 函数中有效。
+        - 相比 promise.then 来获取 promise 结果，这只是一个更优雅的语法，同时也更可读和更易书写。
+        - 例子
+        ```
+        async function f(){
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => resolve('done'), 1000);
+            });
+            let result = await promise; //这个函数在执行的时候，暂停在了这一行，并且当 promise 完成后，拿到 result 作为结果继续往下执行。所以「done!」是在一秒后显示的。
+            alert(result); //"done"
+        }
+        f();
+        ```
+        await 字面的意思就是让 JavaScript 引擎等待直到 promise 状态完成，然后以完成的结果继续执行。这个行为不会耗费 CPU 资源，因为引擎可以同时处理其他任务：执行其他脚本，处理事件等。
+        - await 不能在顶层代码运行
+        ```
+        (async () => {
+            let response = await fetch('/article/promise-chaining/user.json');
+            let user = await response.json();
+            ...
+        })();
+        ```
+      - Error Handling
+        - 使用try...catch捕获错误
+        ```
+        async function f() {
+            try {
+                let response = await fetch('http://no-such-url');
+                let user = await response.json();
+            } catch(err) {
+                alert(err); // TypeError: failed to fetch
+            }
+        }
+        f();        
+        ```
+        - 使用promise.catch
+        ```
+        async function f() {
+            let response = await fetch('http://no-such-url');
+        }
+
+        // f() 变为一个被拒绝的 promise
+        f().catch(alert); // TypeError: failed to fetch // (*)        
+        ```
+      - async/wait与Promise.all一起使用，当我们需要等待多个promise时，可以使用Promise.all来包裹他们，然后使用await
+        ```
+        (async () => {
+            let result = await Promise.all([
+                fetch(url1),
+                fetch(url2),
+                fetch(url3),
+                ...
+            ]);
+        })();
+        ```
+      - Microtask queue
+        - Async/await 是基于 promise 的，所以它内部使用相同的微任务队列，并且相对宏任务来说具有更高的优先级
+        ```
+        async function f() {
+            return 1;
+        }
+
+        (async () => {
+            setTimeout(() => alert('timeout'), 0);
+            await f();
+            alert('await');
+        })();        
+        ```
+        await 总是先完成，因为（作为微任务）它相比 setTimeout 具有更高的优先级。
+      - 有了 async/await 我们就几乎不需要使用 promise.then/catch，但是不要忘了它们是基于 promise 的，所以在有些时候（如在最外层代码）我们就不得不使用这些方法。
+
   - Generators, advanced iteration
+
+
   - Modules
     - Modules instruction
-      - 
+      - 传统实现模块的方式
+        - AMD — 最古老的模块化系统，最开始应用在 require.js 这个库中
+        - CommonJS — 为 Node.js 创建的模块化系统
+        - UMD — 另外一个模块化系统，建议作为通用的模块化系统，它与 AMD 和 CommonJS 都是兼容的。
+      - 什么是模块？
+        - 模块仅仅是一个文件，一个脚本而已，它就是这么简单。用一些关键字比如 export 和 import 来交换模块之间的功能（functionality）或者从一个模块中调用另一个模块中的函数。
+        - export 关键字表示在当前模块之外可以访问的变量和功能。就是导出模块的意思。
+        - import 关键字允许从其他模块中导入一些诸如函数之类的功能等等。
+      - 模块的特点
+        - 每个模块都有自己的顶级作用域（top-level scope）。换句话说，一个模块中的顶级作用域变量和函数在其他脚本中是不可见的
+        - 模块只执行一次。生成导出，然后在导入的位置共享同一个导出，当在某个位置修改了 admin 对象，在其他模块中是可以看到修改的。
+        - 在一个模块中，顶级 this 是未定义的，而不是像非模块脚本中的全局变量。
+        - 外部模块脚本 <script type="module" src="..."> 不会阻塞 HTML 的解析，它们与其他资源并行加载。
+        - 直到 HTML 文档完全解析渲染后（即使模块脚本比 HTML 先加载完成），模块脚本才会开始运行。
+        - 不允许裸模块（“bare” modules）
+          - 在浏览器中，必须给与 import 一个相对或者绝对的 URL。没有给定路径的模块被称作“裸”模块。import 中不允许使用这些模块。
+          - 在具体环境有所不同，比如 Node.js 或者打包工具中是可以使用裸模块的，因为它们有自己的查找模块和钩子的方法。但是目前浏览器还不支持裸模块。
+      - 构建工具
+        - 在日常开发中，浏览器模块很少以原始形式使用，通常，我们用一些特殊工具，像 Webpack，将他们打包在一起，然后部署到服务器。
+        - 使用打包工具的一个好处是——它们对于如何解析模块给与了足够多的控制，比如允许使用裸模块，以及 CSS/HTML 模块等等。
+        - 构建工具完成的事情
+          - 用打包函数替换掉原生的 import 调用，生成一个（或者多个，这是可调的）具有所有模块的文件，这就是打包工具的工作。特殊的模块类型，比如 HTML/CSS 模块也是可以这样做的。
+          - 删除无法访问的代码
+          - 删除未使用的导出（“tree-shaking”）
+          - 删除开发中使用的如 console 和 debugger 这样的语句
+          - 使用 Babel 可以将现代的，前沿的 JavaScript 语法转换为具有类似功能的旧语法
+          - 最终生成压缩文件（删除无用空格，变量用短的名字替换等）
+        - 如何使用Babel和Webpack构建ES6开发环境
+          - 首先通过npm init初始化项目
+          - 然后安装webpack
+            - webpack通过指定的webpack.config.js文件中指定的entry文件，分析引入的模块，并执行loader的匹配规则，对相应的文件作出处理并打包返回到指定的output目录。
+            - 我们可以通过添加不同的loader对文件进行处理，例如使用Babel-loader对ES6/ES7进行编译成带有polyfill的ES5的代码提高浏览器兼容性。
+            - Webpack十分适合在Single Page Application中使用
+            - 安装方法
+              - `npm install webpack --save-dev`
+              - 修改package.json文件中的scripts属性，添加webpack的开发watch命令和打包编译build命令，这些命令都可以通过指定参数来生成的开发环境或者正式产品环境的代码。
+                ```
+                "scripts": {
+                    "build": "webpack -p",
+                    "watch": "webpack --watch"
+                },                
+                ```
+                通过在命令行执行`npm run build`就可以执行webpack的生产环境的编译打包
+                通过在命令行执行`npm run watch`就可以执行变开发变调试，当代码更新时自动编译。
+            - webpack.confg.js webpack的配置文件，webpack通过它来进行初始化
+              - 例子
+              ```
+                var path = require('path');
+
+                module.exports = {
+                    entry: './assets/js/index.js', //应用程序入口文件，用来分析import模块
+                    output: {
+                        filename: 'bundle.js', //打包输出的文件名
+                        path: path.resolve(__dirname, 'dist') //打包输出的目录
+                    },
+                    // 添加的loader模块
+                    module: {
+                        rules: [{
+                            test: /\.js$/, // Run the loader on all .js files
+                            exclude: /node_modules/, // ignore all files in the node_modules folder
+                            use: 'jshint-loader'
+                        }]
+                    }
+                };
+              ```
+          - 安装babel-loader
+            - 安装方法
+            ```
+            npm install --save-dev babel-core babel-loader babel-preset-env
+            ```
+          - NPM命令小结
+            - --save/-d 安装项目依赖
+            - --save-dev/-D 安装开发依赖
+            - npm run nameInPackageScripts 执行package.json中对应的命令行
+
     - Export and import
+      - 声明前导出
+        - 导出数组
+        ```
+        export const month = ['Jan', 'Feb', 'Mar', 'Apr', 'Aug', 'Sep', ...];
+        ```
+        - 导出常量
+        ```
+        export const MODULES_STANDARD_YEAR = 2015;
+        ```
+        - 导出类
+        ```
+        export class User{
+            constructor(name){
+                this.name = name;
+            }
+        }
+        ```
+        - 导出类/函数后没有分号，不要在函数和类的声明后使用分号。
+        ```
+        export function sayHi(user) {
+            alert(`Hello, ${user}!`);
+        }  // no ; at the end
+        ```
+
+      - 声明后导出
+        - 例子，先声明函数再导出
+            ```
+            function sayHi(user) {
+                alert(`Hello, ${user}!`);
+            }
+
+            function sayBye(user) {
+                alert(`Bye, ${user}!`);
+            }
+
+            export {sayHi, sayBye}; // 导出变量列表            
+            ```
+
+      - 导入所有`import * as <obj>`
+        - 普通导入
+            ```
+            import {sayHi, sayBye } from './say';
+            sayHi('John'); // Hello, John!
+            sayBye('John'); // Bye, John!
+            ```
+        - 全部导入
+            ```
+            import * as say from './say';
+            say.sayHi('John');
+            say.sayBye('John');
+            ```
+        - tree-shaking技术优化导入
+          - “通通导入”看起来很酷，语法也很短，但是我们通常为什么要明确列出我们需要导入的内容？
+          - 现在的构建工具（webpack 或者其他的）把模块打包到一起，然后对其进行优化以获得更快的加载速度，并且还会删除无用的代码…然后，打包工具会自动检测优化它，并且在打包文件中完全删除其他无用的函数以使得打包后的文件更小，这就是所谓的“tree-shaking”技术
+          - 明确列出要导入的内容会使得名称较短：sayHi() 取代 lib.sayHi()。
+          - 显示导入可以更好的概述代码结构：在哪里使用了什么。它使得代码阅读和重构更容易
+
+      - 导入为别名`import as`
+        - 我们也可以使用 as 让导入具有不同的名字。
+            ```
+            import { sayHi as hi, sayBye as bye } from './say';
+            hi('John'); // Hello, John!
+            bye('John'); // Bye, John!            
+            ```
+
+      - 导出为别名`export as`
+        - 现在 hi 和 bye 是在外面使用时的正式名称
+            ```
+            //say.js
+            export {sayHi as hi, sayBye as bye};
+            ...
+            //main.js
+            import * as say from './say.js';
+            say.hi('John'); // Hello, John!
+            say.bye('John'); // Bye, John!            
+            ```
+
+      - 默认导出
+        - 不用花括号的导入看起来很酷。开始使用模块时常见的错误就是忘记花括号。所以请记住，命名导入需要使用花括号，而默认导入不需要。
+        - 命名导出必须（理应）具有名称，而 export default 可能是匿名的（没有名称）
+          - 下面这些都是完全有效的默认导出
+          ```
+            export default class { // 没有类名
+                constructor() { ... }
+            }
+
+            export default function(user) { // 没有函数名
+                alert(`Hello, ${user}!`);
+            }
+
+            // 导出一个值而不使用变量
+            export default ['Jan', 'Feb', 'Mar','Apr', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];          
+          ```
+        - 默认导出别名
+          - “default”关键词用于默认导出的别名，常用于我们需要引用单独导出和其他脚本的情况。
+          ```
+            function sayHi(user) {
+                alert(`Hello, ${user}!`);
+            }
+
+            export {sayHi as default}; // 和我们在函数前添加“export default”一样          
+          ```
+          - 假设模块 user.js 导出一个默认导出“default”和几个命名导出（虽然很少出现，但是会发生）：
+            ```
+            //user.js
+            export default class User {
+                constructor(name) {
+                    this.name = name;
+                }
+            }
+
+            export function sayHi(user) {
+                alert(`Hello, ${user}!`);
+            }
+            //main.js
+            import {default as User, sayHi} from './user.js';
+
+            new User('John');         
+            ```
+      - 关于默认导出和命名导出的选择
+        - 开发者应该谨慎使用默认导出，因为这将会使代码更难维护。
+        - 在任何地方都使用命名导出。即使只导出一个东西，也仍然使用命名导出，而不是默认导出 default。
+      - Re-export
+        - “Re-export”语法 export ... from ... 允许直接导出刚刚导入的内容（可能是其他名字），就像这样
+        ```
+        export {sayHi} from './say.js';
+        export {default as User} from './user.js';        
+        ```
+      - 请注意在 {...} 中的导入/导出语句无效。
+
     - Dynamic imports
-  - Miscellaneous
+      - import(module) 函数
+        - 注意这里是一个import函数，并不是静态的导入命令。静态的import的模块路径必须是原始类型字符串，不能是函数调用。
+        - import(module)函数可以在任何地方调用，它返回一个解析为模块对象的Promise
+        - 普通Promise对象调用
+        ```
+        import('modulePath')
+            .then(moduleObj => ...)
+            .catch(err => loading error...)
+        ```
+        - async函数调用
+        ```
+        async function load(){
+            const module = await import('modulePath');
+            module.method();
+        }
+        ```
 
 
 - Document
