@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Not wrap with float element</title>
+    <style>
+        html,
+        body,
+        div {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 300px;
+            background-color: red;
+            /* float: left; */
+            /* position: absolute; */
+        }
+
+        .aside {
+            width: 100px;
+            height: 150px;
+            /* float: left; */
+            background: #f66;
+            margin: 20px 0;
+        }
+
+        .main {
+            height: 200px;
+            margin: 20px 0;
+            /* width: 200px; */
+            background: #fcc;
+            /*利用BFC元素不会与float元素出现重叠的特性。创建一个BFC区域*/
+            /* overflow: hidden; */
+            float: left;
+            /* 虽然形成了BFC，布局失败 */
+            /* display: inline-block; */
+            /* 虽然形成了BFC，布局失败 */
+            /* position: absolute; */
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="aside"></div>
+        <div class="main">This is text content for example. This is text content for example. This is text content for
+            example. This is text content for example. This is text content for example. This is text content for
+            example.
+        </div>
+    </div>
+
+</body>
+
+</html>

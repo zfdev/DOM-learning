@@ -510,6 +510,17 @@ Object
         ```
     - Arrays
       - 数组是一种特殊的对象，适用于存储和管理有序的数据项。
+      - 数组是对象，所以它是按引用传递的，要注意数组的方法中有哪些是修改原有数组的，有些是不修改原数组的，哪些是返回新数组的。
+      - 数组作为一个方法的参数并在方法内部修改数组的时候，假如使用的不是修改原数组的方法，而使用通过 arr = arr.concat(otherArr)的方式赋值是无法修改数组的。所以只能使用arr[index]的方式修改数组的值，或者使用修改原数组的方法才会得到正确的结果。
+        ```
+        let arr = [1];
+        let arr1 = [2, 3, 4];
+        function changeArray(arr){
+            arr = arr.concat(arr1);
+        }
+        changeArray(arr);
+        console.dir(arr); //结果是[1]并不是[1, 2, 3, 4]
+        ```
       - 创建数组的方法,尽量不要使用构造函数的方法创建数组，会产生未知问题
         `let arr = [item1, items, ...]`
       - length属性是数组的长度，它是数组最后一项的数字索引值加1，如果我们手动修改length，数组就会被截断，当然我们可以利用这个特性清空数组，arr.length = 0;
@@ -604,10 +615,14 @@ Object
         - 复制数组元素
           - arr.slice(start, end) 从start到end但不包括end返回一个新数组。这个方法和str.slice很像
           - arr.concat(...items) 将数组和其他数组元素组成新数组并返回，**如果参数是多维数组将会被展开**。
+
         - 计算生成新数组并返回
           - arr.map((item, index, array) => { return ...; }); 对数组的每个元素调用函数并返回结果数组。 
+          - **使用这个方法的时候，假如内部使用if进行逻辑判断返回值，有可能会有返回的数组项中值为undefined的情况，如果想要过滤数组的值，使用filter方法更合理，这个方法适用于处理数组中所有的值并返回新数组的应用场景。**
+
         - 累加计算并返回结果
           - arr.reduce/reduceRight((acc/previousValue, currentValue, index, arr) => { return ...;}, initial); 迭代每个数组元素并将计算结果返回
+
         - 字符串和数组相互转化
           - str.split(seperateStr) 字符串转数组，通过指定的seperateStr分隔符分割字符串为数组并返回
           - arr.join(seperateStr) 数组转字符串，通过指定的seperateStr分隔字符串合并数组为字符串并返回
@@ -616,9 +631,12 @@ Object
         - 参数为要查找的元素和开始的位置，常用的就是indexOf，includes返回的true/false应用太窄
           - arr.indexOf/lastIndexOf(item, pos) 从指定位置pos查找item如果找到就返回索引值，否则返回-1, lastIndexOf相同只不过是从尾部开始查询, `return Number;`
           - arr.includes(item, fromPos) 从指定索引开始fromPos查询item,如果找到则返回true，否则返回false, `return Boolean`
+
         - 参数为返回值true/false函数表达式，**find只查找第一个元素，没有返回的是undefinded, filter查找的是所有符合的元素，没有返回的是空数组[]**
           - arr.find(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回第一个匹配的item则停止，如果没找到返回undefined, `return Object/undefined`
+
           - arr.filter(function(item, index, array){ if(condition){return true/false} }) 在数组中根据条件函数返回值查找指定元素，如果返回值为true就返回的所有数组元素，如果没有则返回空数组，`return Array`
+          
           - arr.findIndex(function(item, index, array){ if(condition){return true/false} }); 和find相似，只不过返回的是元素的索引而不是元素本身, 查找的是第一个匹配的索引  `return Number`
 
       - 迭代
@@ -626,6 +644,7 @@ Object
 
       - 其他
         - Array.isArray(obj) 判断对象是否是一个数组 返回true/false
+  
 
     - Iterables
       - 可迭代对象，可以在for...of循环中使用，比如数组就是可迭代对象之一，字符串也是可迭代的。很多内建的方法和操作都依赖于它。
@@ -942,7 +961,7 @@ Object
         ```
       - 智能函数参数,我们可以利用赋值解构的特性灵活的给函数传入参数，而不用在意参数顺序
         ```
-        // 清晰起见，精简了部分参数，首先默认值指向了一个空对象，因为参数是一个对象，然后进入对象内部的赋值解构，由于空对象没有找到对应的key，所以会使用默认值。
+        // 清晰起见，精简了部分参数，首先默认值指向了一个空对象，调用是传入的值是undefined，所以使用了默认参数，因为参数是一个对象，然后进入对象内部的赋值解构，由于空对象没有找到对应的key，所以会使用默认值。
         function showMenu({ title = "Menu", width = 100, height = 200 } = {}) {
             alert( `${title} ${width} ${height}` );
         }
@@ -2285,6 +2304,7 @@ Object
         ```
       - 极简对象
         - 我们可以不借助 prototype 创建一个对象，那就是 Object.create(null)。这些对象被用作是「纯字典」，对于它们而言 `__proto__` 作为键没有问题，因为他们没有默认对象创建时的原型链继承。
+
       - 获取对象的属性
         - Object.keys(obj) / Object.values(obj) / Object.entries(obj) —— 返回包含自身属性的名称/值/键值对的数组。不包括继承的属性。
         - Object.getOwnPropertySymbols(obj) —— 返回包含所有自身 symbol 属性名称的数组。
@@ -2325,6 +2345,7 @@ Object
           ```
           rabbit.hasOwnProperty 这个方法来自哪里？观察继承链我们发现这个方法由 Object.prototype.hasOwnProperty 提供。换句话说，它是继承得来的。
           但是如果说 for...in 列出了所有继承属性，为什么 hasOwnProperty 这个方法没有出现在其中？答案很简单：它是不可枚举的。就像所有其他在 Object.prototype 中的属性一样。这是为什么它们没有被列出的原因。
+
   - Classes
     - Class basic syntax
       - syntax
@@ -2469,7 +2490,6 @@ Object
             }
         }
         ```
-
 
     - Static properties and methods
       - 我们可以把一个方法赋值给一个类方法，而不是赋给它的 "原型对象"。这样的方法我们称为静态的。
@@ -2671,7 +2691,6 @@ Object
 
         alert( {}.toString.call(user) ); // [object User]        
         ```
-
 
     - Mixins
       - 在 JavaScript 中，我们只能继承单个对象。每个对象只能有一个 [[Prototype]] 原型。并且每个类只可以扩展另外一个类
@@ -4436,6 +4455,7 @@ Object
   
     - xhr.abort();
       We can terminate the request at any time. That triggers abort event, and xhr.status becomes 0;
+      
     - xhr.setRequestHeader(key, value);
         - HTTP-headers
           Send custom headers.
@@ -4477,6 +4497,24 @@ Object
         ```
 
 
+- Fetch
+  - fetch规范与jQuery.ajax()主要有两种方式的不同
+    - 当接收到一个代表错误的 HTTP 状态码时，从 fetch()返回的 Promise 不会被标记为 reject， 即使该 HTTP 响应的状态码是 404 或 500。相反，它会将 Promise 状态标记为 resolve （但是会将 resolve 的返回值的 ok 属性设置为 false ），仅当网络故障时或请求被阻止时，才会标记为 reject。
+    - 默认情况下，fetch 不会从服务端发送或接收任何 cookies, 如果站点依赖于用户 session，则会导致未经认证的请求（要发送 cookies，必须设置 credentials 选项）。自从2017年8月25日后，默认的credentials政策变更为same-originFirefox也在61.0b13中改变默认值
+  - 进行 fetch 请求
+    ```
+    fetch('https://example.com/movie/')
+        .then(response => {
+            return response.json();
+        })
+        .then(jsonData => {
+            console.dir(jsonData);
+        })
+        .catch(error => {
+            console.error(errors);
+        });
+    ```
+
 - RegExp Object and String
   - Patterns and flags
     - Create a RegExp Object语法
@@ -4497,7 +4535,7 @@ Object
       - y 粘滞模式
 
 
-  - Method of RegExp and String
+  - Method RegExp and String
     正则表达式通常和string的方法一起使用来查找字符，除此之外RegExp上也有一些方法用来匹配字符。
     - String上的方法
       - str.search(regExp); 查找第一个匹配的位置索引 `return Number`
@@ -4608,9 +4646,11 @@ Object
   - 反向引用
     - String.replace中的可以用`$n`访问第n个捕获组
       - `name = name.replace(/(\w+) (\w+)/i, "$2, $1");`
+
     - 在正则表达式中我们使用`\n`来引用捕获组, n start from 1.
       - `let reg = /['"](.*?)['"]/g;` the same as below
       - `let reg = /(['"])(.*?)\1/g;`
+      
     - 在组内使用 ?: 则无法引用到该组。正则表达式引擎不会记住被排除在捕获 (?:...) 之外的组。
   - 选择
     - 选择表达式相比于字符集合不同的地方在于选择表达式是在正则表达式级别的，不仅仅是字符

@@ -1,22 +1,181 @@
 <!DOCTYPE html>
-<script>
-    'use strict';
-    let dictionary = Object.create(null, {
-        toString: {
-            value() {
-                return Object.keys(this).join(',');
-            }
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style type="text/css">
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
-    });
 
-    dictionary.apple = "Apple";
-    dictionary.__proto__ = "test";
+        div {
+            box-shadow: #666 1px 1px 5px;
+            width: 50%;
+            height: 50%;
 
-    // apple 和 __proto__ 在循环内
-    for (let key in dictionary) {
-        alert(key); // "apple"，然后 "__proto__"
-    }
+            text-align: right;
+            color: aliceblue;
+        }
 
-    // 通过 toString 得到逗号分隔的属性值
-    alert(dictionary.toString()); // "apple,__proto__"
-</script>
+        .static {
+            position: static;
+            background-color: gray;
+            top: 50px;
+            left: 50px;
+        }
+
+        .relative {
+            position: relative;
+            background-color: yellowgreen;
+            top: 50px;
+            left: 50px;
+        }
+
+        .absolute {
+            position: absolute;
+            background-color: deepskyblue;
+            top: 0;
+            left: 0;
+            opacity: .75;
+        }
+
+        .absolute-silbling {
+            position: absolute;
+            background-color: hotpink;
+            bottom: 0;
+            left: 0;
+            opacity: .75;
+        }
+
+        .absolute-fullfilled {
+            position: absolute;
+            background-color: red;
+            width: auto;
+            height: auto;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            opacity: .75;
+        }
+
+        .fixed {
+            position: fixed;
+            background-color: darkred;
+            top: 200px;
+            left: 200px;
+
+        }
+
+        .hide {
+            visibility: hidden;
+        }
+
+        .opacity0 {
+            opacity: 0;
+        }
+
+        .remove {
+            display: none;
+        }
+
+        .log {
+            width: 100%;
+            text-align: left;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="static">
+        static
+        <div class="relative">
+            relative
+            <div class="absolute-fullfilled">
+                absolute fullfilled
+            </div>
+            <div class="absolute">
+                absolute
+                <div class="fixed">
+                    fixed
+                    <div class="absolute">
+                        absolute silbling 1
+
+                    </div>
+                    <div class="absolute" style="left: 50%; top: 50%;">
+                        absolute silbling 2
+                        <span class="absolute-silbling" style="z-index: 1;">as span</span>
+                        <div class="absolute-silbling" style="width: 150%;">as div</div>
+                        absolute silbling 2 text
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="log">
+        <textarea name="" id="logContent" cols="50" rows="15"></textarea>
+    </div>
+    <script>
+        const logOutput = document.querySelector('#logContent');
+        const domContainer = document.querySelector('.static');
+        const delegate = function (e) {
+            const target = e.target;
+            logOutput.value += `${target.nodeName}[${target.className}][${target.style.cssText}]\n`;
+            textareaScroll();
+        }
+        const textareaScroll = function () {
+            const scrollY = logOutput.scrollHeight;
+            logOutput.scrollTo(0, scrollY);
+        }
+        domContainer.addEventListener('click', delegate);
+        let dictionary = Object.create(null, {
+            toString: {
+                value() {
+                    return Object.keys(this).join(',');
+                }
+            }
+        });
+
+        dictionary.apple = "Apple";
+        dictionary.__proto__ = "test";
+
+        // apple 和 __proto__ 在循环内
+        // for (let key in dictionary) {
+        //     alert(key); // "apple"，然后 "__proto__"
+        // }
+
+        // // 通过 toString 得到逗号分隔的属性值
+        // alert(dictionary.toString()); // "apple,__proto__"
+
+
+        var number = 5;
+        var obj = {
+            number: 3,
+            fn1: (function () {
+                var number = 3;
+                // console.dir(this);
+                this.number *= 2; //非严格模式this才能访问到全局对象，否则是undefined
+                // console.dir(this.number);
+                return function () {
+                    var num = this.number;
+                    console.log(num);
+                    this.number *= 2;
+                    number *= 3;
+                    console.log(number);
+                }
+            })()
+        }
+        var fn1 = obj.fn1;
+        fn1.call(null);
+        obj.fn1();
+        console.log(window.number);
+    </script>
+</body>
+
+</html>

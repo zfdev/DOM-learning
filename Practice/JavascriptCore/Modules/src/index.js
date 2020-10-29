@@ -172,3 +172,19 @@ let rabbit = new Rabbit();
 alert(rabbit instanceof Animal); // true
 // rabbit.__proto__ === Rabbit.prototype
 // rabbit.__proto__.__proto__ === Animal.prototype (match!)
+
+// (() => {
+//     for (let i = 0; i < 10; i++) {
+//         if (i == 5) {
+//             return i; // return must be in a function
+//         }
+//         console.log(i);
+//     }
+// })();
+
+// var obj = {
+//     number: 3,
+//     fn1: (function () {
+//         console.dir(this); //匿名自执行函数内部this为undefined
+//     })()
+// }
